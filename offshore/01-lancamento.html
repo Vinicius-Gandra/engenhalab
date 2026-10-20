@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
   <link rel="stylesheet" href="assets/css/lancamento.css">
+  <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
+  <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-1">
 </head>
 <body data-page="lancamento">
   <a class="skip" href="#main">Pular para o conteúdo</a>
@@ -118,12 +120,12 @@
     <section class="panel lx-campo" id="lx-campo" hidden></section>
 
     <section class="panel lx-compare">
-      <div class="panel-title"><div><span class="eyebrow">Comparação</span><h2>Os quatro torpedos nas mesmas condições</h2><p>Mesma altura de soltura, mesma lâmina d’água e mesmo solo. Clique numa linha para trocar de modelo.</p></div></div>
+      <div class="panel-title"><div><span class="eyebrow">Comparação</span><h2>Os quatro torpedos nas mesmas condições</h2><p>Mesma altura de soltura, mesma lâmina d’água e mesmo solo. Toque numa linha para trocar de modelo.</p></div></div>
       <div class="lx-cmp" id="lx-cmp"></div>
     </section>
 
     <section class="panel">
-      <div class="panel-title"><div><span class="eyebrow">Perfil completo</span><h2>Velocidade da soltura à parada</h2><p>Água à esquerda do leito, solo à direita. Passe o mouse para ler os valores.</p></div>
+      <div class="panel-title"><div><span class="eyebrow">Perfil completo</span><h2>Velocidade da soltura à parada</h2><p>Água à esquerda do leito, solo à direita. Toque ou passe o mouse para ler os valores.</p></div>
         <div class="action-row" style="margin:0"><button type="button" class="button ghost" id="download-launch">CSV da queda</button><button type="button" class="button ghost" id="download-true">CSV da cravação</button></div></div>
       <div class="lx-chart" id="lx-vchart"></div>
       <div class="legend"><span><i></i>Velocidade</span><span><i class="teal"></i>Velocidade terminal na água</span><span><i style="background:var(--sediment)"></i>Leito marinho</span></div>
@@ -138,7 +140,7 @@
 
     <section class="soil-layout" id="secao-solo">
       <div class="panel soil-main">
-        <div class="panel-title"><div><span class="eyebrow">Posição final em escala</span><h2>Torpedo, solo e linha</h2><p>Passe o mouse sobre o solo para ler profundidade e Su.</p></div><div class="modebar" role="group" aria-label="Enquadramento"><button type="button" data-frame="all" aria-pressed="true">Seção completa</button><button type="button" data-frame="pile" aria-pressed="false">Aproximar torpedo</button></div></div>
+        <div class="panel-title"><div><span class="eyebrow">Posição final em escala</span><h2>Torpedo, solo e linha</h2><p>Toque ou passe o mouse sobre o solo para ler profundidade e Su.</p></div><div class="modebar" role="group" aria-label="Enquadramento"><button type="button" data-frame="all" aria-pressed="true">Seção completa</button><button type="button" data-frame="pile" aria-pressed="false">Aproximar torpedo</button></div></div>
         <div class="plot soil-plot"><svg id="soil-section" class="diagram" viewBox="0 0 1000 600" role="img" aria-label="Corte do solo com o torpedo cravado e a linha enterrada"></svg></div>
         <div class="legend"><span><i></i>Trecho enterrado</span><span><i class="teal"></i>Corrente</span><span><i class="blue"></i>Poliéster</span><span><i style="background:var(--steel)"></i>Torpedo</span><span><i style="background:linear-gradient(90deg,var(--soil-lo),var(--sediment))"></i>Su cresce com a profundidade</span></div>
       </div>
@@ -160,7 +162,8 @@
   <script src="assets/js/config.js"></script>
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/torpedo.js"></script>
-  <script src="assets/js/paginas/lancamento.js"></script>
+  <script src="assets/js/paginas/lancamento.js?v=20261020-1"></script>
+  <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>
 </html>
