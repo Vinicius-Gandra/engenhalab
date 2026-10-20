@@ -595,9 +595,16 @@ function renderCfg() {
 
 /* ================= Edição ================= */
 function setPath(path, raw, sc) {
+  if (typeof path !== "string") return false;
   const parts = path.split("."), root = parts[0] === "per" ? DB.per[cur] : parts[0] === "cfg" ? DB.cfg : parts[0] === "sig" ? DB.sig : parts[0] === "hf" ? DB.hf : DB.per[cur];
   const keys = ["per", "cfg", "sig", "hf"].includes(parts[0]) ? parts.slice(1) : parts;
-  let o = root; for (let i = 0; i < keys.length - 1; i++) o = o[keys[i]];
+  if (!keys.length || keys.some(k => !k || k === "__proto__" || k === "prototype" || k === "constructor")) return false;
+  let o = root;
+  for (let i = 0; i < keys.length - 1; i++) {
+    if (!o || typeof o !== "object" || !Object.hasOwn(o, keys[i])) return false;
+    o = o[keys[i]];
+  }
+  if (!o || typeof o !== "object" || !Object.hasOwn(o, keys[keys.length - 1])) return false;
   const last = keys[keys.length - 1], isText = last === "nome" || last === "id" || last === "data";
   if (isText) { o[last] = raw; return true; }
   const v = parseFloat(raw); if (!Number.isFinite(v)) return false;
