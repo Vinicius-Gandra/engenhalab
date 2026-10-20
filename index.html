@@ -14,17 +14,15 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600&display=swap">
   <style>
     /* ==========================================================================
-       EngenhaLab · central dos laboratórios
-       Mesmos tokens do sistema visual VG (maquinas-eletricas/assets/css/base.css).
-       Cada laboratório é um bloco quadrado na grade. Para abrir um laboratório:
-       troque <article class="tile tile-soon"> por <a class="tile tile-open" href="pasta/index.html">
-       e o selo "Em preparação" por "Aberto".
+       EngenhaLab · central dos laboratórios (pensada primeiro para o celular)
+       Abertos: <article class="lab"> com a lista de módulos.
+       Em preparação: <article class="tile-soon"> na faixa de baixo.
        ========================================================================== */
     :root {
       --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       --font-serif: Georgia, "Times New Roman", serif;
       --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      --max: 1240px; --gut: clamp(16px, 4vw, 48px);
+      --max: 1180px; --gut: 16px;
     }
     :root, html[data-theme="dark"] {
       color-scheme: dark;
@@ -63,31 +61,31 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-    body { margin: 0; min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font: 400 16px/1.6 var(--font-sans); font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-top: 72px; }
+    body { margin: 0; min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); color: var(--text); font: 400 16px/1.55 var(--font-sans); font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; color: inherit; cursor: pointer; }
-    h1, h2, p { margin: 0; }
+    h1, h2, h3, p, ol { margin: 0; }
+    ol { padding: 0; list-style: none; }
     svg { display: block; }
     ::selection { background: var(--accent); color: var(--accent-ink); }
-    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-    .skip { position: fixed; z-index: 500; top: -60px; left: 16px; padding: 10px 16px; border-radius: 6px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+    .skip { position: fixed; z-index: 500; top: -60px; left: 16px; padding: 10px 16px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
     .skip:focus { top: 12px; }
-    .wrap { width: min(100% - 2 * var(--gut), var(--max)); margin-inline: auto; }
+    .wrap { width: min(100% - 2 * var(--gut) - env(safe-area-inset-left) - env(safe-area-inset-right), var(--max)); margin-inline: auto; }
 
     /* ---- Cabeçalho ---------------------------------------------------------- */
-    .top { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); }
-    .top .wrap { display: flex; align-items: center; gap: 16px; height: 64px; }
-    .brand { display: inline-flex; align-items: baseline; gap: 10px; }
-    .brand-mark { font-size: 1.45rem; font-weight: 850; letter-spacing: -.06em; }
+    .top { position: sticky; top: 0; z-index: 50; padding-top: env(safe-area-inset-top); border-bottom: 1px solid transparent; background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); transition: border-color .2s; }
+    .top.solid { border-bottom-color: var(--line); }
+    .top .wrap { display: flex; align-items: center; gap: 4px; height: 56px; }
+    .brand { display: inline-flex; align-items: baseline; gap: 8px; min-height: 44px; align-items: center; }
+    .brand-mark { font-size: 1.35rem; font-weight: 850; letter-spacing: -.06em; }
     .brand-mark b, .brand-name b { color: var(--accent); }
-    .brand-name { font-size: .95rem; font-weight: 700; letter-spacing: -.02em; color: var(--text-2); }
+    .brand-name { font-size: .92rem; font-weight: 700; letter-spacing: -.02em; color: var(--text-2); }
     .brand-name b { font-weight: 800; }
     .top nav { margin-left: auto; }
-    .top nav a { padding: 8px 12px; border-radius: 8px; color: var(--text-2); font-size: .86rem; font-weight: 600; }
-    .top nav a:hover { color: var(--text); background: var(--surface-2); }
-    .theme { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--text-2); font-size: 1.05rem; }
-    .theme:hover { border-color: var(--line); background: var(--surface-2); color: var(--text); }
+    .top nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--text-2); font-size: .88rem; font-weight: 600; }
+    .theme { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--text-2); font-size: 1.1rem; }
     .moon { display: none; }
     html[data-theme="light"] .sun { display: none; }
     html[data-theme="light"] .moon { display: inline; }
@@ -95,41 +93,82 @@
 
     /* ---- Abertura ---------------------------------------------------------- */
     main { flex: 1; }
-    .intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); align-items: end; gap: 16px 48px; padding-block: clamp(36px, 6vw, 72px) clamp(24px, 3.5vw, 40px); }
-    .intro h1 { font-size: clamp(2.3rem, 5vw, 4.2rem); font-weight: 760; line-height: 1.02; letter-spacing: -.045em; }
+    .intro { padding-block: 28px 22px; }
+    .intro h1 { font-size: clamp(2.1rem, 9.4vw, 4.2rem); font-weight: 760; line-height: 1.02; letter-spacing: -.045em; }
     .intro h1 em { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--accent); letter-spacing: -.03em; }
-    .intro p { color: var(--text-2); font-size: 1rem; line-height: 1.65; }
-    .intro .count { display: block; margin-top: 8px; color: var(--text-3); font-size: .86rem; }
+    .jump { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .jump a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--text-2); font-size: .84rem; font-weight: 620; }
+    .jump a b { font: 600 .78rem var(--font-mono); color: var(--text-3); }
+    .jump a:first-child { border-color: color-mix(in srgb, var(--teal) 45%, transparent); background: var(--teal-wash); color: var(--teal); }
+    .jump a:first-child b { color: inherit; }
 
-    /* ---- Blocos ------------------------------------------------------------- */
-    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding-bottom: clamp(48px, 7vw, 88px); }
-    .tile { position: relative; aspect-ratio: 1; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: 20px 22px 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); overflow: hidden; }
-    .tile-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .tile-num { color: var(--text-3); font: 600 .84rem var(--font-mono); }
-    .tile-open .tile-num { color: var(--accent); }
+    /* ---- Títulos de seção ---------------------------------------------------- */
+    .sec { padding-bottom: 36px; }
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .sec-head h2 { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-2); }
+    .sec-head span { font: 600 .78rem var(--font-mono); color: var(--text-3); }
+
+    /* ---- Identidade de cada laboratório --------------------------------------- */
+    .lab, .tile-soon { --hue: var(--accent); position: relative; isolation: isolate; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+    [data-lab="maquinas"]   { --hue: #d9873f; }
+    [data-lab="estruturas"] { --hue: #6f9cf0; }
+    [data-lab="fluidos"]    { --hue: #3fb9c4; }
+    [data-lab="offshore"]   { --hue: #3d93d6; }
+    [data-lab="metalurgia"] { --hue: #ec6a3c; }
+    [data-lab="cad"]        { --hue: #a58cf0; }
+    .lab::before, .tile-soon::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(120% 60% at 100% 0%, color-mix(in srgb, var(--hue) 16%, transparent), transparent 60%); }
+    .lab::after { content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--hue), transparent); opacity: .7; }
+    .num { font: 600 .82rem var(--font-mono); color: color-mix(in srgb, var(--hue) 78%, var(--text)); }
     .status { display: inline-flex; align-items: center; gap: 7px; padding: 3px 10px 3px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--text-3); font-size: .74rem; font-weight: 650; white-space: nowrap; }
     .status i { width: 7px; height: 7px; border: 1.5px solid currentColor; border-radius: 50%; }
     .status-open { border-color: color-mix(in srgb, var(--teal) 45%, transparent); background: var(--teal-wash); color: var(--teal); }
     .status-open i { border-color: var(--teal); background: var(--teal); }
-    .tile-fig { position: relative; display: grid; place-items: center; min-height: 0; }
-    .tile-fig svg { position: absolute; inset: 8px 0 12px; width: 100%; height: calc(100% - 20px); overflow: visible; }
-    .tile h2 { font-size: clamp(1.15rem, 1.7vw, 1.4rem); font-weight: 720; letter-spacing: -.025em; line-height: 1.2; }
-    .tile-body p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 6px; color: var(--text-2); font-size: .88rem; line-height: 1.55; }
-    .tile-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--text-3); font-size: .8rem; }
-    .tile-go { color: var(--text); font-weight: 680; font-size: .86rem; }
-    .tile-go b { display: inline-block; margin-left: 4px; color: var(--accent); transition: transform .15s; }
-    .tile-open { transition: border-color .15s, background .15s; }
-    .tile-open:hover { border-color: var(--accent-line); background: color-mix(in srgb, var(--surface) 88%, var(--accent)); }
-    .tile-open:hover .tile-go b { transform: translateX(3px); }
-    .tile-soon { background: color-mix(in srgb, var(--surface) 55%, var(--bg)); }
-    .tile-soon .tile-fig { opacity: .8; }
-    .tile-soon .tile-body p { color: var(--text-3); }
-    .tile-next { border-style: dashed; border-color: var(--line-strong); background: transparent; transition: border-color .15s; }
-    .tile-next:hover { border-color: var(--accent-line); }
-    .tile-next .plus { width: 34%; aspect-ratio: 1; display: grid; place-items: center; border: 1.5px dashed var(--line-strong); border-radius: 50%; color: var(--text-3); font-size: 2.4rem; font-weight: 300; }
-    .tile-next:hover .plus { color: var(--accent); border-color: var(--accent-line); }
 
-    /* Figuras */
+    /* ---- Laboratórios abertos -------------------------------------------------- */
+    .open-list { display: grid; gap: 16px; }
+    .lab { background: var(--surface); }
+    .lab-main { display: block; padding: 18px 18px 16px; }
+    .lab-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .lab .tile-fig { aspect-ratio: 16 / 10; margin: 6px -4px 4px; }
+    .lab h3 { font-size: 1.5rem; font-weight: 740; letter-spacing: -.03em; line-height: 1.15; }
+    .lab-main p { margin-top: 6px; color: var(--text-2); font-size: .95rem; line-height: 1.55; }
+    .cta { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; margin-top: 16px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-weight: 720; font-size: .98rem; letter-spacing: -.01em; transition: filter .15s, transform .12s; }
+    .cta b { transition: transform .15s; }
+    .lab-main:active .cta { transform: scale(.985); filter: brightness(.95); }
+    .mods { border-top: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 70%, var(--bg)); }
+    .mods-title { padding: 12px 18px 4px; color: var(--text-3); font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .mods li + li { border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+    .mods a { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; min-height: 56px; padding: 8px 18px; transition: background .15s; }
+    .mods a:active { background: var(--surface-2); }
+    .mods .n { grid-row: span 2; font: 600 .8rem var(--font-mono); color: var(--text-3); }
+    .mods .t { font-size: .95rem; font-weight: 640; letter-spacing: -.01em; line-height: 1.25; }
+    .mods small { grid-column: 2; color: var(--text-3); font-size: .8rem; line-height: 1.3; }
+    .mods .go { grid-row: 1 / span 2; grid-column: 3; color: var(--text-3); font-size: 1rem; transition: transform .15s, color .15s; }
+
+    /* ---- Em preparação --------------------------------------------------------- */
+    .soon-list { display: grid; grid-auto-flow: column; grid-auto-columns: 78%; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); padding: 2px var(--gut) 6px; margin-inline: calc(-1 * var(--gut)); scrollbar-width: none; }
+    .soon-list::-webkit-scrollbar { display: none; }
+    .tile-soon { scroll-snap-align: start; display: flex; flex-direction: column; padding: 14px 14px 16px; background: color-mix(in srgb, var(--surface) 55%, var(--bg)); cursor: default; }
+    .soon-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .tile-soon .tile-fig { aspect-ratio: 16 / 10; margin: 8px 0 10px; opacity: .9; }
+    .tile-soon h3 { font-size: 1.06rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.25; }
+    .tile-soon p { margin-top: 4px; color: var(--text-3); font-size: .84rem; line-height: 1.5; }
+    .tile-soon .status { transition: color .2s, border-color .2s; }
+    .tile-soon.nudge .status { animation: nudge .32s ease; color: var(--text-2); border-color: var(--line-strong); }
+    @keyframes nudge { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    .dots { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
+    .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); transition: background .2s, width .2s; }
+    .dots i.on { width: 18px; border-radius: 3px; background: var(--text-2); }
+
+    /* ---- Figuras ---------------------------------------------------------------- */
+    .tile-fig { position: relative; }
+    .tile-fig svg { position: absolute; inset: 8px 0; width: 100%; height: calc(100% - 16px); overflow: visible; }
+    .cfd-fig canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--hue) 22%, var(--line)); }
+    .tile-fig::before { content: ""; position: absolute; inset: 0; border-radius: 12px; pointer-events: none; opacity: .55; }
+    [data-lab="maquinas"] .tile-fig::before { background: repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, color-mix(in srgb, var(--hue) 10%, transparent) 22px 23px); mask: radial-gradient(circle, #000 30%, transparent 70%); }
+    [data-lab="metalurgia"] .tile-fig::before { background: radial-gradient(ellipse 45% 40% at 45% 62%, color-mix(in srgb, var(--hue) 22%, transparent), transparent 70%); animation: met-glow 2.4s ease-in-out infinite alternate; }
+    [data-lab="cad"] .tile-fig::before { background: radial-gradient(circle, color-mix(in srgb, var(--hue) 28%, transparent) 1px, transparent 1.4px) 0 0/14px 14px; mask: radial-gradient(ellipse, #000 35%, transparent 75%); }
+    @keyframes met-glow { from { opacity: .35; } to { opacity: .8; } }
     .m-core { fill: var(--surface-2); stroke: var(--text-3); stroke-width: 1.4; }
     .m-slot { fill: var(--bg); }
     .m-cu { fill: var(--copper); }
@@ -153,99 +192,81 @@
     .fg-txt.acc { fill: var(--accent); }
     .fg-txt.mid { text-anchor: middle; }
     .met-drop { fill: var(--teal); }
-
-
-    /* ---- Identidade de cada laboratório --------------------------------------- */
-    .tile { --hue: var(--accent); isolation: isolate; transition: border-color .2s, background .2s, transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s; }
-    .tile[data-lab="maquinas"]   { --hue: #d9873f; }
-    .tile[data-lab="estruturas"] { --hue: #6f9cf0; }
-    .tile[data-lab="fluidos"]    { --hue: #3fb9c4; }
-    .tile[data-lab="offshore"]   { --hue: #3d93d6; }
-    .tile[data-lab="metalurgia"] { --hue: #ec6a3c; }
-    .tile[data-lab="cad"]        { --hue: #a58cf0; }
-    .tile::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--hue) 16%, transparent), transparent 60%); }
-    .tile::after { content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 2px; border-radius: 0 0 2px 2px; background: linear-gradient(90deg, transparent, var(--hue), transparent); opacity: .55; transition: opacity .2s; }
-    .tile .tile-num { color: color-mix(in srgb, var(--hue) 78%, var(--text)); }
-    .tile:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -24px color-mix(in srgb, var(--hue) 70%, transparent); border-color: color-mix(in srgb, var(--hue) 45%, var(--line)); }
-    .tile:hover::after { opacity: 1; }
-    .tile-fig svg { transition: transform .45s cubic-bezier(.2,.7,.3,1); }
-    .tile:hover .tile-fig svg { transform: scale(1.035); }
-    .tile-fig::before { content: ""; position: absolute; inset: 6px 4px 10px; border-radius: 12px; pointer-events: none; opacity: .55; }
-    .tile[data-lab="maquinas"] .tile-fig::before { background: repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, color-mix(in srgb, var(--hue) 10%, transparent) 22px 23px); mask: radial-gradient(circle, #000 30%, transparent 70%); }
-    .tile[data-lab="estruturas"] .tile-fig::before { background: linear-gradient(color-mix(in srgb, var(--hue) 14%, transparent) 1px, transparent 1px) 0 0/18px 18px, linear-gradient(90deg, color-mix(in srgb, var(--hue) 14%, transparent) 1px, transparent 1px) 0 0/18px 18px; mask: radial-gradient(ellipse, #000 35%, transparent 75%); }
-    .tile[data-lab="fluidos"] .tile-fig::before { background: radial-gradient(ellipse 60% 45% at 42% 50%, color-mix(in srgb, var(--hue) 14%, transparent), transparent 70%); }
-    .tile[data-lab="metalurgia"] .tile-fig::before { background: radial-gradient(ellipse 45% 40% at 45% 62%, color-mix(in srgb, var(--hue) 22%, transparent), transparent 70%); animation: met-glow 2.4s ease-in-out infinite alternate; }
-    .tile[data-lab="cad"] .tile-fig::before { background: radial-gradient(circle, color-mix(in srgb, var(--hue) 28%, transparent) 1px, transparent 1.4px) 0 0/14px 14px; mask: radial-gradient(ellipse, #000 35%, transparent 75%); }
-    @keyframes met-glow { from { opacity: .35; } to { opacity: .8; } }
-    .tile-soon .tile-fig { opacity: .92; }
-
-    /* Estruturas: tensões */
     #fea-cells path { stroke: none; }
-    /* Fluidos: simulação em canvas */
-    .cfd-fig canvas { position: absolute; inset: 6px 0 10px; width: 100%; height: calc(100% - 16px); border-radius: 12px; border: 1px solid color-mix(in srgb, var(--hue) 22%, var(--line)); }
-    .tile[data-lab="fluidos"] .tile-fig::before, .tile[data-lab="estruturas"] .tile-fig::before { display: none; }
-    .tile:hover .cfd-fig canvas { transform: none; }
     /* CAD: desenho traçado em ciclo de 9 s */
     .cad { --cyc: 9s; }
     .cad-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cad-draw var(--cyc) ease-in-out infinite; }
     .cad-fill { opacity: 0; animation: cad-fill var(--cyc) ease infinite; }
     .cad-fade { opacity: 0; animation: cad-fade var(--cyc) ease infinite; }
-    .cad-hole { transform: scale(0); opacity: 0; animation: cad-hole var(--cyc) cubic-bezier(.3,1.6,.5,1) infinite; }
-    .cad-dim { opacity: 0; animation: cad-dim var(--cyc) ease infinite; }
+    .cad-hole { transform: scale(0); opacity: 0; animation: cad-hole var(--cyc) cubic-bezier(.3,1.6,.5,1) infinite; animation-delay: calc(var(--i) * .2s); }
+    .cad-dim { opacity: 0; animation: cad-dim var(--cyc) ease infinite; animation-delay: var(--dd, 0s); }
     .cad-pen { animation: cad-pen var(--cyc) ease-in-out infinite; }
     .cad-stamp { opacity: 0; animation: cad-stamp var(--cyc) ease infinite; }
+    .cad-draw + .cad-draw { animation-delay: 1s; }
     @keyframes cad-fade  { 0% { opacity: 0 } 6%, 88% { opacity: 1 } 96%, 100% { opacity: 0 } }
     @keyframes cad-draw  { 0%, 6% { stroke-dashoffset: 1 } 30%, 88% { stroke-dashoffset: 0; opacity: 1 } 96%, 100% { stroke-dashoffset: 0; opacity: 0 } }
     @keyframes cad-fill  { 0%, 26% { opacity: 0 } 34%, 88% { opacity: 1 } 96%, 100% { opacity: 0 } }
     @keyframes cad-pen   { 0%, 6% { transform: rotate(0); opacity: 1 } 30% { transform: rotate(360deg); opacity: 1 } 34%, 100% { transform: rotate(360deg); opacity: 0 } }
     @keyframes cad-hole  { 0%, 32% { transform: scale(0); opacity: 0 } 38% { transform: scale(1); opacity: 1 } 88% { transform: scale(1); opacity: 1 } 96%, 100% { transform: scale(1); opacity: 0 } }
-    .cad-hole { animation-delay: calc(var(--i) * .2s); }
-    .cad-draw + .cad-draw { animation-delay: 1s; }
-    .cad-dim { animation-delay: var(--dd, 0s); }
     @keyframes cad-dim   { 0%, 50% { opacity: 0; transform: translateY(4px) } 58%, 88% { opacity: 1; transform: none } 96%, 100% { opacity: 0 } }
     @keyframes cad-stamp { 0%, 64% { opacity: 0 } 70%, 88% { opacity: 1 } 96%, 100% { opacity: 0 } }
-    @media (prefers-reduced-motion: reduce) {
-      .tile, .tile-fig svg { transition: none; } .tile:hover { transform: none; }
-      .cad-draw, .cad-fill, .cad-fade, .cad-hole, .cad-dim, .cad-stamp { animation: none; opacity: 1; stroke-dashoffset: 0; transform: none; }
-      .cad-pen { display: none; } .tile[data-lab="metalurgia"] .tile-fig::before { animation: none; }
-    }
-
-
-    /* ---- Cursor e clique -------------------------------------------------------- */
-    .tile-open { cursor: pointer; }
-    .tile-open:active { transform: translateY(-1px) scale(.992); transition-duration: .08s; }
-    .tile-soon { cursor: not-allowed; }
-    .tile-soon:hover { transform: none; box-shadow: none; border-color: var(--line); }
-    .tile-soon:hover .tile-fig svg { transform: none; }
-    .tile-soon .status { transition: color .2s, border-color .2s; }
-    .tile-soon:hover .status { color: var(--text-2); border-color: var(--line-strong); }
-    .tile-soon.nudge .status { animation: nudge .32s ease; }
-    @keyframes nudge { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-    @media (prefers-reduced-motion: reduce) { .tile-open:active { transform: none; } .tile-soon.nudge .status { animation: none; } }
 
     /* ---- Rodapé ------------------------------------------------------------- */
-    .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 22px 28px; border-top: 1px solid var(--line); color: var(--text-3); font-size: .84rem; }
+    .foot { display: flex; flex-direction: column; gap: 6px; padding-block: 22px calc(26px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); color: var(--text-3); font-size: .84rem; }
     .foot b { color: var(--text); font-weight: 850; letter-spacing: -.04em; }
     .foot b span { color: var(--accent); }
     .foot a { color: var(--text-2); border-bottom: 1px solid var(--line-strong); }
-    .foot a:hover { color: var(--accent); border-color: var(--accent); }
 
-    /* ---- Responsivo ------------------------------------------------------------ */
-    @media (max-width: 1199px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 1000px) { .intro { grid-template-columns: minmax(0, 1fr); } }
-    @media (max-width: 620px) {
-      .top .wrap { height: 58px; }
-      .brand-name { display: none; }
-      .grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-      .tile { padding: 18px 18px 20px; }
+    /* ---- Mouse (computador) ---------------------------------------------------- */
+    @media (hover: hover) {
+      .top nav a:hover, .theme:hover { color: var(--text); background: var(--surface-2); }
+      .jump a:hover { border-color: var(--line-strong); color: var(--text); }
+      .lab { transition: border-color .2s, box-shadow .25s; }
+      .lab:hover { border-color: color-mix(in srgb, var(--hue) 40%, var(--line)); box-shadow: 0 18px 44px -28px color-mix(in srgb, var(--hue) 80%, transparent); }
+      .lab-main:hover .cta { filter: brightness(1.06); }
+      .lab-main:hover .cta b { transform: translateX(3px); }
+      .lab .tile-fig svg { transition: transform .45s cubic-bezier(.2,.7,.3,1); }
+      .lab-main:hover .tile-fig svg { transform: scale(1.03); }
+      .mods a:hover { background: var(--surface-2); }
+      .mods a:hover .go { color: var(--accent); transform: translateX(3px); }
+      .tile-soon:hover .status { color: var(--text-2); border-color: var(--line-strong); }
+      .foot a:hover { color: var(--accent); border-color: var(--accent); }
     }
-    @media (prefers-reduced-motion: reduce) { .tile-open, .tile-go b, .tile-next { transition: none; } }
+
+    /* ---- Telas maiores ------------------------------------------------------- */
+    @media (min-width: 640px) {
+      :root { --gut: 28px; }
+      .intro { padding-block: 48px 30px; }
+      .soon-list { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; margin: 0; padding: 0; }
+      .dots { display: none; }
+      .foot { flex-direction: row; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+    }
+    @media (min-width: 960px) {
+      :root { --gut: 40px; }
+      .top .wrap { height: 64px; }
+      .intro { padding-block: 64px 36px; }
+      .sec { padding-bottom: 52px; }
+      .open-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+      .lab-main { padding: 22px 24px 20px; }
+      .lab .tile-fig { aspect-ratio: auto; height: 250px; }
+      .mods-title { padding-inline: 24px; }
+      .mods a { padding-inline: 24px; }
+      .soon-list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    }
+    @media (max-width: 380px) { .brand-name { display: none; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+      .cad-draw, .cad-fill, .cad-fade, .cad-hole, .cad-dim, .cad-stamp { animation: none; opacity: 1; stroke-dashoffset: 0; transform: none; }
+      .cad-pen { display: none; } [data-lab="metalurgia"] .tile-fig::before { animation: none; }
+      .tile-soon.nudge .status { animation: none; }
+    }
   </style>
 </head>
 <body>
-  <a class="skip" href="#laboratorios">Pular para os laboratórios</a>
+  <a class="skip" href="#abertos">Pular para os laboratórios</a>
 
-  <header class="top">
+  <header class="top" id="topo">
     <div class="wrap">
       <a class="brand" href="index.html" aria-label="EngenhaLab — início"><span class="brand-mark">VG<b>.</b></span><span class="brand-name">Engenha<b>Lab</b></span></a>
       <nav aria-label="Navegação principal"><a href="sobre.html">Sobre o autor</a></nav>
@@ -256,77 +277,84 @@
   <main>
     <section class="intro wrap" aria-labelledby="intro-title">
       <h1 id="intro-title">Laboratórios de <em>engenharia.</em></h1>
+      <div class="jump">
+        <a href="#abertos">Abertos <b>2</b></a>
+        <a href="#preparacao">Em preparação <b>4</b></a>
+      </div>
     </section>
 
-    <section class="grid wrap" id="laboratorios" aria-label="Laboratórios">
-
-      <!-- 01 · Máquinas elétricas -->
-      <a data-lab="maquinas" class="tile tile-open" href="maquinas-eletricas/index.html">
-        <div class="tile-top"><span class="tile-num">01</span><span class="status status-open"><i aria-hidden="true"></i>Aberto</span></div>
-        <div class="tile-fig" aria-hidden="true">
-          <svg id="rotor" viewBox="-240 -240 480 480"><g id="m-stator"></g><g id="m-rotor"></g><path class="m-centre" d="M-232 0H232M0 -232V232"/></svg>
-        </div>
-        <div class="tile-body">
-          <h2>Máquinas elétricas</h2>
+    <section class="sec wrap" id="abertos" aria-labelledby="h-abertos">
+      <div class="sec-head"><h2 id="h-abertos">Abertos</h2><span>02</span></div>
+      <div class="open-list">
+      <article class="lab" data-lab="maquinas">
+        <a class="lab-main" href="maquinas-eletricas/index.html">
+          <div class="lab-top"><span class="num">01</span><span class="status status-open"><i aria-hidden="true"></i>Aberto</span></div>
+          <div class="tile-fig" aria-hidden="true"><svg id="rotor" viewBox="-240 -240 480 480"><g id="m-stator"></g><g id="m-rotor"></g><path class="m-centre" d="M-232 0H232M0 -232V232"/></svg></div>
+          <h3>Máquinas elétricas</h3>
           <p>Geradores e motores síncronos: rotor, eixo, mancal e trocador ar–água.</p>
-          <div class="tile-foot"><span>5 módulos</span><span class="tile-go">Abrir <b aria-hidden="true">→</b></span></div>
-        </div>
-      </a>
-
-      <!-- 02 · Estruturas & FEM -->
-      <article data-lab="estruturas" class="tile tile-soon">
-        <div class="tile-top"><span class="tile-num">02</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
-        <div class="tile-fig cfd-fig" aria-hidden="true"><canvas id="fem"></canvas></div>
-        <div class="tile-body">
-          <h2>Estruturas &amp; FEM</h2>
-          <p>Análise estrutural por elementos finitos, vasos de pressão e verificação de componentes.</p>
-          <div class="tile-foot"><span>Em breve</span></div>
-        </div>
+          <span class="cta">Abrir laboratório <b aria-hidden="true">→</b></span>
+        </a>
+        <nav class="mods" aria-label="Módulos de Máquinas elétricas">
+          <p class="mods-title">4 módulos</p>
+          <ol>
+            <li><a href="maquinas-eletricas/01-maquinas-sincronas.html"><span class="n">01</span><span class="t">Máquinas síncronas</span><small>rotor e campo</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="maquinas-eletricas/02-mecanica.html"><span class="n">02</span><span class="t">Mecânica</span><small>eixo e mancal</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="maquinas-eletricas/03-termica.html"><span class="n">03</span><span class="t">Térmica</span><small>trocador ar–água</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="maquinas-eletricas/04-eixos.html"><span class="n">04</span><span class="t">Eixos</span><small>rotor completo</small><span class="go" aria-hidden="true">→</span></a></li>
+          </ol>
+        </nav>
       </article>
-
-      <!-- 03 · Fluidos & CFD -->
-      <article data-lab="fluidos" class="tile tile-soon">
-        <div class="tile-top"><span class="tile-num">03</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
-        <div class="tile-fig cfd-fig" aria-hidden="true"><canvas id="cfd"></canvas></div>
-        <div class="tile-body">
-          <h2>Fluidos &amp; CFD</h2>
-          <p>Escoamentos, turbomáquinas e troca térmica por simulação fluidodinâmica.</p>
-          <div class="tile-foot"><span>Em breve</span></div>
-        </div>
-      </article>
-
-      <!-- 04 · Offshore & ancoragem -->
-      <a data-lab="offshore" class="tile tile-open" href="offshore/index.html">
-        <div class="tile-top"><span class="tile-num">04</span><span class="status status-open"><i aria-hidden="true"></i>Aberto</span></div>
-        <div class="tile-fig" aria-hidden="true"><svg viewBox="0 0 320 200"><defs><clipPath id="fpso-clip"><rect width="320" height="200"/></clipPath></defs><g clip-path="url(#fpso-clip)"><path class="fg-hatch" d="M0 182H320M10 182l-8 10M24 182l-8 10M38 182l-8 10M52 182l-8 10M66 182l-8 10M80 182l-8 10M94 182l-8 10M108 182l-8 10M122 182l-8 10M136 182l-8 10M150 182l-8 10M164 182l-8 10M178 182l-8 10M192 182l-8 10M206 182l-8 10M220 182l-8 10M234 182l-8 10M248 182l-8 10M262 182l-8 10M276 182l-8 10M290 182l-8 10M304 182l-8 10M318 182l-8 10"/><g id="fpso-lines"><path class="fg-acc" id="fpso-moor"/><path class="fg-flow" id="fpso-riser" style="stroke-width:1.8"/></g><path class="fg-acc-fill" d="M14 182l6-7 6 7ZM44 182l6-7 6 7ZM294 182l6-7 6 7Z"/><g id="fpso-ship" transform="translate(120 78)"><path class="fg-solid" d="M-100 -14H90L110 -20L102 12H-92Q-102 12 -102 2Z"/><path class="fg-line" d="M-100 -2H104"/><rect class="fg-solid" x="-66" y="-23" width="22" height="9" rx="1"/><rect class="fg-solid" x="-40" y="-26" width="20" height="12" rx="1"/><rect class="fg-solid" x="-16" y="-22" width="22" height="8" rx="1"/><rect class="fg-solid" x="10" y="-25" width="20" height="11" rx="1"/><rect class="fg-solid" x="34" y="-21" width="18" height="7" rx="1"/><rect class="fg-solid" x="-98" y="-36" width="20" height="22" rx="1"/><path class="fg-line" d="M-102 -38H-74M-94 -30h12M-94 -24h12"/><path class="fg-line" d="M86 -14L100 -50M93 -32h7"/><path class="fg-acc-fill" d="M100 -50q-4 -6 0 -12q4 6 0 12Z"/><circle class="fg-acc" cx="70" cy="-6" r="5"/><path class="fg-acc" d="M70 -1V12"/></g><rect x="0" y="78" width="320" height="104" style="fill:var(--teal-wash)"/><g id="fpso-waves"><path class="fg-water" d="M-40 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0" transform="translate(0 78)"/></g></g></svg></div>
-        <div class="tile-body">
-          <h2>Offshore &amp; ancoragem</h2>
+      <article class="lab" data-lab="offshore">
+        <a class="lab-main" href="offshore/index.html">
+          <div class="lab-top"><span class="num">02</span><span class="status status-open"><i aria-hidden="true"></i>Aberto</span></div>
+          <div class="tile-fig" aria-hidden="true"><svg viewBox="0 0 320 200"><defs><clipPath id="fpso-clip"><rect width="320" height="200"/></clipPath></defs><g clip-path="url(#fpso-clip)"><path class="fg-hatch" d="M0 182H320M10 182l-8 10M24 182l-8 10M38 182l-8 10M52 182l-8 10M66 182l-8 10M80 182l-8 10M94 182l-8 10M108 182l-8 10M122 182l-8 10M136 182l-8 10M150 182l-8 10M164 182l-8 10M178 182l-8 10M192 182l-8 10M206 182l-8 10M220 182l-8 10M234 182l-8 10M248 182l-8 10M262 182l-8 10M276 182l-8 10M290 182l-8 10M304 182l-8 10M318 182l-8 10"/><g id="fpso-lines"><path class="fg-acc" id="fpso-moor"/><path class="fg-flow" id="fpso-riser" style="stroke-width:1.8"/></g><path class="fg-acc-fill" d="M14 182l6-7 6 7ZM44 182l6-7 6 7ZM294 182l6-7 6 7Z"/><g id="fpso-ship" transform="translate(120 78)"><path class="fg-solid" d="M-100 -14H90L110 -20L102 12H-92Q-102 12 -102 2Z"/><path class="fg-line" d="M-100 -2H104"/><rect class="fg-solid" x="-66" y="-23" width="22" height="9" rx="1"/><rect class="fg-solid" x="-40" y="-26" width="20" height="12" rx="1"/><rect class="fg-solid" x="-16" y="-22" width="22" height="8" rx="1"/><rect class="fg-solid" x="10" y="-25" width="20" height="11" rx="1"/><rect class="fg-solid" x="34" y="-21" width="18" height="7" rx="1"/><rect class="fg-solid" x="-98" y="-36" width="20" height="22" rx="1"/><path class="fg-line" d="M-102 -38H-74M-94 -30h12M-94 -24h12"/><path class="fg-line" d="M86 -14L100 -50M93 -32h7"/><path class="fg-acc-fill" d="M100 -50q-4 -6 0 -12q4 6 0 12Z"/><circle class="fg-acc" cx="70" cy="-6" r="5"/><path class="fg-acc" d="M70 -1V12"/></g><rect x="0" y="78" width="320" height="104" style="fill:var(--teal-wash)"/><g id="fpso-waves"><path class="fg-water" d="M-40 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0q10 -4 20 0t20 0" transform="translate(0 78)"/></g></g></svg></div>
+          <h3>Offshore &amp; ancoragem</h3>
           <p>Ancoragem de FPSO com estacas torpedo: lançamento, cravação, catenária e capacidade.</p>
-          <div class="tile-foot"><span>5 etapas</span><span class="tile-go">Abrir <b aria-hidden="true">→</b></span></div>
-        </div>
-      </a>
+          <span class="cta">Abrir laboratório <b aria-hidden="true">→</b></span>
+        </a>
+        <nav class="mods" aria-label="Módulos de Offshore e ancoragem">
+          <p class="mods-title">5 etapas</p>
+          <ol>
+            <li><a href="offshore/01-lancamento.html"><span class="n">01</span><span class="t">Lançamento e cravação</span><small>queda livre e penetração no solo</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="offshore/02-catenaria.html"><span class="n">02</span><span class="t">Catenária</span><small>linha de ancoragem</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="offshore/03-capacidade-axial.html"><span class="n">03</span><span class="t">Capacidade axial</span><small>tração na estaca</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="offshore/04-carga-lateral.html"><span class="n">04</span><span class="t">Carga lateral</span><small>esforços laterais na estaca</small><span class="go" aria-hidden="true">→</span></a></li>
+            <li><a href="offshore/05-estaca-3d.html"><span class="n">05</span><span class="t">Torpedo 3D</span><small>modelo da estaca</small><span class="go" aria-hidden="true">→</span></a></li>
+          </ol>
+        </nav>
+      </article>
+      </div>
+    </section>
 
-      <!-- 05 · Metalurgia química -->
-      <article data-lab="metalurgia" class="tile tile-soon">
-        <div class="tile-top"><span class="tile-num">05</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
+    <section class="sec wrap" id="preparacao" aria-labelledby="h-prep">
+      <div class="sec-head"><h2 id="h-prep">Em preparação</h2><span>04</span></div>
+      <div class="soon-list" id="soon-list">
+      <article class="tile-soon" data-lab="estruturas">
+        <div class="soon-top"><span class="num">03</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
+        <div class="tile-fig cfd-fig" aria-hidden="true"><canvas id="fem"></canvas></div>
+        <h3>Estruturas &amp; FEM</h3>
+        <p>Análise estrutural por elementos finitos, vasos de pressão e verificação de componentes.</p>
+      </article>
+      <article class="tile-soon" data-lab="fluidos">
+        <div class="soon-top"><span class="num">04</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
+        <div class="tile-fig cfd-fig" aria-hidden="true"><canvas id="cfd"></canvas></div>
+        <h3>Fluidos &amp; CFD</h3>
+        <p>Escoamentos, turbomáquinas e troca térmica por simulação fluidodinâmica.</p>
+      </article>
+      <article class="tile-soon" data-lab="metalurgia">
+        <div class="soon-top"><span class="num">05</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
         <div class="tile-fig" aria-hidden="true"><svg viewBox="0 0 320 200"><defs><clipPath id="met-clip"><rect width="320" height="200"/></clipPath></defs><g clip-path="url(#met-clip)"><path class="fg-hatch" d="M0 184H320M12 184l-8 10M26 184l-8 10M40 184l-8 10M54 184l-8 10M68 184l-8 10M82 184l-8 10M96 184l-8 10M110 184l-8 10M124 184l-8 10M138 184l-8 10M152 184l-8 10M166 184l-8 10M180 184l-8 10M194 184l-8 10M208 184l-8 10M222 184l-8 10M236 184l-8 10M250 184l-8 10M264 184l-8 10M278 184l-8 10M292 184l-8 10M306 184l-8 10"/><path class="fg-line" d="M0 181H320"/><path class="fg-solid" d="M121 182L126 50H136L141 182Z"/><rect class="fg-solid" x="-10" y="164" width="340" height="8" rx="1"/><g id="met-car"><circle class="fg-solid" cx="8" cy="176" r="4.5"/><circle class="fg-solid" cx="56" cy="176" r="4.5"/><circle class="fg-solid" cx="104" cy="176" r="4.5"/><circle class="fg-solid" cx="152" cy="176" r="4.5"/><circle class="fg-solid" cx="200" cy="176" r="4.5"/><circle class="fg-solid" cx="248" cy="176" r="4.5"/><circle class="fg-solid" cx="296" cy="176" r="4.5"/><circle class="fg-solid" cx="344" cy="176" r="4.5"/></g><g id="met-molds"><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g><g class="met-mold"><path class="fg-solid" d="M-11 0H11L13 44H-13Z"/><path style="fill:var(--bg)" class="fg-line" d="M-7 2H7L8 42H-8Z"/><path class="fg-acc-fill met-fill" d="M0 0Z"/></g></g><path id="met-cyl" class="fg-line" style="stroke-width:3"/><path id="met-stream" class="fg-acc" style="stroke-width:3.4;stroke-dasharray:6 4"/><g id="met-sparks" class="fg-acc-fill"><circle cx="0" cy="0" r="1.4"/><circle cx="0" cy="0" r="1.4"/><circle cx="0" cy="0" r="1.4"/></g><g id="met-furnace" transform="translate(131 48)"><path class="fg-solid" d="M-66 -8H-2L5 -14L3 -3L-4 56Q-35 62 -64 56Z"/><path class="fg-line" style="fill:none" d="M-58 -4V50Q-35 55 -12 50V-4"/><path class="fg-acc-fill" d="M-57 0H-12L-12 7H-57Z"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 10h4M-6 10h4"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 17h4M-6 17h4"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 24h4M-6 24h4"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 31h4M-6 31h4"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 38h4M-6 38h4"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 45h4M-6 45h4"/><path style="stroke:var(--copper);stroke-width:2.6" d="M-67 52h4M-6 52h4"/></g><circle class="fg-solid" cx="131" cy="48" r="4.5"/></g></svg></div>
-        <div class="tile-body">
-          <h2>Metalurgia química</h2>
-          <p>Química geral, balanço de massa e energia, reações químicas e oxirredução.</p>
-          <div class="tile-foot"><span>Em breve</span></div>
-        </div>
+        <h3>Metalurgia química</h3>
+        <p>Química geral, balanço de massa e energia, reações químicas e oxirredução.</p>
       </article>
-
-      <!-- 06 · Automação & CAD -->
-      <article data-lab="cad" class="tile tile-soon">
-        <div class="tile-top"><span class="tile-num">06</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
+      <article class="tile-soon" data-lab="cad">
+        <div class="soon-top"><span class="num">06</span><span class="status"><i aria-hidden="true"></i>Em preparação</span></div>
         <div class="tile-fig" aria-hidden="true"><svg viewBox="0 0 320 200"><g class="cad"><path class="fg-centre cad-fade" style="--d:0s" d="M86 110H234M160 40V180"/><circle class="fg-centre cad-fade" style="--d:.3s" cx="160" cy="110" r="42"/><circle class="fg-solid cad-fill" cx="160" cy="110" r="60"/><circle class="fg-line cad-draw" style="--d:.5s;--len:2.2s" pathLength="1" cx="160" cy="110" r="60" transform="rotate(-90 160 110)"/><circle class="fg-line cad-draw" style="--d:2.4s;--len:.8s" pathLength="1" cx="160" cy="110" r="17" transform="rotate(-90 160 110)"/><circle class="fg-line cad-hole" style="--i:0;transform-origin:196.4px 131px" cx="196.4" cy="131" r="6"/><circle class="fg-line cad-hole" style="--i:1;transform-origin:160px 152px" cx="160" cy="152" r="6"/><circle class="fg-line cad-hole" style="--i:2;transform-origin:123.6px 131px" cx="123.6" cy="131" r="6"/><circle class="fg-line cad-hole" style="--i:3;transform-origin:123.6px 89px" cx="123.6" cy="89" r="6"/><circle class="fg-line cad-hole" style="--i:4;transform-origin:160px 68px" cx="160" cy="68" r="6"/><circle class="fg-line cad-hole" style="--i:5;transform-origin:196.4px 89px" cx="196.4" cy="89" r="6"/><g class="cad-pen" style="transform-origin:160px 110px"><circle class="fg-acc-fill" cx="160" cy="50" r="3"/><path class="fg-acc" style="stroke-width:1" d="M160 41v-12M151 35h18" /></g><g class="cad-dim" style="--dd:0s"><path class="fg-dim" d="M100 104V24M220 104V24M100 30H220"/><path class="fg-acc-fill" d="M100 30l8-3.5v7ZM220 30l-8-3.5v7Z"/><text class="fg-txt acc mid" x="160" y="22" id="cad-od">Ø120</text></g><g class="cad-dim" style="--dd:.4s"><path class="fg-dim" d="M200.4 85L242 58H272"/><text class="fg-txt" x="244" y="53">6× Ø12</text></g><g class="cad-dim" style="--dd:.8s"><path class="fg-dim" d="M145 118L78 162H50"/><text class="fg-txt" x="50" y="157">Ø34</text></g><g class="cad-stamp"><rect x="236" y="166" width="76" height="24" rx="2" class="fg-dim"/><path class="fg-dim" d="M236 176H312M280 166V190"/><text class="fg-txt" x="240" y="174" style="font-size:7px">FLANGE</text><text class="fg-txt" x="240" y="186" style="font-size:7px">A3 · 1:2</text><text class="fg-txt acc" x="284" y="186" style="font-size:7px">REV B</text></g></g></svg></div>
-        <div class="tile-body">
-          <h2>Automação &amp; CAD</h2>
-          <p>Modelos parametrizados, rotinas em Python e geração de desenhos e documentos técnicos.</p>
-          <div class="tile-foot"><span>Em breve</span></div>
-        </div>
+        <h3>Automação &amp; CAD</h3>
+        <p>Modelos parametrizados, rotinas em Python e geração de desenhos e documentos técnicos.</p>
       </article>
+      </div>
+      <div class="dots" id="soon-dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
     </section>
   </main>
 
@@ -562,7 +590,7 @@
       const rgb = c => { probe.clearRect(0, 0, 1, 1); probe.fillStyle = '#000'; probe.fillStyle = c; probe.fillRect(0, 0, 1, 1); return [...probe.getImageData(0, 0, 1, 1).data.slice(0, 3)]; };
       const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
       let C = null;
-      const palette = () => { const tile = cfdCanvas.closest('.tile'); C = { bg: rgb(getComputedStyle(tile).backgroundColor), pos: rgb(css('--accent')), neg: rgb(css('--teal')), ink: css('--text'), ink2: css('--text-2'), ink3: css('--text-3'), solid: css('--surface-3'), acc: css('--accent'), light: document.documentElement.getAttribute('data-theme') === 'light' || (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: light)').matches) }; C.neg2 = C.light ? [40, 104, 190] : [96, 150, 240]; };
+      const palette = () => { const tile = cfdCanvas.closest('.tile-soon, .lab'); C = { bg: rgb(getComputedStyle(tile).backgroundColor), pos: rgb(css('--accent')), neg: rgb(css('--teal')), ink: css('--text'), ink2: css('--text-2'), ink3: css('--text-3'), solid: css('--surface-3'), acc: css('--accent'), light: document.documentElement.getAttribute('data-theme') === 'light' || (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: light)').matches) }; C.neg2 = C.light ? [40, 104, 190] : [96, 150, 240]; };
       palette();
       new MutationObserver(palette).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
       matchMedia('(prefers-color-scheme: light)').addEventListener?.('change', palette);
@@ -733,6 +761,30 @@
       t.addEventListener('click', () => { t.classList.remove('nudge'); void t.offsetWidth; t.classList.add('nudge'); });
       t.addEventListener('animationend', () => t.classList.remove('nudge'));
     });
+
+    // Cabeçalho com linha só depois de rolar.
+    (() => {
+      const top = document.getElementById('topo');
+      const upd = () => top.classList.toggle('solid', scrollY > 8);
+      addEventListener('scroll', upd, { passive: true }); upd();
+    })();
+
+    // Faixa "em preparação" no celular: indicador da posição.
+    (() => {
+      const list = document.getElementById('soon-list'), dots = [...document.querySelectorAll('#soon-dots i')];
+      const cards = [...list.children];
+      let raf = 0;
+      list.addEventListener('scroll', () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const x = list.scrollLeft, max = list.scrollWidth - list.clientWidth;
+          let k = 0, best = Infinity;
+          cards.forEach((c, i) => { const d = Math.abs(c.offsetLeft - list.offsetLeft - x); if (d < best) { best = d; k = i; } });
+          if (max > 0 && x >= max - 4) k = cards.length - 1;
+          dots.forEach((d, i) => d.classList.toggle('on', i === k));
+        });
+      }, { passive: true });
+    })();
 
     // Tema compartilhado com os laboratórios e a página do autor.
     document.getElementById('theme').addEventListener('click', () => {
