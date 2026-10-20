@@ -27,6 +27,7 @@ body[data-page="offshore"] { -webkit-tap-highlight-color: transparent; }
   body[data-page="offshore"] .head-links span { display: none; }
 
   /* 3D: de ponta a ponta, controles grandes, sem desfoque sobre a animação */
+  body[data-page="offshore"] .container > .v3:first-child { margin-top: -14px; border-top: 0; }
   body[data-page="offshore"] .v3 { margin: 14px -14px; border-width: 1px 0; border-radius: 0; }
   body[data-page="offshore"] .v3-head { gap: 14px; padding: 18px 16px 14px; }
   body[data-page="offshore"] .v3-head h2 { font-size: 1.2rem; line-height: 1.2; }
@@ -61,6 +62,7 @@ body[data-page="offshore"] { -webkit-tap-highlight-color: transparent; }
   /* projeto atual */
   body[data-page="offshore"] .grid.cols-2 { gap: 12px; }
   body[data-page="offshore"] .panel { padding: 18px 16px; border-radius: 14px; }
+  body[data-page="offshore"] .panel.v3 { padding: 0; border-radius: 0; }
   body[data-page="offshore"] .kv > div { min-height: 44px; align-items: center; }
   body[data-page="offshore"] .action-row { gap: 8px; }
   body[data-page="offshore"] .action-row .button { flex: 1; min-height: 48px; padding: 0 10px; border-radius: 12px; font-size: .84rem; white-space: nowrap; }
