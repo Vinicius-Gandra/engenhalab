@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09131f"><meta name="color-scheme" content="dark light">
+  <meta name="description" content="Laboratório offshore, etapa 00: Visão geral do estudo.">
+  <title>Laboratório offshore · Visão geral | Vinicius Gandra</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2309131f'/%3E%3Cpath d='M8 50h48' stroke='%238195a2' stroke-width='3'/%3E%3Cpath d='M10 50C22 50 30 46 36 34S46 14 54 12' fill='none' stroke='%23f5ad69' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script>try { var t = localStorage.getItem('vg-theme'); if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/offshore.css">
+</head>
+<body data-page="offshore">
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+  <header class="s-appbar">
+    <a class="s-brand" href="../index.html" aria-label="EngenhaLab — todos os laboratórios">VG<b>.</b></a>
+    <a class="s-back" href="../index.html" title="Voltar a todos os laboratórios"><span aria-hidden="true">←</span><span class="s-back-label">Laboratórios</span></a>
+    <span class="s-header-divider" aria-hidden="true"></span>
+    <div class="s-appbar-title"><span class="overline">Laboratório offshore</span><strong>Visão geral do estudo</strong></div>
+    <div class="s-actions" aria-label="Ações">
+      <button type="button" class="s-act s-act-icon" id="theme-toggle" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
+    </div>
+  </header>
+  <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html" aria-current="page"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html"><span class="s-area-number">05</span> Torpedo 3D</a></nav>
+  <main class="container" id="main">
+<section class="page-head"><div><span class="eyebrow">00 / VISÃO GERAL</span><h1>Estacas torpedo e linhas de ancoragem</h1><p>Sequência de estudos de uma ancoragem com estaca torpedo: lançamento, penetração no solo, catenária da linha e verificações da estaca. O modelo, a lâmina d’água, o solo e a tração são compartilhados entre as páginas.</p><div class="head-links"><a data-flow-link href="01-lancamento.html">Começar pelo lançamento ↗</a><span>5 etapas</span></div></div><div class="head-aside" aria-hidden="true">↓</div></section>
+<section class="panel v3" id="vista-3d" aria-labelledby="v3-title">
+  <header class="v3-head">
+    <div>
+      <span class="eyebrow">Visão geral em 3D</span>
+      <h2 id="v3-title">Campo de produção com FPSO ancorado</h2>
+      <p>FPSO preso por 24 linhas a estacas torpedo, com poços, manifolds, PLEM, PLET, risers em lazy wave e dutos de injeção de água e exportação de óleo.</p>
+    </div>
+    <div class="v3-tools">
+      <button type="button" class="v3-tb v3-primary" id="v3-play" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z"/><path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg><span>Tour guiado</span></button>
+      <div class="v3-seg" role="group" aria-label="Câmera">
+        <button type="button" id="v3-spin" aria-pressed="true">Girando</button>
+        <button type="button" id="v3-top" aria-pressed="false">Vista de cima</button>
+        <button type="button" id="v3-reset">Centralizar</button>
+      </div>
+      <button type="button" class="v3-tb v3-icon" id="v3-full" aria-label="Tela cheia" title="Tela cheia"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+    </div>
+  </header>
+
+  <div class="v3-stage" id="v3-stage">
+    <canvas id="v3-canvas" tabindex="0" aria-label="Vista tridimensional do campo de produção e do sistema de ancoragem"></canvas>
+
+    <div class="v3-meta">
+      <span class="v3-kicker">Campo de Mero · Bacia de Santos</span>
+      <dl>
+        <div><dt>Lâmina d’água</dt><dd id="v3-h">1.930 <small>m</small></dd></div>
+        <div><dt>Raio de ancoragem</dt><dd id="v3-r">— <small>m</small></dd></div>
+        <div><dt>Linhas</dt><dd>24 <small>em 4 × 6</small></dd></div>
+      </dl>
+    </div>
+
+    <div class="v3-layers" role="group" aria-label="Camadas">
+      <button type="button" data-layer="moor" aria-pressed="true"><i style="--c:#6fd8cf"></i>Ancoragem</button>
+      <button type="button" data-layer="prod" aria-pressed="true"><i style="--c:#f2c14e"></i>Produção</button>
+      <button type="button" data-layer="inj" aria-pressed="true"><i style="--c:#4fb3ff"></i>Injeção de água</button>
+      <button type="button" data-layer="exp" aria-pressed="true"><i style="--c:#ff7d52"></i>Exportação</button>
+      <button type="button" data-layer="lbl" aria-pressed="true"><i style="--c:#e8f2f3"></i>Rótulos</button>
+    </div>
+
+    <div class="v3-card" id="v3-card">
+      <div class="v3-card-top">
+        <span id="v3-count">01 / 07</span>
+        <div class="v3-nav">
+          <button type="button" id="v3-prev" aria-label="Etapa anterior"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+          <button type="button" id="v3-next" aria-label="Próxima etapa"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+        </div>
+      </div>
+      <h3 id="v3-step-title"></h3>
+      <p id="v3-step-text" aria-live="polite"></p>
+      <div class="v3-prog"><i id="v3-prog"></i></div>
+    </div>
+
+    <div class="v3-dock">
+      <label class="v3-heading">Aproamento <input id="v3-heading" inputmode="decimal" value="35"><span>°</span></label>
+      <small>solo ampliado na vertical</small>
+    </div>
+
+    <div class="v3-tip" id="v3-tip" role="tooltip"></div>
+  </div>
+
+  <nav class="v3-steps" id="v3-steps" role="tablist" aria-label="Etapas da instalação"></nav>
+</section>
+
+<section class="grid cols-2"><div class="panel"><span class="eyebrow">PROJETO ATUAL</span><h2>Seu caso de estudo</h2><div class="kv" id="project-overview"></div><div class="action-row"><a class="button primary" data-flow-link href="01-lancamento.html">Configurar torpedo ↗</a><a class="button ghost" data-flow-link href="05-estaca-3d.html">Ver modelo 3D ↗</a></div></div><div class="panel"><span class="eyebrow">MODELOS</span><h2>Torpedos</h2><div class="model-table" id="model-table"></div></div></section>
+<section style="margin-top:24px"><span class="eyebrow">TRILHA DE CÁLCULO</span><h2>Etapas do estudo</h2><div class="steps" id="flow-steps"></div></section>
+
+    <div id="message" hidden></div>
+    <footer class="section-footer"><span>Laboratório offshore · etapa 00 · <a href="../index.html">todos os laboratórios</a></span><a data-flow-link href="01-lancamento.html">Próxima etapa: Lançamento e cravação →</a></footer>
+  </main>
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/calc.js"></script>
+  <script src="assets/js/torpedo.js"></script>
+  <script src="assets/js/paginas/offshore.js"></script>
+  <script src="assets/js/catenaria-vista3d.js"></script>
+  <script src="assets/js/tema.js"></script>
+</body>
+</html>

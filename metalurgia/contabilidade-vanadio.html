@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#09131f">
+<title>Contabilidade metalúrgica do vanádio | EngenhaLab</title>
+<script>try{var t=localStorage.getItem('vg-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root,html[data-theme="dark"]{color-scheme:dark;
+  --bg:#09131f;--surface:#122230;--surface-2:#172a3a;--surface-3:#1d3346;--line:#24384a;--line-strong:#33506a;
+  --text:#edf2f2;--text-2:#a9b9c2;--text-3:#8195a2;--accent:#f5ad69;--accent-ink:#1a1206;--accent-wash:rgba(245,173,105,.12);
+  --teal:#89d6d2;--teal-wash:rgba(137,214,210,.12);--ok:#7dd3a8;--warn:#f5c56b;--err:#f39a9a;--blue:#8fb4f5;--vio:#b9a7f5}
+html[data-theme="light"]{color-scheme:light;
+  --bg:#f5f5ef;--surface:#fff;--surface-2:#f7f8f4;--surface-3:#eef1ec;--line:#d6dfdc;--line-strong:#b8c7c4;
+  --text:#14232c;--text-2:#4b5f6c;--text-3:#586c79;--accent:#b45a22;--accent-ink:#fff;--accent-wash:rgba(180,90,34,.08);
+  --teal:#0f6f6a;--teal-wash:rgba(15,111,106,.08);--ok:#1f7a4d;--warn:#8a5a00;--err:#b03a3a;--blue:#2f63b8;--vio:#6a55b8}
+@media (prefers-color-scheme:light){:root:not([data-theme]){color-scheme:light;
+  --bg:#f5f5ef;--surface:#fff;--surface-2:#f7f8f4;--surface-3:#eef1ec;--line:#d6dfdc;--line-strong:#b8c7c4;
+  --text:#14232c;--text-2:#4b5f6c;--text-3:#586c79;--accent:#b45a22;--accent-ink:#fff;--accent-wash:rgba(180,90,34,.08);
+  --teal:#0f6f6a;--teal-wash:rgba(15,111,106,.08);--ok:#1f7a4d;--warn:#8a5a00;--err:#b03a3a;--blue:#2f63b8;--vio:#6a55b8}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.55 "Inter",ui-sans-serif,system-ui,sans-serif;font-feature-settings:"cv11","ss01";-webkit-font-smoothing:antialiased}
+.mono,td.n,th.n,input,select{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+/* barra */
+.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;height:60px;padding:0 clamp(16px,4vw,40px);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.brand{font-size:1.35rem;font-weight:850;letter-spacing:-.06em}.brand b{color:var(--accent)}
+.back{display:inline-flex;gap:6px;padding:6px 10px;border-radius:8px;color:var(--text-2);font-size:.84rem;font-weight:600}.back:hover{background:var(--surface-2);color:var(--text)}
+.div{width:1px;height:26px;background:var(--line)}
+.ttl{display:grid;line-height:1.2}.ttl span{color:var(--text-3);font:700 .64rem "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}.ttl strong{font-size:.92rem}
+.theme{margin-left:auto;width:38px;height:38px;border:1px solid transparent;border-radius:10px;background:none;color:var(--text-2)}.theme:hover{border-color:var(--line);background:var(--surface-2)}
+.moon{display:none}html[data-theme="light"] .sun{display:none}html[data-theme="light"] .moon{display:inline}
+@media(max-width:640px){.back span+span,.div{display:none}}
+/* layout */
+.wrap{width:min(1440px,100%);margin:auto;padding:24px clamp(16px,4vw,40px) 60px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;margin-bottom:18px}
+.eyebrow{color:var(--accent);font:700 .7rem "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+h1{font-size:clamp(1.8rem,3.6vw,2.7rem);font-weight:760;letter-spacing:-.045em;line-height:1.08;margin-top:6px}
+h1 em{font-family:Georgia,serif;font-style:italic;font-weight:400;color:var(--accent)}
+.lead{color:var(--text-2);max-width:68ch;margin-top:8px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ctl{display:flex;align-items:center;gap:8px;padding:5px 6px 5px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.ctl label{color:var(--text-3);font-size:.74rem;font-weight:650}
+select,input{color:var(--text);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.84rem;min-width:0}
+select:focus,input:focus{border-color:var(--accent);outline:none}
+.seg{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.seg button{border:0;background:none;padding:6px 12px;border-radius:7px;font-size:.8rem;font-weight:650;color:var(--text-2)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:7px 12px;font-size:.82rem;font-weight:650;transition:border-color .15s}
+.btn:hover{border-color:var(--accent)}.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px;margin:6px 0 18px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:10px 14px;font-size:.86rem;font-weight:650;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--text);border-color:var(--accent)}
+.tabs button:hover{color:var(--text)}
+.tabs .num{color:var(--accent);font:600 .72rem "JetBrains Mono",monospace;margin-right:6px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.panel h2{font-size:1.05rem;font-weight:720;letter-spacing:-.02em}
+.panel .sub{color:var(--text-3);font-size:.8rem;margin-top:3px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.span2{grid-column:span 2}
+@media(max-width:1100px){.g4,.g5{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.g2,.g3,.g4,.g5{grid-template-columns:1fr}.span2{grid-column:auto}}
+.kpi{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--accent));opacity:.8}
+.kpi span{display:block;color:var(--text-3);font-size:.74rem;font-weight:600}
+.kpi strong{display:block;font:600 clamp(1.15rem,1.9vw,1.55rem) "JetBrains Mono",monospace;letter-spacing:-.02em;margin:6px 0 2px}
+.kpi small{color:var(--text-3);font-size:.72rem}
+.up{color:var(--ok)}.dn{color:var(--err)}
+table{width:100%;border-collapse:collapse;font-size:.84rem}
+th{color:var(--text-3);font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;text-align:left;padding:8px 9px;border-bottom:1px solid var(--line-strong);white-space:nowrap}
+td{padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n,th.n{text-align:right;white-space:nowrap;font-size:.8rem}
+tr.tot td{font-weight:700;color:var(--accent);border-bottom:0}
+tr.grp td{color:var(--text-3);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding-top:14px;border-bottom:1px solid var(--line-strong)}
+.tw{overflow-x:auto}
+td input{width:100%;max-width:120px;text-align:right;padding:5px 7px;font-size:.8rem}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;border:1px solid currentColor;font-size:.72rem;font-weight:700;white-space:nowrap}
+.note{padding:11px 14px;border-radius:10px;border-left:3px solid var(--c,var(--warn));background:color-mix(in srgb,var(--c,var(--warn)) 8%,transparent);color:var(--text-2);font-size:.84rem}
+.note b{color:var(--c,var(--warn))}
+.muted{color:var(--text-3)}.small{font-size:.78rem}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .ax{fill:var(--text-3);font:10.5px "JetBrains Mono",monospace}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;color:var(--text-2);font-size:.76rem}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.lossbar{display:grid;grid-template-columns:minmax(150px,1.3fr) 3fr auto;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.lossbar .tr{height:12px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.lossbar .tr div{height:100%;border-radius:6px}
+.lossbar .v{text-align:right;font:600 .8rem "JetBrains Mono",monospace;white-space:nowrap}
+.lossbar .v small{display:block;color:var(--text-3);font-weight:400}
+.sankey svg{display:block;width:100%;min-width:860px;height:auto}
+.sankey text{font-family:"Inter",sans-serif}
+.zbar{display:inline-block;height:8px;border-radius:4px;vertical-align:middle}
+[hidden]{display:none!important}
+.eq{font-family:Georgia,serif;font-size:1rem;color:var(--text)}
+footer{margin-top:28px;color:var(--text-3);font-size:.76rem}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../index.html" aria-label="EngenhaLab — todos os laboratórios">VG<b>.</b></a>
+  <a class="back" href="../index.html"><span aria-hidden="true">←</span><span>Laboratórios</span></a>
+  <span class="div" aria-hidden="true"></span>
+  <div class="ttl"><span>Metalurgia química</span><strong>Contabilidade metalúrgica do V</strong></div>
+  <button class="theme" id="theme" type="button" aria-label="Alternar tema claro/escuro" title="Alternar tema claro/escuro"><span class="sun">☼</span><span class="moon">☾</span></button>
+</header>
+
+<main class="wrap">
+  <section class="head">
+    <div>
+      <div class="eyebrow">02 / Contabilidade por período</div>
+      <h1>Onde o <em>vanádio</em> está indo.</h1>
+      <p class="lead">Fechamento do período com inventário por etapa, balanço do V de ponta a ponta, árvore de perdas, evolução contra a meta e reconciliação dos dados medidos.</p>
+    </div>
+    <div class="bar">
+      <div class="ctl"><label for="per">Período</label><select id="per"></select></div>
+      <div class="seg" role="group" aria-label="Base dos números"><button type="button" data-mode="raw" aria-pressed="false">Medido</button><button type="button" data-mode="rec" aria-pressed="true">Reconciliado</button></div>
+    </div>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="ov" aria-selected="true"><span class="num">01</span>Balanço da planta</button>
+    <button role="tab" data-tab="loss" aria-selected="false"><span class="num">02</span>Árvore de perdas</button>
+    <button role="tab" data-tab="evo" aria-selected="false"><span class="num">03</span>Evolução</button>
+    <button role="tab" data-tab="th" aria-selected="false"><span class="num">04</span>Real × teórico</button>
+    <button role="tab" data-tab="rec" aria-selected="false"><span class="num">05</span>Reconciliação</button>
+    <button role="tab" data-tab="data" aria-selected="false"><span class="num">06</span>Dados do período</button>
+    <button role="tab" data-tab="cfg" aria-selected="false"><span class="num">07</span>Configuração</button>
+  </nav>
+
+  <!-- 01 Balanço -->
+  <section data-pane="ov">
+    <div class="grid g5" id="kpis"></div>
+    <div id="alerts" class="grid" style="margin-top:14px"></div>
+    <div class="panel" style="margin-top:14px">
+      <div class="ph"><div><h2>Fluxo do vanádio por etapa</h2><p class="sub" id="skSub"></p></div>
+        <div class="legend" style="margin:0"><span><i style="background:var(--accent)"></i>V em processo</span><span><i style="background:var(--err)"></i>Perdas</span><span><i style="background:var(--teal)"></i>Estoque</span><span><i style="background:var(--text-3)"></i>Não contabilizado</span></div></div>
+      <div class="sankey tw" id="sankey"></div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="panel"><h2>Rendimento real por etapa</h2><p class="sub">Produto da etapa ÷ V alimentado na etapa (já descontado o estoque)</p><div class="tw" style="margin-top:10px"><table id="tYield"></table></div></div>
+      <div class="panel"><h2>Inventário por etapa</h2><p class="sub">Estoque inicial + recebido − processado = estoque final (kg de V)</p><div class="tw" style="margin-top:10px"><table id="tInv"></table></div></div>
+    </div>
+  </section>
+
+  <!-- 02 Perdas -->
+  <section data-pane="loss" hidden>
+    <div class="grid g4" id="lossKpis"></div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="panel"><div class="ph"><div><h2>Onde perdi V neste período</h2><p class="sub">Perdas em kg de V e em US$ ao preço do V configurado</p></div></div><div id="lossTree"></div></div>
+      <div class="panel"><h2>Perdas por período</h2><p class="sub">kg de V perdido em cada destino</p><div class="chart" id="cLoss" style="margin-top:10px"></div><div class="legend" id="cLossLeg"></div></div>
+    </div>
+    <div class="panel" style="margin-top:14px"><h2>Comparação com o período anterior e com a meta</h2><p class="sub">Perda esperada pela meta = V alimentado na etapa × (1 − rendimento meta)</p><div class="tw" style="margin-top:10px"><table id="tLossCmp"></table></div></div>
+  </section>
+
+  <!-- 03 Evolução -->
+  <section data-pane="evo" hidden>
+    <div class="grid g2">
+      <div class="panel"><h2>K de cadeia</h2><p class="sub">kg de V no produto ÷ kg de V consumido no período</p><div class="chart" id="cK" style="margin-top:10px"></div><div class="legend" id="cKLeg"></div></div>
+      <div class="panel"><h2>Rendimento por etapa</h2><p class="sub">Rendimento real de V de cada etapa</p><div class="chart" id="cY" style="margin-top:10px"></div><div class="legend" id="cYLeg"></div></div>
+      <div class="panel"><h2>Consumo específico</h2><p class="sub">kg de Al por t de produto e kg de NH₄Cl por kg de V precipitado</p><div class="grid g2" style="margin-top:10px;gap:10px"><div><div class="muted small">Al · kg/t de produto</div><div class="chart" id="cC"></div></div><div><div class="muted small">NH₄Cl · kg/kg de V</div><div class="chart" id="cC2"></div></div></div></div>
+      <div class="panel"><h2>Produção acumulada × meta</h2><p class="sub" id="cPSub"></p><div class="chart" id="cP" style="margin-top:10px"></div><div class="legend" id="cPLeg"></div></div>
+    </div>
+  </section>
+
+  <!-- 04 Real × teórico -->
+  <section data-pane="th" hidden>
+    <div class="grid g3" id="thKpis"></div>
+    <div class="panel" style="margin-top:14px"><h2>Rendimento de V: real × meta × estequiometria</h2><p class="sub">Pela estequiometria nenhuma reação perde V (100 %). O gap é o que a planta ainda pode ganhar.</p><div class="tw" style="margin-top:10px"><table id="tGap"></table></div></div>
+    <div class="panel" style="margin-top:14px"><h2>Reagentes: consumo real × estequiométrico</h2><p class="sub">Consumo mínimo calculado pela reação cadastrada sobre o V efetivamente convertido</p><div class="tw" style="margin-top:10px"><table id="tReag"></table></div></div>
+    <div class="panel" style="margin-top:14px"><h2>Reações cadastradas</h2><p class="sub">ΔH°r calculado com as entalpias de formação da Configuração (298 K)</p><div class="tw" style="margin-top:10px"><table id="tRx"></table></div></div>
+  </section>
+
+  <!-- 05 Reconciliação -->
+  <section data-pane="rec" hidden>
+    <div class="grid g4" id="recKpis"></div>
+    <div class="note" id="recNote" style="margin-top:14px"></div>
+    <div class="panel" style="margin-top:14px"><h2>Medições: medido × reconciliado</h2><p class="sub">min Σ((x − x̂)/σ)² sujeito ao balanço de V fechado em cada etapa. z = ajuste ÷ desvio padrão do ajuste; |z| &gt; 1,96 indica medição suspeita.</p><div class="tw" style="margin-top:10px"><table id="tRec"></table></div></div>
+    <div class="panel" style="margin-top:14px"><h2>Fechamento por etapa</h2><p class="sub">Resíduo de cada balanço antes e depois da reconciliação (kg de V)</p><div class="tw" style="margin-top:10px"><table id="tClose"></table></div></div>
+  </section>
+
+  <!-- 06 Dados -->
+  <section data-pane="data" hidden>
+    <div class="panel">
+      <div class="ph"><div><h2>Dados medidos do período</h2><p class="sub">Massa ou volume, teor e incerteza (1σ, % relativo) de cada corrente. O V de cada corrente = massa × teor.</p></div>
+        <div class="bar"><button class="btn" id="newPer" type="button">Novo período</button><button class="btn" id="delPer" type="button">Excluir período</button></div></div>
+      <div class="grid g4" style="margin-bottom:14px" id="perMeta"></div>
+      <div class="tw"><table id="tData"></table></div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="panel"><div class="ph"><div><h2>Lotes recebidos</h2><p class="sub">Somam a entrada de concentrado do período</p></div><button class="btn" id="addLot" type="button">Adicionar lote</button></div><div class="tw"><table id="tLots"></table></div></div>
+      <div class="panel"><h2>Corridas e reagentes</h2><p class="sub">Consumo medido no período</p><div class="tw" style="margin-top:10px"><table id="tReagIn"></table></div></div>
+    </div>
+    <div class="panel" style="margin-top:14px"><div class="ph"><div><h2>Arquivo</h2><p class="sub">Os dados ficam salvos neste navegador. Exporte para guardar ou levar para outra máquina.</p></div>
+      <div class="bar"><button class="btn" id="expJson" type="button">Exportar JSON</button><label class="btn" for="impJson">Importar JSON</label><input id="impJson" type="file" accept="application/json" hidden><button class="btn" id="expCsv" type="button">Relatório CSV do período</button><button class="btn" id="reset" type="button">Restaurar exemplo</button></div></div></div>
+  </section>
+
+  <!-- 07 Configuração -->
+  <section data-pane="cfg" hidden>
+    <div class="grid g2">
+      <div class="panel"><h2>Metas</h2><p class="sub">Usadas na evolução, na árvore de perdas e no gap</p><div class="tw" style="margin-top:10px"><table id="tMeta"></table></div></div>
+      <div class="panel"><h2>Preços</h2><p class="sub">Valoração de perdas e de reagentes</p><div class="tw" style="margin-top:10px"><table id="tPrice"></table></div></div>
+      <div class="panel span2"><h2>Entalpias de formação ΔH°f (298 K, kJ/mol)</h2><p class="sub">Usadas no ΔH°r das reações cadastradas</p><div class="grid g5" style="margin-top:12px" id="hfGrid"></div></div>
+    </div>
+  </section>
+
+  <footer>EngenhaLab · Contabilidade metalúrgica idealizada para acompanhamento de processo. Os números reconciliados dependem das incertezas informadas; valide com análises químicas e o responsável técnico.</footer>
+</main>
+
+<script>
+(() => {
+"use strict";
+const $ = id => document.getElementById(id), $$ = s => [...document.querySelectorAll(s)];
+const nf = (v, d = 1) => Number.isFinite(v) ? v.toLocaleString("pt-BR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "—";
+const pct = (v, d = 2) => Number.isFinite(v) ? nf(v * 100, d) + " %" : "—";
+const usd = v => Number.isFinite(v) ? "US$ " + Math.round(v).toLocaleString("pt-BR") : "—";
+const kgV = v => nf(v / 1000, 2) + " t V";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ================= Massas molares e reações ================= */
+const EL = { H: 1.008, C: 12.011, N: 14.007, O: 15.999, Na: 22.98977, Al: 26.9815385, Cl: 35.45, V: 50.9415, Fe: 55.845, Ca: 40.078, Si: 28.0855 };
+function parse(f) { const o = {}; f.replace(/([A-Z][a-z]?)(\d*)/g, (_, e, n) => { o[e] = (o[e] || 0) + (n ? +n : 1); }); return o; }
+const MW = f => Object.entries(parse(f)).reduce((a, [e, n]) => a + EL[e] * n, 0);
+const SUB = s => s.replace(/(\d+)/g, "<sub>$1</sub>");
+// reações por etapa (as que movimentam o V e os reagentes acompanhados)
+const RX = [
+  { st: "Ustulação + lixiviação", eq: [[1, "V2O3"], [1, "Na2CO3"], [1, "O2"]], pr: [[2, "NaVO3"], [1, "CO2"]], reag: "Na2CO3" },
+  { st: "Ustulação + lixiviação", eq: [[4, "FeV2O4"], [4, "Na2CO3"], [5, "O2"]], pr: [[8, "NaVO3"], [2, "Fe2O3"], [4, "CO2"]] },
+  { st: "Precipitação", eq: [[1, "NaVO3"], [1, "NH4Cl"]], pr: [[1, "NH4VO3"], [1, "NaCl"]], reag: "NH4Cl" },
+  { st: "Calcinação", eq: [[2, "NH4VO3"]], pr: [[1, "V2O5"], [2, "NH3"], [1, "H2O"]] },
+  { st: "Redução aluminotérmica", eq: [[3, "V2O5"], [10, "Al"]], pr: [[6, "V"], [5, "Al2O3"]], reag: "Al" },
+];
+const HF0 = { V2O5: -1550.6, V2O3: -1218.8, FeV2O4: -1480, Na2CO3: -1130.7, NaVO3: -1145.2, CO2: -393.5, Fe2O3: -824.2, NH4Cl: -314.4, NH4VO3: -1053.1, NaCl: -411.2, NH3: -45.9, H2O: -241.8, Al2O3: -1675.7, O2: 0, Al: 0, V: 0 };
+// massa de reagente estequiométrica por kg de V convertido
+const vAtoms = (sp) => parse(sp).V || 0;
+function stoichPerV(rx) {
+  const nV = rx.pr.reduce((a, [n, s]) => a + n * vAtoms(s), 0);
+  const r = rx.eq.find(([, s]) => s === rx.reag);
+  return r[0] * MW(r[1]) / (nV * EL.V);
+}
+
+/* ================= Estrutura de dados ================= */
+// Correntes medidas: quantidade (t ou m³), teor (% V ou g/L V) e incertezas relativas (1σ)
+const STREAMS = [
+  { k: "R", g: "Entrada", n: "Concentrado recebido (lotes)", u: "t", a: "%", from: "lots" },
+  { k: "P1", g: "Ustulação + lixiviação", n: "Licor de NaVO₃ produzido", u: "m³", a: "g/L" },
+  { k: "L1", g: "Ustulação + lixiviação", n: "Resíduo de lixiviação", u: "t", a: "%", loss: "Resíduo de lixiviação" },
+  { k: "P2", g: "Precipitação", n: "AMV (NH₄VO₃) produzido", u: "t", a: "%" },
+  { k: "L2", g: "Precipitação", n: "Filtrado da precipitação", u: "m³", a: "g/L", loss: "Filtrado da precipitação" },
+  { k: "P3", g: "Calcinação", n: "Flake de V₂O₅ produzido", u: "t", a: "%" },
+  { k: "L3", g: "Calcinação", n: "Poeira da calcinação", u: "t", a: "%", loss: "Poeira da calcinação" },
+  { k: "P4", g: "Redução aluminotérmica", n: "Produto (FeV) expedido/estocado", u: "t", a: "%" },
+  { k: "L4", g: "Redução aluminotérmica", n: "Escória", u: "t", a: "%", loss: "Escória da redução" },
+];
+const STOCKS = [
+  { k: "Sc", n: "Pátio de concentrado", u: "t", a: "%" },
+  { k: "SL", n: "Tanque de licor", u: "m³", a: "g/L" },
+  { k: "SA", n: "Estoque de AMV", u: "t", a: "%" },
+  { k: "SV", n: "Estoque de V₂O₅", u: "t", a: "%" },
+];
+const STAGES = ["Ustulação + lixiviação", "Precipitação", "Calcinação", "Redução aluminotérmica"];
+const STAGE_SHORT = ["Ustul. + lix.", "Precipitação", "Calcinação", "Redução"];
+const LOSSN = ["Resíduo de lixiviação", "Filtrado da precipitação", "Poeira da calcinação", "Escória da redução"];
+// vetor de variáveis da reconciliação (kg V)
+const VARS = ["R", "dSc", "P1", "L1", "dSL", "P2", "L2", "dSA", "P3", "L3", "dSV", "P4", "L4"];
+const VNAME = { R: "Concentrado recebido", dSc: "Δ estoque · pátio de concentrado", P1: "Licor produzido", L1: "Resíduo de lixiviação", dSL: "Δ estoque · tanque de licor", P2: "AMV produzido", L2: "Filtrado da precipitação", dSA: "Δ estoque · AMV", P3: "V₂O₅ produzido", L3: "Poeira da calcinação", dSV: "Δ estoque · V₂O₅", P4: "Produto", L4: "Escória" };
+const VSRC = { R: "balança de recebimento / amostragem dos lotes", dSc: "levantamento topográfico do pátio", P1: "medidor de vazão do licor", L1: "balança/amostrador do resíduo", dSL: "nível do tanque de licor", P2: "balança do AMV", L2: "medidor de vazão/amostrador do filtrado", dSA: "inventário de AMV", P3: "balança do V₂O₅", L3: "coleta de poeira", dSV: "inventário de V₂O₅", P4: "balança de expedição do produto", L4: "balança/amostrador da escória" };
+// A·x = 0  (V em cada etapa)
+const A = [
+  [1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 1, 0, -1, -1, -1, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, -1, -1, -1, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1, -1, -1],
+];
+
+/* ================= Exemplo: 6 meses de planta ================= */
+function rng(seed) { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+function sample() {
+  const R = rng(7), j = (a) => 1 + (R() - .5) * 2 * a;
+  const meses = ["Mai/2026", "Jun/2026", "Jul/2026", "Ago/2026", "Set/2026", "Out/2026"];
+  const per = [];
+  let st = { Sc: [1800, 1.82], SL: [900, 24], SA: [40, 43.4], SV: [30, 55.6] };
+  meses.forEach((nome, m) => {
+    const last = m === meses.length - 1, days = 31, done = last ? 18 : days, fr = done / days;
+    const proc = 6100 * fr * j(.05), gc = 1.80 * j(.03);                    // t concentrado processado, %V
+    const vIn = proc * gc * 10;                                               // kg V
+    const e1 = .852 + (m === 3 ? -.025 : 0) + (R() - .5) * .012, e2 = .968 + (R() - .5) * .008 - (m >= 4 ? .012 : 0), e3 = .991 + (R() - .5) * .004, e4 = .951 + (R() - .5) * .01;
+    const recv = [], nl = last ? 4 : 6; let tRecv = 0;
+    for (let i = 0; i < nl; i++) { const t = (proc / nl) * j(.15); recv.push({ id: `L-${26 * 100 + m * 10 + i + 1}`, data: `${String(1 + Math.floor(i * done / nl)).padStart(2, "0")}/${String(5 + m).padStart(2, "0")}`, t: +t.toFixed(1), v: +(gc * j(.04)).toFixed(3) }); tRecv += t; }
+    const v1 = vIn * e1, dl = (R() - .5) * 0.04 * v1, v2feed = v1 - dl, v2 = v2feed * e2, da = (R() - .5) * 0.05 * v2, v3feed = v2 - da, v3 = v3feed * e3, dv = (R() - .5) * 0.05 * v3, v4feed = v3 - dv, v4 = v4feed * e4;
+    const cg = 25 * j(.06), fg = .8 * j(.1);
+    const end = { Sc: [st.Sc[0] + tRecv - proc, st.Sc[1]], SL: [(st.SL[0] * st.SL[1] + dl) / cg, cg], SA: [(st.SA[0] * st.SA[1] * 10 + da) / (43.4 * 10), 43.4], SV: [(st.SV[0] * st.SV[1] * 10 + dv) / (55.6 * 10), 55.6] };
+    // medições com erro (e o medidor de vazão do licor descalibrado a partir de setembro)
+    const bias1 = m >= 4 ? 1.11 : 1;
+    const meas = {
+      P1: [v1 / cg * bias1 * j(.012), cg * j(.012)],
+      L1: [proc * .8 * j(.02), (vIn - v1) / (proc * .8) / 10 * j(.03)],
+      P2: [v2 / (43.4 * 10) * j(.006), 43.4 * j(.006)],
+      L2: [(v2feed - v2) / fg * j(.02), fg * j(.03)],
+      P3: [v3 / (55.6 * 10) * j(.004), 55.6 * j(.003)],
+      L3: [(v3feed - v3) / (40 * 10) * j(.05), 40 * j(.03)],
+      P4: [v4 / (80 * 10) * j(.002), 80 * j(.003)],
+      L4: [(v4feed - v4) / (2.4 * 10) * j(.03), 2.4 * j(.05)],
+    };
+    const S = {}; for (const k in meas) S[k] = { q: +meas[k][0].toFixed(2), a: +meas[k][1].toFixed(4) };
+    const stock = {}; for (const k in st) stock[k] = { q0: +st[k][0].toFixed(1), a0: +st[k][1].toFixed(3), q1: +end[k][0].toFixed(1), a1: +end[k][1].toFixed(3) };
+    per.push({ nome, dias: days, diasDec: done, lots: recv, S, stock,
+      reag: { Al: +(v4 / 1000 * 0.883 * 1.07 * j(.02)).toFixed(1), NH4Cl: +(v2 / 1000 * 1.05 * 2.6 * j(.04)).toFixed(1), Na2CO3: +(vIn / 1000 * 1.04 * 1.55 * j(.03)).toFixed(1) },
+      corridas: Math.round(26 * fr) });
+    st = end;
+  });
+  return per;
+}
+const SIG0 = { R: [.5, 2], P1: [2, 2], L1: [3, 6], P2: [1, 1], L2: [5, 6], P3: [.5, .5], L3: [10, 5], P4: [.2, .5], L4: [5, 8], Sc: [3, 2], SL: [1.5, 1.5], SA: [5, 1], SV: [3, .5] };
+const CFG0 = { metaK: .79, metaY: [.86, .97, .99, .955], metaProd: 85, gradeFeV: 80, pV: 30, pAl: 2.6, pNH4Cl: .35, pNa2CO3: .45 };
+let DB;
+function fresh() { return { v: 1, per: sample(), sig: JSON.parse(JSON.stringify(SIG0)), cfg: JSON.parse(JSON.stringify(CFG0)), hf: { ...HF0 } }; }
+try { DB = JSON.parse(localStorage.getItem("vlab-contab-v1")) } catch (_) { }
+if (!DB || DB.v !== 1 || !Array.isArray(DB.per) || !DB.per.length) DB = fresh();
+const save = () => { try { localStorage.setItem("vlab-contab-v1", JSON.stringify(DB)); } catch (_) { } };
+let cur = DB.per.length - 1, mode = "rec";
+
+/* ================= Cálculo de um período ================= */
+const vOf = (q, a, u) => u === "g/L" ? q * a : q * a * 10;          // m³·g/L = kg; t·% ×10 = kg
+function measured(p) {
+  const x = {}, s = {};
+  const lotsV = p.lots.reduce((acc, l) => acc + l.t * l.v * 10, 0), lotsT = p.lots.reduce((a, l) => a + l.t, 0);
+  x.R = lotsV; s.R = lotsV * Math.hypot(DB.sig.R[0], DB.sig.R[1]) / 100;
+  for (const st of STREAMS) if (st.k !== "R") { const m = p.S[st.k], v = vOf(m.q, m.a, st.a); x[st.k] = v; s[st.k] = Math.abs(v) * Math.hypot(...DB.sig[st.k]) / 100; }
+  const stockV = {};
+  for (const S of STOCKS) {
+    const o = p.stock[S.k], v0 = vOf(o.q0, o.a0, S.a), v1 = vOf(o.q1, o.a1, S.a), r = Math.hypot(...DB.sig[S.k]) / 100;
+    stockV[S.k] = { v0, v1 }; x["d" + S.k] = v1 - v0; s["d" + S.k] = Math.hypot(v0 * r, v1 * r);
+  }
+  return { x, s, stockV, lotsT };
+}
+function solve(M, b) { // Gauss com pivotamento
+  const n = b.length, a = M.map((r, i) => [...r, b[i]]);
+  for (let i = 0; i < n; i++) { let p = i; for (let k = i + 1; k < n; k++) if (Math.abs(a[k][i]) > Math.abs(a[p][i])) p = k; [a[i], a[p]] = [a[p], a[i]];
+    for (let k = 0; k < n; k++) if (k !== i) { const f = a[k][i] / a[i][i]; for (let c = i; c <= n; c++) a[k][c] -= f * a[i][c]; } }
+  return a.map((r, i) => r[n] / r[i]);
+}
+function reconcile(x, s) {
+  const xv = VARS.map(k => x[k]), V = VARS.map(k => Math.max(1e-6, s[k]) ** 2), m = A.length, n = VARS.length;
+  const r = A.map(row => row.reduce((acc, a, j) => acc + a * xv[j], 0));
+  const AVAt = A.map(ri => A.map(rk => ri.reduce((acc, a, j) => acc + a * rk[j] * V[j], 0)));
+  const lam = solve(AVAt, r);
+  const adj = VARS.map((_, j) => V[j] * A.reduce((acc, row, i) => acc + row[j] * lam[i], 0));
+  const xh = xv.map((v, j) => v - adj[j]);
+  // variância do ajuste: diag(V Aᵀ (AVAᵀ)⁻¹ A V)
+  const inv = A.map((_, i) => solve(AVAt, A.map((__, k) => i === k ? 1 : 0)));
+  const varAdj = VARS.map((_, j) => { let t = 0; for (let i = 0; i < m; i++) for (let k = 0; k < m; k++) t += A[i][j] * V[j] * inv[k][i] * A[k][j] * V[j]; return t; });
+  const chi = r.reduce((acc, ri, i) => acc + ri * lam[i], 0);
+  const out = {}; VARS.forEach((k, j) => out[k] = { x: xv[j], xh: xh[j], adj: -adj[j], sig: Math.sqrt(V[j]), z: varAdj[j] > 0 ? -adj[j] / Math.sqrt(varAdj[j]) : 0 });
+  return { v: out, chi, dof: m, resid: r };
+}
+function period(idx, md = mode) {
+  const p = DB.per[idx], meas = measured(p), rec = reconcile(meas.x, meas.s);
+  const X = {}; VARS.forEach(k => X[k] = md === "rec" ? rec.v[k].xh : meas.x[k]);
+  const feed = [X.R - X.dSc, X.P1 - X.dSL, X.P2 - X.dSA, X.P3 - X.dSV];
+  const prodk = [X.P1, X.P2, X.P3, X.P4], loss = [X.L1, X.L2, X.L3, X.L4];
+  const U = feed.map((f, i) => f - prodk[i] - loss[i]);                  // não contabilizado
+  const yld = feed.map((f, i) => prodk[i] / f);
+  const consumed = feed[0] - X.dSL - X.dSA - X.dSV;                        // V consumido líquido de acúmulo intermediário
+  const K = X.P4 / consumed;
+  const prodT = p.S.P4.q * (md === "rec" && meas.x.P4 > 0 ? rec.v.P4.xh / meas.x.P4 : 1);
+  return { p, meas, rec, X, feed, prodk, loss, U, yld, K, consumed, prodT, stockV: meas.stockV };
+}
+
+/* ================= Gráficos ================= */
+function chart(el, { labels, series, yfmt = v => nf(v, 1), ymin, ymax, h = 220, bars = null }) {
+  const W = 560, H = h, L = 52, Rm = 16, T = 12, B = 30, iw = W - L - Rm, ih = H - T - B;
+  const vals = series.flatMap(s => s.v.filter(Number.isFinite)).concat(bars ? bars.flatMap(b => b.v) : []);
+  let lo = ymin ?? Math.min(...vals), hi = ymax ?? Math.max(...vals); if (hi - lo < 1e-9) { hi += 1; lo -= 1; }
+  const pad = (hi - lo) * .12; if (ymin === undefined) lo -= pad; if (ymax === undefined) hi += pad;
+  const n = labels.length, X = i => L + (n === 1 ? iw / 2 : i * iw / (n - 1)), Y = v => T + ih - (v - lo) / (hi - lo) * ih;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for (let k = 0; k <= 4; k++) { const v = lo + (hi - lo) * k / 4, y = Y(v); s += `<line class="gl" x1="${L}" x2="${W - Rm}" y1="${y}" y2="${y}"/><text class="ax" x="${L - 6}" y="${y + 3.5}" text-anchor="end">${yfmt(v)}</text>`; }
+  labels.forEach((l, i) => s += `<text class="ax" x="${X(i)}" y="${H - 10}" text-anchor="middle">${esc(l)}</text>`);
+  if (bars) { const bw = Math.min(26, iw / n / (bars.length + 1)); bars.forEach((b, bi) => b.v.forEach((v, i) => { const x = X(i) + (bi - (bars.length - 1) / 2) * bw - bw / 2 + 1; s += `<rect x="${x}" y="${Y(Math.max(v, lo))}" width="${bw - 2}" height="${Math.max(0, Y(lo) - Y(Math.max(v, lo)))}" rx="2" fill="${b.c}" opacity="${b.op || .85}"/>`; })); }
+  for (const se of series) {
+    const pts = se.v.map((v, i) => Number.isFinite(v) ? [X(i), Y(v)] : null);
+    const d = pts.reduce((a, p, i) => p ? a + (a && pts[i - 1] ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1) : a, "");
+    s += `<path d="${d}" fill="none" stroke="${se.c}" stroke-width="${se.w || 2.2}" ${se.dash ? `stroke-dasharray="${se.dash}"` : ""} stroke-linejoin="round" stroke-linecap="round"/>`;
+    if (!se.noDots) pts.forEach((p, i) => { if (p) s += `<circle cx="${p[0]}" cy="${p[1]}" r="${se.hollow && se.hollow(i) ? 3.5 : 3}" fill="${se.hollow && se.hollow(i) ? css("--surface") : se.c}" stroke="${se.c}" stroke-width="1.6"><title>${esc(se.n)} · ${esc(labels[i])}: ${yfmt(se.v[i])}</title></circle>`; });
+  }
+  el.innerHTML = s + "</svg>";
+}
+const leg = (el, items) => el.innerHTML = items.map(([n, c, d]) => `<span><i style="background:${d ? `repeating-linear-gradient(90deg,${c} 0 4px,transparent 4px 7px)` : c}"></i>${esc(n)}</span>`).join("");
+
+/* ================= Sankey ================= */
+function sankey(r) {
+  const X = r.X, W = 1000, H = 400, y0 = 92, topSt = 34, botY = 330;
+  const f0 = Math.max(...r.feed), sc = 150 / f0, th = v => Math.max(0, v * sc);
+  const xs = [150, 360, 570, 780], nw = 14;
+  const cAcc = css("--accent"), cErr = css("--err"), cTeal = css("--teal"), cMut = css("--text-3"), cTxt = css("--text"), cTx2 = css("--text-2"), cSurf = css("--surface-2"), cLine = css("--line-strong");
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Fluxo de vanádio por etapa">`;
+  const band = (x1, y1, x2, y2, w, c, op = .55, dash = "") => w > .2 ? `<path d="M${x1} ${y1}C${(x1 + x2) / 2} ${y1} ${(x1 + x2) / 2} ${y2} ${x2} ${y2}" fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="${w}" ${dash}/>` : "";
+  const down = (x1, y1, x2, y2, w, c, op = .5, dash = "") => w > .2 ? `<path d="M${x1} ${y1}C${x2} ${y1} ${x2} ${y1} ${x2} ${y2}" fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="${w}" ${dash}/>` : "";
+  const label = (x, y, t1, t2, c = cTxt, anchor = "middle") => `<text x="${x}" y="${y}" text-anchor="${anchor}" font-size="12" font-weight="700" fill="${c}">${esc(t1)}</text>` + (t2 ? `<text x="${x}" y="${y + 15}" text-anchor="${anchor}" font-size="11" fill="${cTx2}" font-family="JetBrains Mono, monospace">${esc(t2)}</text>` : "");
+  // entrada
+  const fIn = th(r.feed[0]);
+  s += band(30, y0 + fIn / 2, xs[0], y0 + fIn / 2, fIn, cAcc, .45);
+  s += label(30, y0 - 26, "V alimentado", kgV(r.feed[0]), cTxt, "start");
+  if (Math.abs(X.dSc) > 1) s += `<text x="30" y="${y0 + fIn + 18}" font-size="10.5" fill="${cTx2}" font-family="JetBrains Mono, monospace">recebido ${kgV(X.R)} · Δpátio ${X.dSc >= 0 ? "+" : "−"}${kgV(Math.abs(X.dSc))}</text>`;
+  const dS = [X.dSL, X.dSA, X.dSV, 0];
+  let lossLbl = "";
+  for (let i = 0; i < 4; i++) {
+    const hIn = th(r.feed[i]), x = xs[i];
+    const forward = r.prodk[i] - Math.max(0, dS[i]), stk = Math.max(0, dS[i]), draw = Math.max(0, -dS[i]);
+    // empilhamento das saídas: estoque (topo), avanço, perda, não contabilizado
+    let y = y0;
+    const yStk = y; y += th(stk);
+    const yFw = y; y += th(forward);
+    const yL = y; y += th(r.loss[i]);
+    const yU = y; const hU = th(Math.max(0, r.U[i]));
+    s += `<rect x="${x}" y="${y0}" width="${nw}" height="${Math.max(2, Math.max(hIn, y - y0 + hU))}" rx="3" fill="${cAcc}"/>`;
+    s += label(x + nw / 2, y0 - 44, STAGE_SHORT[i], "η " + pct(r.yld[i], 1));
+    // perda → caixa embaixo
+    const lx = x + 90, lw = th(r.loss[i]);
+    s += down(x + nw, yL + lw / 2, lx, botY, lw, cErr, .5);
+    if (hU > .2) s += down(x + nw, yU + hU / 2, lx + 34, botY, hU, cMut, .55, `stroke-dasharray="3 3"`);
+    lossLbl += label(lx, botY + 18, LOSSN[i].replace(" da ", " · ").replace(" de ", " · "), kgV(r.loss[i]), cErr);
+    if (Math.abs(r.U[i]) > 1) lossLbl += `<text x="${lx}" y="${botY + 48}" text-anchor="middle" font-size="10.5" fill="${cMut}" font-family="JetBrains Mono, monospace">não contab. ${r.U[i] >= 0 ? "" : "−"}${kgV(Math.abs(r.U[i]))}</text>`;
+    // estoque acumulado ↑
+    if (th(stk) > .2) { s += `<path d="M${x + nw} ${yStk + th(stk) / 2}C${x + 60} ${yStk + th(stk) / 2} ${x + 60} ${topSt} ${x + 92} ${topSt}" fill="none" stroke="${cTeal}" stroke-opacity=".6" stroke-width="${th(stk)}"/>`; }
+    if (i < 3) {
+      const nx = xs[i + 1], nIn = th(draw);
+      s += band(x + nw, yFw + th(forward) / 2, nx, y0 + nIn + th(forward) / 2, th(forward), cAcc, .45);
+      if (nIn > .2) s += `<path d="M${nx - 70} ${topSt}C${nx - 30} ${topSt} ${nx - 30} ${y0 + nIn / 2} ${nx} ${y0 + nIn / 2}" fill="none" stroke="${cTeal}" stroke-opacity=".6" stroke-width="${nIn}"/>`;
+      if (Math.abs(dS[i]) > 1) s += `<text x="${(x + nx) / 2 + 4}" y="${topSt - 10}" text-anchor="middle" font-size="10.5" fill="${cTeal}" font-family="JetBrains Mono, monospace">estoque ${dS[i] >= 0 ? "+" : "−"}${kgV(Math.abs(dS[i]))}</text>`;
+    } else {
+      const fw = th(r.prodk[3]);
+      s += band(x + nw, yFw + fw / 2, 905, y0 + fw / 2, fw, cAcc, .65);
+      s += `<rect x="905" y="${y0}" width="10" height="${Math.max(2, fw)}" rx="3" fill="${cAcc}"/>`;
+      s += label(960, y0 + fw / 2 - 12, "Produto", kgV(r.prodk[3]), cAcc);
+      s += `<text x="960" y="${y0 + fw / 2 + 22}" text-anchor="middle" font-size="10.5" fill="${cTx2}">K = ${pct(r.K, 1)}</text>`;
+    }
+  }
+  s += `<line x1="20" x2="${W - 20}" y1="${botY - 4}" y2="${botY - 4}" stroke="${cLine}" stroke-dasharray="2 5"/>` + lossLbl;
+  return s + "</svg>";
+}
+
+/* ================= Renderização ================= */
+const kpi = (t, v, sub, c) => `<div class="kpi" style="--c:${c || "var(--accent)"}"><span>${t}</span><strong>${v}</strong><small>${sub}</small></div>`;
+function delta(v, prev, good = 1, d = 1, f = x => nf(x * 100, d) + " p.p.") { if (!Number.isFinite(prev)) return ""; const dv = v - prev; return `<span class="${dv * good >= 0 ? "up" : "dn"}">${dv >= 0 ? "▲" : "▼"} ${f(Math.abs(dv))}</span> vs anterior`; }
+let R, ALL;
+function renderAll() {
+  ALL = DB.per.map((_, i) => period(i));
+  R = ALL[cur];
+  const P = cur > 0 ? ALL[cur - 1] : null, cfg = DB.cfg, p = R.p;
+  const lossV = R.loss.reduce((a, b) => a + b, 0), Ut = R.U.reduce((a, b) => a + b, 0);
+  // KPIs
+  $("kpis").innerHTML =
+    kpi("V no produto", kgV(R.X.P4), `${nf(R.prodT, 1)} t de FeV${cfg.gradeFeV} · ${p.corridas} corridas`) +
+    kpi("K de cadeia", pct(R.K, 1), `meta ${pct(cfg.metaK, 1)} · ${delta(R.K, P && P.K)}`, R.K >= cfg.metaK ? "var(--ok)" : "var(--err)") +
+    kpi("V perdido", kgV(lossV), `${usd(lossV * cfg.pV)} ao preço do V`, "var(--err)") +
+    kpi("Estoque intermediário", (R.X.dSL + R.X.dSA + R.X.dSV >= 0 ? "+" : "−") + kgV(Math.abs(R.X.dSL + R.X.dSA + R.X.dSV)), "variação de V em licor, AMV e V₂O₅", "var(--teal)") +
+    kpi("Não contabilizado", (mode === "rec" ? "0,00 t V" : kgV(Ut)), mode === "rec" ? "balanço fechado pela reconciliação" : `${pct(Ut / R.feed[0], 2)} do V alimentado`, "var(--text-3)");
+  // alertas
+  const al = [];
+  const worst = VARS.map(k => [k, R.rec.v[k]]).sort((a, b) => Math.abs(b[1].z) - Math.abs(a[1].z))[0];
+  if (Math.abs(worst[1].z) > 1.96) al.push(["err", `Medição suspeita: <b>${esc(VNAME[worst[0]])}</b> precisou de ajuste de ${nf(worst[1].adj / 1000, 2)} t V (z = ${nf(worst[1].z, 2)}). Verifique ${esc(VSRC[worst[0]])}.`]);
+  R.yld.forEach((y, i) => { if (y < cfg.metaY[i] - .005) al.push(["warn", `<b>${STAGES[i]}</b> abaixo da meta: ${pct(y, 1)} contra ${pct(cfg.metaY[i], 1)} (${kgV(R.feed[i] * (cfg.metaY[i] - y))} a mais de perda).`]); });
+  if (p.diasDec < p.dias) { const proj = R.X.P4 / p.diasDec * p.dias / 1000; al.push([proj >= cfg.metaProd ? "ok" : "warn", `Período em andamento (${p.diasDec}/${p.dias} dias). Projeção de fechamento: <b>${nf(proj, 1)} t V</b> contra meta de ${nf(cfg.metaProd, 1)} t V.`]); }
+  $("alerts").innerHTML = al.map(([c, m]) => `<div class="note" style="--c:var(--${c})">${m}</div>`).join("");
+  $("skSub").textContent = `${p.nome} · ${mode === "rec" ? "valores reconciliados" : "valores medidos"} · espessura proporcional ao V (kg)`;
+  $("sankey").innerHTML = sankey(R);
+  // rendimentos
+  $("tYield").innerHTML = `<thead><tr><th>Etapa</th><th class="n">V alimentado</th><th class="n">V produzido</th><th class="n" style="text-transform:none">η real</th><th class="n">Meta</th><th class="n">Anterior</th></tr></thead><tbody>` +
+    STAGES.map((s, i) => `<tr><td>${s}</td><td class="n">${kgV(R.feed[i])}</td><td class="n">${kgV(R.prodk[i])}</td><td class="n" style="color:var(--${R.yld[i] >= cfg.metaY[i] ? "ok" : "err"})">${pct(R.yld[i], 2)}</td><td class="n">${pct(cfg.metaY[i], 1)}</td><td class="n">${P ? pct(P.yld[i], 2) : "—"}</td></tr>`).join("") +
+    `<tr class="tot"><td>K de cadeia (global)</td><td class="n">${kgV(R.consumed)}</td><td class="n">${kgV(R.X.P4)}</td><td class="n">${pct(R.K, 2)}</td><td class="n">${pct(cfg.metaK, 1)}</td><td class="n">${P ? pct(P.K, 2) : "—"}</td></tr></tbody>`;
+  // inventário
+  const inv = [["Pátio de concentrado", "Sc", R.X.R, "recebido"], ["Tanque de licor", "SL", R.X.P1, "produzido"], ["Estoque de AMV", "SA", R.X.P2, "produzido"], ["Estoque de V₂O₅", "SV", R.X.P3, "produzido"]];
+  $("tInv").innerHTML = `<thead><tr><th>Estoque</th><th class="n">Inicial</th><th class="n">+ Entrada</th><th class="n">− Processado</th><th class="n">= Final</th></tr></thead><tbody>` +
+    inv.map(([n, k, inn]) => { const v0 = R.stockV[k].v0, d = R.X["d" + k], v1 = v0 + d; return `<tr><td>${n}</td><td class="n">${kgV(v0)}</td><td class="n">${kgV(inn)}</td><td class="n">${kgV(inn - d)}</td><td class="n">${kgV(v1)}</td></tr>`; }).join("") + "</tbody>";
+  renderLoss(P); renderEvo(); renderTh(); renderRec(); renderData(); renderCfg();
+}
+function renderLoss(P) {
+  const cfg = DB.cfg, items = R.loss.map((v, i) => [LOSSN[i], v, i]);
+  if (mode === "raw") items.push(["Não contabilizado", R.U.reduce((a, b) => a + b, 0), 4]);
+  const tot = items.reduce((a, x) => a + Math.max(0, x[1]), 0), mx = Math.max(...items.map(x => x[1]));
+  const lossV = R.loss.reduce((a, b) => a + b, 0);
+  const exp = R.feed.map((f, i) => f * (1 - cfg.metaY[i])), expT = exp.reduce((a, b) => a + b, 0);
+  $("lossKpis").innerHTML = kpi("V perdido no período", kgV(tot), `${pct(tot / R.feed[0], 1)} do V alimentado`, "var(--err)") +
+    kpi("Valor perdido", usd(tot * cfg.pV), `a US$ ${nf(cfg.pV, 2)}/kg V`, "var(--err)") +
+    kpi("Perda acima da meta", kgV(lossV - expT), usd((lossV - expT) * cfg.pV), lossV > expT ? "var(--warn)" : "var(--ok)") +
+    kpi("Maior perda", items.slice().sort((a, b) => b[1] - a[1])[0][0], pct(mx / tot, 1) + " do total", "var(--accent)");
+  const col = ["var(--err)", "var(--warn)", "var(--vio)", "var(--blue)", "var(--text-3)"];
+  $("lossTree").innerHTML = items.slice().sort((a, b) => b[1] - a[1]).map(([n, v, i]) => `<div class="lossbar"><div><b>${n}</b><div class="muted small">${i < 4 ? STAGES[i] : "fechamento do balanço medido"}</div></div><div class="tr"><div style="width:${Math.max(0, v / mx * 100)}%;background:${col[i]}"></div></div><div class="v">${kgV(v)}<small>${usd(v * cfg.pV)} · ${pct(v / tot, 1)}</small></div></div>`).join("");
+  chart($("cLoss"), { labels: ALL.map(a => a.p.nome.slice(0, 3)), series: R.loss.map((_, i) => ({ n: LOSSN[i], c: col[i], v: ALL.map(a => a.loss[i] / 1000) })), yfmt: v => nf(v, 1) + " t" });
+  leg($("cLossLeg"), LOSSN.map((n, i) => [n, col[i]]));
+  $("tLossCmp").innerHTML = `<thead><tr><th>Destino</th><th class="n">Este período</th><th class="n">Anterior</th><th class="n">Variação</th><th class="n">Esperado pela meta</th><th class="n">Acima da meta</th><th class="n">US$ acima da meta</th></tr></thead><tbody>` +
+    R.loss.map((v, i) => { const pv = P ? P.loss[i] : NaN, ex = exp[i]; return `<tr><td>${LOSSN[i]}</td><td class="n">${kgV(v)}</td><td class="n">${P ? kgV(pv) : "—"}</td><td class="n ${v > pv ? "dn" : "up"}">${P ? (v >= pv ? "+" : "−") + kgV(Math.abs(v - pv)) : "—"}</td><td class="n">${kgV(ex)}</td><td class="n ${v > ex ? "dn" : "up"}">${(v >= ex ? "+" : "−") + kgV(Math.abs(v - ex))}</td><td class="n">${usd((v - ex) * cfg.pV)}</td></tr>`; }).join("") +
+    `<tr class="tot"><td>Total</td><td class="n">${kgV(lossV)}</td><td class="n">${P ? kgV(P.loss.reduce((a, b) => a + b, 0)) : "—"}</td><td class="n"></td><td class="n">${kgV(expT)}</td><td class="n">${(lossV >= expT ? "+" : "−") + kgV(Math.abs(lossV - expT))}</td><td class="n">${usd((lossV - expT) * cfg.pV)}</td></tr></tbody>`;
+}
+function renderEvo() {
+  const cfg = DB.cfg, lab = ALL.map(a => a.p.nome.slice(0, 3)), partial = i => ALL[i].p.diasDec < ALL[i].p.dias;
+  chart($("cK"), { labels: lab, series: [{ n: "Meta", c: css("--text-3"), v: lab.map(() => cfg.metaK * 100), dash: "5 5", noDots: 1, w: 1.5 }, { n: "K de cadeia", c: css("--accent"), v: ALL.map(a => a.K * 100), hollow: partial }], yfmt: v => nf(v, 1) + "%" });
+  leg($("cKLeg"), [["K de cadeia", css("--accent")], ["Meta", css("--text-3"), 1]]);
+  const yc = [css("--accent"), css("--teal"), css("--vio"), css("--blue")];
+  chart($("cY"), { labels: lab, series: STAGES.map((s, i) => ({ n: s, c: yc[i], v: ALL.map(a => a.yld[i] * 100), hollow: partial })), yfmt: v => nf(v, 1) + "%" });
+  leg($("cYLeg"), STAGES.map((s, i) => [s, yc[i]]));
+  const alT = ALL.map(a => a.p.reag.Al * 1000 / Math.max(1e-9, a.prodT)), nh = ALL.map(a => a.p.reag.NH4Cl * 1000 / Math.max(1e-9, a.X.P2));
+  chart($("cC"), { labels: lab, series: [{ n: "Al", c: css("--accent"), v: alT, hollow: partial }], yfmt: v => nf(v, 0), h: 260 });
+  chart($("cC2"), { labels: lab, series: [{ n: "NH₄Cl", c: css("--teal"), v: nh, hollow: partial }], yfmt: v => nf(v, 2), h: 260 });
+  // acumulado no ano (desde o 1º período) × meta, com projeção do período em andamento
+  let acc = 0, accM = 0; const real = [], meta = [], proj = [];
+  ALL.forEach((a, i) => { acc += a.X.P4 / 1000; accM += cfg.metaProd; real.push(acc); meta.push(accM); proj.push(NaN); });
+  const last = ALL[ALL.length - 1], lp = last.p;
+  if (lp.diasDec < lp.dias) { proj[proj.length - 2] = real[real.length - 2]; proj[proj.length - 1] = real[real.length - 2] + last.X.P4 / 1000 / lp.diasDec * lp.dias; }
+  chart($("cP"), { labels: lab, series: [{ n: "Meta acumulada", c: css("--text-3"), v: meta, dash: "5 5", w: 1.5 }, { n: "Projeção", c: css("--accent"), v: proj, dash: "3 4", w: 1.6, hollow: () => 1 }, { n: "Produção acumulada", c: css("--accent"), v: real }], yfmt: v => nf(v, 0) + " t", ymin: 0 });
+  leg($("cPLeg"), [["Produção acumulada (t V)", css("--accent")], ["Projeção de fechamento", css("--accent"), 1], ["Meta acumulada", css("--text-3"), 1]]);
+  $("cPSub").textContent = lp.diasDec < lp.dias ? `Projeção de ${lp.nome}: ${nf(last.X.P4 / 1000 / lp.diasDec * lp.dias, 1)} t V (${lp.diasDec}/${lp.dias} dias) · meta ${nf(cfg.metaProd, 1)} t V/mês` : `Meta de ${nf(cfg.metaProd, 1)} t V por período`;
+}
+function rxH(rx) { const h = DB.hf, sum = arr => arr.reduce((a, [n, s]) => a + n * (h[s] ?? NaN), 0); return sum(rx.pr) - sum(rx.eq); }
+function renderTh() {
+  const cfg = DB.cfg, gaps = R.feed.map((f, i) => f * (1 - R.yld[i])), gapM = R.feed.map((f, i) => f * Math.max(0, cfg.metaY[i] - R.yld[i]));
+  const rg = [["Al", R.X.P4, DB.cfg.pAl, RX[4]], ["NH4Cl", R.X.P2, DB.cfg.pNH4Cl, RX[2]], ["Na2CO3", R.X.P1, DB.cfg.pNa2CO3, RX[0]]];
+  const reagGap = rg.reduce((a, [k, vV, pr, rx]) => a + Math.max(0, R.p.reag[k] * 1000 - stoichPerV(rx) * vV) * pr, 0);
+  $("thKpis").innerHTML = kpi("Gap total de V (× estequiometria)", kgV(gaps.reduce((a, b) => a + b, 0)), usd(gaps.reduce((a, b) => a + b, 0) * cfg.pV) + " por período", "var(--err)") +
+    kpi("Gap até a meta", kgV(gapM.reduce((a, b) => a + b, 0)), usd(gapM.reduce((a, b) => a + b, 0) * cfg.pV) + " recuperáveis atingindo as metas", "var(--warn)") +
+    kpi("Excesso de reagentes", usd(reagGap), "custo acima do consumo estequiométrico", "var(--vio)");
+  $("tGap").innerHTML = `<thead><tr><th>Etapa</th><th class="n">V alimentado</th><th class="n" style="text-transform:none">η real</th><th class="n" style="text-transform:none">η meta</th><th class="n" style="text-transform:none">η teórico</th><th class="n">Gap × teórico</th><th class="n">Gap × meta</th><th class="n">US$ até a meta</th></tr></thead><tbody>` +
+    STAGES.map((s, i) => `<tr><td>${s}</td><td class="n">${kgV(R.feed[i])}</td><td class="n">${pct(R.yld[i], 2)}</td><td class="n">${pct(cfg.metaY[i], 1)}</td><td class="n">100,0 %</td><td class="n">${kgV(gaps[i])}</td><td class="n">${kgV(gapM[i])}</td><td class="n">${usd(gapM[i] * cfg.pV)}</td></tr>`).join("") + "</tbody>";
+  $("tReag").innerHTML = `<thead><tr><th>Reagente</th><th>Etapa</th><th class="n">Estequiométrico</th><th class="n">Real</th><th class="n">Real/esteq.</th><th class="n">Excesso</th><th class="n">Custo do excesso</th></tr></thead><tbody>` +
+    rg.map(([k, vV, pr, rx]) => { const th = stoichPerV(rx) * vV / 1000, re = R.p.reag[k]; return `<tr><td>${SUB(k)}</td><td>${rx.st}</td><td class="n">${nf(th, 1)} t</td><td class="n">${nf(re, 1)} t</td><td class="n">${nf(re / th, 2)}×</td><td class="n">${nf(re - th, 1)} t</td><td class="n">${usd((re - th) * 1000 * pr)}</td></tr>`; }).join("") + "</tbody>";
+  const side = arr => arr.map(([n, s]) => (n > 1 ? n + " " : "") + SUB(s)).join(" + ");
+  $("tRx").innerHTML = `<thead><tr><th>Etapa</th><th>Reação</th><th class="n">ΔH°r (kJ)</th><th class="n">Reagente / kg V</th></tr></thead><tbody>` +
+    RX.map(rx => `<tr><td>${rx.st}</td><td class="eq">${side(rx.eq)} → ${side(rx.pr)}</td><td class="n">${nf(rxH(rx), 1)}</td><td class="n">${rx.reag ? nf(stoichPerV(rx), 3) + " kg " + SUB(rx.reag) : "—"}</td></tr>`).join("") + "</tbody>";
+}
+function renderRec() {
+  const rec = R.rec, crit = 9.488, ok = rec.chi <= crit;
+  const sus = VARS.filter(k => Math.abs(rec.v[k].z) > 1.96).sort((a, b) => Math.abs(rec.v[b].z) - Math.abs(rec.v[a].z));
+  $("recKpis").innerHTML = kpi("Teste global χ²", nf(rec.chi, 2), `crítico ${nf(crit, 2)} (4 g.l., 95 %)`, ok ? "var(--ok)" : "var(--err)") +
+    kpi("Medições suspeitas", String(sus.length), sus.length ? VNAME[sus[0]] : "nenhuma com |z| > 1,96", sus.length ? "var(--err)" : "var(--ok)") +
+    kpi("Maior ajuste", (() => { const k = VARS.slice().sort((a, b) => Math.abs(rec.v[b].adj) - Math.abs(rec.v[a].adj))[0]; return kgV(Math.abs(rec.v[k].adj)); })(), "em módulo, kg de V", "var(--accent)") +
+    kpi("Desfechamento medido", kgV(Math.abs(rec.resid.reduce((a, b) => a + b, 0))), "soma dos resíduos antes do ajuste", "var(--text-3)");
+  $("recNote").style.setProperty("--c", sus.length ? "var(--err)" : "var(--ok)");
+  $("recNote").innerHTML = sus.length ? `<b>Verificar:</b> ${sus.map(k => `${esc(VNAME[k])} (${esc(VSRC[k])}, z = ${nf(rec.v[k].z, 2)})`).join("; ")}. A primeira da lista é a medição que precisou do maior ajuste em relação à sua incerteza.` : `<b>Dados consistentes.</b> Os ajustes cabem nas incertezas declaradas.`;
+  const mz = Math.max(3, ...VARS.map(k => Math.abs(rec.v[k].z)));
+  $("tRec").innerHTML = `<thead><tr><th>Variável</th><th>Fonte</th><th class="n">Medido</th><th class="n" style="text-transform:none">σ</th><th class="n">Reconciliado</th><th class="n">Ajuste</th><th class="n">Ajuste %</th><th class="n">z</th><th></th></tr></thead><tbody>` +
+    VARS.map(k => { const v = rec.v[k], bad = Math.abs(v.z) > 1.96; return `<tr><td>${esc(VNAME[k])}</td><td class="muted small">${esc(VSRC[k])}</td><td class="n">${nf(v.x, 0)}</td><td class="n">${nf(v.sig, 0)}</td><td class="n">${nf(v.xh, 0)}</td><td class="n">${(v.adj >= 0 ? "+" : "") + nf(v.adj, 0)}</td><td class="n">${Math.abs(v.x) > 1 ? (v.adj >= 0 ? "+" : "") + nf(v.adj / Math.abs(v.x) * 100, 2) + " %" : "—"}</td><td class="n" style="color:var(--${bad ? "err" : "text-2"});font-weight:${bad ? 700 : 400}">${nf(v.z, 2)}</td><td style="width:90px"><span class="zbar" style="width:${Math.abs(v.z) / mz * 80}px;background:var(--${bad ? "err" : "line-strong"})"></span></td></tr>`; }).join("") + `</tbody>`;
+  const raw = period(cur, "raw");
+  $("tClose").innerHTML = `<thead><tr><th>Etapa</th><th class="n">Entrada − saídas (medido)</th><th class="n">% do alimentado</th><th class="n">Após reconciliação</th></tr></thead><tbody>` +
+    STAGES.map((s, i) => `<tr><td>${s}</td><td class="n">${nf(raw.U[i], 0)} kg</td><td class="n">${pct(raw.U[i] / raw.feed[i], 2)}</td><td class="n">0 kg</td></tr>`).join("") + "</tbody>";
+}
+function inp(path, v, step = "any") { return `<input type="number" step="${step}" data-p="${path}" value="${v}">`; }
+function renderData() {
+  const p = R.p, sig = DB.sig;
+  $("perMeta").innerHTML = `<label class="ctl"><span class="muted small">Nome</span><input data-p="per.nome" value="${esc(p.nome)}" style="width:110px;font-family:Inter"></label>
+    <label class="ctl"><span class="muted small">Dias decorridos</span>${inp("per.diasDec", p.diasDec, 1)}</label>
+    <label class="ctl"><span class="muted small">Dias do período</span>${inp("per.dias", p.dias, 1)}</label>
+    <label class="ctl"><span class="muted small">Corridas</span>${inp("per.corridas", p.corridas, 1)}</label>`;
+  let h = `<thead><tr><th>Corrente</th><th class="n">Quantidade</th><th></th><th class="n">Teor V</th><th></th><th class="n" style="text-transform:none">σ quant. %</th><th class="n" style="text-transform:none">σ teor %</th><th class="n">V (kg)</th></tr></thead><tbody>`;
+  let g = "";
+  for (const st of STREAMS) {
+    if (st.g !== g) { g = st.g; h += `<tr class="grp"><td colspan="8">${g}</td></tr>`; }
+    if (st.k === "R") { const t = R.meas.lotsT; h += `<tr><td>${st.n}</td><td class="n">${nf(t, 1)}</td><td class="muted">t</td><td class="n">${nf(R.meas.x.R / t / 10, 3)}</td><td class="muted">%</td><td class="n">${inp("sig.R.0", sig.R[0])}</td><td class="n">${inp("sig.R.1", sig.R[1])}</td><td class="n">${nf(R.meas.x.R, 0)}</td></tr>`; continue; }
+    const m = p.S[st.k];
+    h += `<tr><td>${st.n}${st.loss ? ` <span class="pill" style="color:var(--err);margin-left:4px">perda</span>` : ""}</td><td class="n">${inp(`S.${st.k}.q`, m.q)}</td><td class="muted">${st.u}</td><td class="n">${inp(`S.${st.k}.a`, m.a)}</td><td class="muted">${st.a}</td><td class="n">${inp(`sig.${st.k}.0`, sig[st.k][0])}</td><td class="n">${inp(`sig.${st.k}.1`, sig[st.k][1])}</td><td class="n">${nf(R.meas.x[st.k], 0)}</td></tr>`;
+  }
+  h += `<tr class="grp"><td colspan="8">Estoques (inicial → final)</td></tr>`;
+  for (const S of STOCKS) {
+    const o = p.stock[S.k];
+    h += `<tr><td>${S.n}</td><td class="n">${inp(`stock.${S.k}.q0`, o.q0)} ${inp(`stock.${S.k}.q1`, o.q1)}</td><td class="muted">${S.u}</td><td class="n">${inp(`stock.${S.k}.a0`, o.a0)} ${inp(`stock.${S.k}.a1`, o.a1)}</td><td class="muted">${S.a}</td><td class="n">${inp(`sig.${S.k}.0`, sig[S.k][0])}</td><td class="n">${inp(`sig.${S.k}.1`, sig[S.k][1])}</td><td class="n">${(R.meas.x["d" + S.k] >= 0 ? "+" : "") + nf(R.meas.x["d" + S.k], 0)}</td></tr>`;
+  }
+  $("tData").innerHTML = h + "</tbody>";
+  $("tLots").innerHTML = `<thead><tr><th>Lote</th><th>Data</th><th class="n">Massa seca (t)</th><th class="n">Teor V (%)</th><th class="n">V (kg)</th><th></th></tr></thead><tbody>` +
+    p.lots.map((l, i) => `<tr><td><input data-p="lots.${i}.id" value="${esc(l.id)}" style="font-family:Inter;text-align:left;max-width:90px"></td><td><input data-p="lots.${i}.data" value="${esc(l.data)}" style="font-family:Inter;text-align:left;max-width:70px"></td><td class="n">${inp(`lots.${i}.t`, l.t)}</td><td class="n">${inp(`lots.${i}.v`, l.v)}</td><td class="n">${nf(l.t * l.v * 10, 0)}</td><td><button class="btn" type="button" data-dellot="${i}" aria-label="Remover lote">✕</button></td></tr>`).join("") +
+    `<tr class="tot"><td>Total</td><td></td><td class="n">${nf(R.meas.lotsT, 1)}</td><td class="n">${nf(R.meas.x.R / Math.max(1e-9, R.meas.lotsT) / 10, 3)}</td><td class="n">${nf(R.meas.x.R, 0)}</td><td></td></tr></tbody>`;
+  $("tReagIn").innerHTML = `<thead><tr><th>Insumo</th><th class="n">Consumo (t)</th><th class="n">Específico</th></tr></thead><tbody>` +
+    `<tr><td>Alumínio (redução)</td><td class="n">${inp("reag.Al", p.reag.Al)}</td><td class="n">${nf(p.reag.Al * 1000 / Math.max(1e-9, R.prodT), 0)} kg/t produto</td></tr>` +
+    `<tr><td>NH₄Cl (precipitação)</td><td class="n">${inp("reag.NH4Cl", p.reag.NH4Cl)}</td><td class="n">${nf(p.reag.NH4Cl * 1000 / Math.max(1e-9, R.X.P2), 2)} kg/kg V</td></tr>` +
+    `<tr><td>Na₂CO₃ (ustulação)</td><td class="n">${inp("reag.Na2CO3", p.reag.Na2CO3)}</td><td class="n">${nf(p.reag.Na2CO3 * 1000 / Math.max(1e-9, R.X.P1), 2)} kg/kg V</td></tr></tbody>`;
+}
+function renderCfg() {
+  const c = DB.cfg;
+  $("tMeta").innerHTML = `<tbody>` + [["K de cadeia (%)", "cfg.metaK", c.metaK * 100, 100], ...STAGES.map((s, i) => [`Rendimento · ${s} (%)`, `cfg.metaY.${i}`, c.metaY[i] * 100, 100]), ["Produção por período (t V)", "cfg.metaProd", c.metaProd, 1], ["Teor de V do produto FeV (%)", "cfg.gradeFeV", c.gradeFeV, 1]]
+    .map(([n, p, v, sc]) => `<tr><td>${n}</td><td class="n"><input type="number" step="any" data-p="${p}" data-sc="${sc}" value="${+v.toFixed(4)}"></td></tr>`).join("") + "</tbody>";
+  $("tPrice").innerHTML = `<tbody>` + [["Vanádio contido (US$/kg V)", "cfg.pV", c.pV], ["Alumínio (US$/kg)", "cfg.pAl", c.pAl], ["NH₄Cl (US$/kg)", "cfg.pNH4Cl", c.pNH4Cl], ["Na₂CO₃ (US$/kg)", "cfg.pNa2CO3", c.pNa2CO3]]
+    .map(([n, p, v]) => `<tr><td>${n}</td><td class="n"><input type="number" step="any" data-p="${p}" value="${v}"></td></tr>`).join("") + "</tbody>";
+  $("hfGrid").innerHTML = Object.keys(HF0).filter(k => HF0[k] !== 0).map(k => `<label class="ctl" style="justify-content:space-between"><span class="small">${SUB(k)}</span><input type="number" step="any" data-p="hf.${k}" value="${DB.hf[k]}" style="width:96px"></label>`).join("");
+}
+
+/* ================= Edição ================= */
+function setPath(path, raw, sc) {
+  const parts = path.split("."), root = parts[0] === "per" ? DB.per[cur] : parts[0] === "cfg" ? DB.cfg : parts[0] === "sig" ? DB.sig : parts[0] === "hf" ? DB.hf : DB.per[cur];
+  const keys = ["per", "cfg", "sig", "hf"].includes(parts[0]) ? parts.slice(1) : parts;
+  let o = root; for (let i = 0; i < keys.length - 1; i++) o = o[keys[i]];
+  const last = keys[keys.length - 1], isText = last === "nome" || last === "id" || last === "data";
+  if (isText) { o[last] = raw; return true; }
+  const v = parseFloat(raw); if (!Number.isFinite(v)) return false;
+  o[last] = sc && +sc === 100 ? v / 100 : v; return true;
+}
+let tm = 0;
+document.addEventListener("change", e => {
+  const t = e.target; if (!t.dataset || !t.dataset.p) return;
+  if (!setPath(t.dataset.p, t.value, t.dataset.sc)) { t.style.borderColor = "var(--err)"; return; }
+  t.style.borderColor = ""; save(); fillPer(); renderAll();
+});
+document.addEventListener("click", e => {
+  const d = e.target.closest("[data-dellot]"); if (!d) return;
+  DB.per[cur].lots.splice(+d.dataset.dellot, 1); save(); renderAll();
+});
+$("addLot").addEventListener("click", () => { const l = DB.per[cur].lots, last = l[l.length - 1] || { t: 1000, v: 1.8 }; l.push({ id: "L-novo", data: "", t: last.t, v: last.v }); save(); renderAll(); });
+$("newPer").addEventListener("click", () => {
+  const p = DB.per[DB.per.length - 1], n = JSON.parse(JSON.stringify(p));
+  n.nome = "Novo período"; n.diasDec = 0; n.lots = [];
+  for (const k in n.stock) { n.stock[k].q0 = p.stock[k].q1; n.stock[k].a0 = p.stock[k].a1; }
+  n.diasDec = n.dias; n.lots = [{ id: "L-001", data: "", t: 1000, v: 1.8 }];
+  DB.per.push(n); cur = DB.per.length - 1; save(); fillPer(); renderAll();
+});
+$("delPer").addEventListener("click", () => { if (DB.per.length < 2) return; if (!confirm(`Excluir o período ${DB.per[cur].nome}?`)) return; DB.per.splice(cur, 1); cur = Math.min(cur, DB.per.length - 1); save(); fillPer(); renderAll(); });
+$("reset").addEventListener("click", () => { DB = fresh(); cur = DB.per.length - 1; save(); fillPer(); renderAll(); });
+function dl(name, text, type) { const b = new Blob([text], { type }), u = URL.createObjectURL(b), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000); }
+$("expJson").addEventListener("click", () => dl("contabilidade-vanadio.json", JSON.stringify(DB, null, 2), "application/json"));
+$("impJson").addEventListener("change", e => { const f = e.target.files[0]; if (!f) return; f.text().then(t => { try { const d = JSON.parse(t); if (d.v !== 1 || !Array.isArray(d.per) || !d.per.length) throw 0; DB = d; cur = DB.per.length - 1; save(); fillPer(); renderAll(); } catch (_) { alert("Arquivo inválido."); } }); e.target.value = ""; });
+$("expCsv").addEventListener("click", () => {
+  const c = v => typeof v === "number" ? String(+v.toFixed(4)).replace(".", ",") : `"${String(v).replace(/"/g, '""')}"`;
+  const rows = [["EngenhaLab · contabilidade metalúrgica do V"], ["Período", R.p.nome], ["Base", mode === "rec" ? "reconciliado" : "medido"], [],
+    ["Variável", "Medido (kg V)", "Reconciliado (kg V)", "Ajuste (kg V)", "z"], ...VARS.map(k => [VNAME[k], R.rec.v[k].x, R.rec.v[k].xh, R.rec.v[k].adj, R.rec.v[k].z]), [],
+    ["Etapa", "V alimentado (kg)", "V produzido (kg)", "Perda (kg)", "Não contabilizado (kg)", "Rendimento"], ...STAGES.map((s, i) => [s, R.feed[i], R.prodk[i], R.loss[i], R.U[i], R.yld[i]]), [],
+    ["K de cadeia", R.K], ["Valor das perdas (US$)", R.loss.reduce((a, b) => a + b, 0) * DB.cfg.pV]];
+  dl(`contabilidade-vanadio-${R.p.nome.replace(/\W+/g, "-")}.csv`, "﻿" + rows.map(r => r.map(c).join(";")).join("\r\n"), "text/csv;charset=utf-8");
+});
+
+/* ================= Navegação ================= */
+function fillPer() { $("per").innerHTML = DB.per.map((p, i) => `<option value="${i}"${i === cur ? " selected" : ""}>${esc(p.nome)}${p.diasDec < p.dias ? " · em andamento" : ""}</option>`).join(""); }
+$("per").addEventListener("change", e => { cur = +e.target.value; renderAll(); });
+$$("[data-mode]").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; $$("[data-mode]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); renderAll(); }));
+$$("[data-tab]").forEach(b => b.addEventListener("click", () => {
+  $$("[data-tab]").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+  $$("[data-pane]").forEach(p => p.hidden = p.dataset.pane !== b.dataset.tab);
+}));
+$("theme").addEventListener("click", () => {
+  const el = document.documentElement, a = el.getAttribute("data-theme"), dark = a === "dark" || (!a && !matchMedia("(prefers-color-scheme: light)").matches);
+  el.setAttribute("data-theme", dark ? "light" : "dark"); try { localStorage.setItem("vg-theme", dark ? "light" : "dark"); } catch (_) { }
+  renderAll();
+});
+fillPer(); renderAll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>EngenhaLab | Balanço de Vanádio</title>
+
+  <style>
+    /*
+      INTEGRAÇÃO:
+      - Todos os seletores estão isolados em .vlab.
+      - Ajuste estas variáveis para combinar com o seu site.
+      - Não há dependência de Bootstrap, React ou bibliotecas externas.
+    */
+    .vlab {
+      --vl-bg: #09111e;
+      --vl-panel: #111d2e;
+      --vl-panel-alt: #152339;
+      --vl-border: #27384f;
+      --vl-text: #eaf1fb;
+      --vl-muted: #a0b2c9;
+      --vl-primary: #65d6ff;
+      --vl-accent: #86efac;
+      --vl-warning: #facc75;
+      --vl-error: #fda4af;
+      --vl-radius: 18px;
+      --vl-font: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+
+      font-family: var(--vl-font);
+      color: var(--vl-text);
+      background: var(--vl-bg);
+      line-height: 1.55;
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .vlab,
+    .vlab * {
+      box-sizing: border-box;
+    }
+
+    .vlab .vl-container {
+      max-width: 1380px;
+      margin: auto;
+    }
+
+    .vlab .vl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .vlab .vl-eyebrow {
+      color: var(--vl-primary);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .74rem;
+      font-weight: 800;
+    }
+
+    .vlab h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      line-height: 1.12;
+      margin: 10px 0;
+      letter-spacing: -.04em;
+    }
+
+    .vlab h2 {
+      margin: 0 0 16px;
+      font-size: 1.12rem;
+    }
+
+    .vlab h3 {
+      font-size: .96rem;
+      margin: 20px 0 10px;
+    }
+
+    .vlab p {
+      margin: 0 0 12px;
+    }
+
+    .vlab .vl-muted,
+    .vlab small {
+      color: var(--vl-muted);
+    }
+
+    .vlab .vl-badge {
+      border: 1px solid var(--vl-border);
+      background: var(--vl-panel);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: .8rem;
+      white-space: nowrap;
+    }
+
+    .vlab .vl-grid {
+      display: grid;
+      grid-template-columns: 370px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .vlab .vl-card {
+      background: var(--vl-panel);
+      border: 1px solid var(--vl-border);
+      border-radius: var(--vl-radius);
+      padding: 22px;
+      margin-bottom: 20px;
+    }
+
+    .vlab .vl-field {
+      margin-bottom: 17px;
+    }
+
+    .vlab label {
+      display: block;
+      font-size: .86rem;
+      font-weight: 650;
+      margin-bottom: 7px;
+    }
+
+    .vlab input,
+    .vlab select,
+    .vlab button {
+      font: inherit;
+    }
+
+    .vlab input,
+    .vlab select {
+      width: 100%;
+      color: var(--vl-text);
+      background: var(--vl-bg);
+      border: 1px solid var(--vl-border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      min-height: 46px;
+    }
+
+    .vlab input:focus-visible,
+    .vlab select:focus-visible,
+    .vlab button:focus-visible {
+      outline: 2px solid var(--vl-primary);
+      outline-offset: 3px;
+    }
+
+    .vlab .vl-field small {
+      display: block;
+      margin-top: 6px;
+      font-size: .75rem;
+    }
+
+    .vlab .vl-button {
+      border: 1px solid var(--vl-border);
+      border-radius: 10px;
+      padding: 10px 15px;
+      background: var(--vl-panel-alt);
+      color: var(--vl-text);
+      cursor: pointer;
+      font-weight: 650;
+    }
+
+    .vlab .vl-button:hover {
+      border-color: var(--vl-primary);
+    }
+
+    .vlab .vl-button-primary {
+      color: #061521;
+      background: var(--vl-primary);
+      border-color: var(--vl-primary);
+    }
+
+    .vlab .vl-button:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+
+    .vlab .vl-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .vlab .vl-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .vlab .vl-kpi {
+      background: var(--vl-panel);
+      border: 1px solid var(--vl-border);
+      border-radius: 15px;
+      padding: 18px;
+    }
+
+    .vlab .vl-kpi span {
+      display: block;
+      color: var(--vl-muted);
+      font-size: .76rem;
+    }
+
+    .vlab .vl-kpi strong {
+      display: block;
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      color: var(--vl-primary);
+      margin: 8px 0 4px;
+      overflow-wrap: anywhere;
+    }
+
+    .vlab .vl-kpi small {
+      font-size: .72rem;
+    }
+
+    .vlab .vl-equation {
+      background: var(--vl-bg);
+      border: 1px solid var(--vl-border);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      font-size: 1.1rem;
+      overflow-x: auto;
+    }
+
+    .vlab .vl-equation math {
+      font-size: 1.2rem;
+    }
+
+    .vlab .vl-notice {
+      padding: 13px 15px;
+      border-radius: 10px;
+      background: rgba(250, 204, 117, .07);
+      border-left: 3px solid var(--vl-warning);
+      color: var(--vl-warning);
+      font-size: .84rem;
+      margin-top: 14px;
+    }
+
+    .vlab .vl-error {
+      color: var(--vl-error);
+      background: rgba(253, 164, 175, .07);
+      border: 1px solid var(--vl-error);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .vlab .vl-table-wrap {
+      overflow-x: auto;
+    }
+
+    .vlab table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .86rem;
+    }
+
+    .vlab caption {
+      text-align: left;
+      color: var(--vl-muted);
+      padding-bottom: 12px;
+      font-size: .78rem;
+    }
+
+    .vlab th,
+    .vlab td {
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--vl-border);
+      text-align: left;
+    }
+
+    .vlab th {
+      color: var(--vl-muted);
+      font-size: .73rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .vlab td:last-child,
+    .vlab th:last-child {
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vlab .vl-total td {
+      font-weight: 750;
+      color: var(--vl-accent);
+    }
+
+    .vlab .vl-checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .vlab .vl-check {
+      padding: 12px;
+      border: 1px solid var(--vl-border);
+      background: var(--vl-bg);
+      border-radius: 10px;
+      font-size: .8rem;
+    }
+
+    .vlab .vl-check strong {
+      display: block;
+      color: var(--vl-accent);
+      margin-top: 4px;
+    }
+
+    .vlab .vl-bar-row {
+      margin: 14px 0;
+    }
+
+    .vlab .vl-bar-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      font-size: .8rem;
+      margin-bottom: 6px;
+    }
+
+    .vlab .vl-bar-track {
+      height: 10px;
+      background: var(--vl-bg);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .vlab .vl-bar-fill {
+      height: 100%;
+      border-radius: 20px;
+    }
+
+    .vlab .vl-method {
+      color: var(--vl-muted);
+      font-size: .83rem;
+    }
+
+    .vlab .vl-method li {
+      margin-bottom: 8px;
+    }
+
+    .vlab [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 1150px) {
+      .vlab .vl-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 850px) {
+      .vlab {
+        padding: 16px;
+      }
+
+      .vlab .vl-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vlab .vl-header {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .vlab .vl-kpis,
+      .vlab .vl-checks {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      .vlab {
+        --vl-bg: #fff;
+        --vl-panel: #fff;
+        --vl-panel-alt: #f4f4f4;
+        --vl-border: #ccc;
+        --vl-text: #111;
+        --vl-muted: #444;
+        --vl-primary: #005b80;
+        --vl-accent: #17603a;
+        --vl-warning: #755000;
+        padding: 0;
+      }
+
+      .vlab .vl-grid {
+        display: block;
+      }
+
+      .vlab .vl-actions,
+      .vlab .vl-button {
+        display: none;
+      }
+
+      .vlab .vl-card,
+      .vlab .vl-kpi {
+        break-inside: avoid;
+      }
+
+      .vlab .vl-kpis {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body style="margin: 0">
+  <main class="vlab" id="vanadiumLab">
+    <div class="vl-container">
+
+      <header class="vl-header">
+        <div>
+          <div class="vl-eyebrow">EngenhaLab / Engenharia de processo</div>
+          <h1>Balanço de produção de vanádio</h1>
+          <p class="vl-muted">
+            Modelo estequiométrico com conversão, recuperação,
+            impurezas e fechamento de massa.
+          </p>
+        </div>
+        <span class="vl-badge">Modelo V₂O₅ / Al · versão 1.0</span>
+      </header>
+
+      <div class="vl-grid">
+
+        <aside>
+          <section class="vl-card">
+            <h2>Base de cálculo</h2>
+
+            <form id="vlForm">
+              <div class="vl-field">
+                <label for="vlFeed">Carga comercial de V₂O₅ (kg)</label>
+                <input id="vlFeed" type="number"
+                  min="0.000001" step="any" value="1000" required>
+                <small>Massa total: pentóxido e impurezas.</small>
+              </div>
+
+              <div class="vl-field">
+                <label for="vlOxidePurity">Pureza de V₂O₅ (%)</label>
+                <input id="vlOxidePurity" type="number"
+                  min="0.000001" max="100" step="any"
+                  value="98" required>
+              </div>
+
+              <div class="vl-field">
+                <label for="vlConversion">Conversão pretendida (%)</label>
+                <input id="vlConversion" type="number"
+                  min="0" max="100" step="any" value="95" required>
+                <small>
+                  Fração do V₂O₅ puro que se pretende consumir.
+                  Limitada pela disponibilidade de alumínio.
+                </small>
+              </div>
+
+              <div class="vl-field">
+                <label for="vlRecovery">Recuperação do vanádio formado (%)</label>
+                <input id="vlRecovery" type="number"
+                  min="0" max="100" step="any" value="97" required>
+                <small>
+                  Parcela do vanádio formado que entra no produto recuperado.
+                </small>
+              </div>
+
+              <div class="vl-field">
+                <label for="vlAlPurity">Pureza do alumínio (%)</label>
+                <input id="vlAlPurity" type="number"
+                  min="0.000001" max="100" step="any"
+                  value="99.5" required>
+              </div>
+
+              <div class="vl-field">
+                <label for="vlMode">Modo de dosagem do alumínio</label>
+                <select id="vlMode">
+                  <option value="auto">Automático — estequiometria + excesso</option>
+                  <option value="manual">Manual — carga conhecida</option>
+                </select>
+              </div>
+
+              <div class="vl-field" id="vlExcessField">
+                <label for="vlExcess">Excesso de alumínio (%)</label>
+                <input id="vlExcess" type="number"
+                  min="0" step="any" value="10" required>
+                <small>
+                  Calculado sobre a redução completa de todo o V₂O₅ puro,
+                  não sobre a conversão pretendida.
+                </small>
+              </div>
+
+              <div class="vl-field" id="vlManualField" hidden>
+                <label for="vlAlMass">Carga comercial de alumínio (kg)</label>
+                <input id="vlAlMass" type="number"
+                  min="0" step="any" value="500" disabled>
+              </div>
+
+              <div id="vlError" class="vl-error"
+                role="alert" hidden></div>
+
+              <div class="vl-actions">
+                <button class="vl-button vl-button-primary" type="submit">
+                  Calcular balanço
+                </button>
+                <button class="vl-button" type="button" id="vlReset">
+                  Restaurar exemplo
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <section class="vl-card vl-method">
+            <h2>Fronteira do modelo</h2>
+            <p>
+              Entrada de matérias-primas, reação idealizada e separação
+              do vanádio formado.
+            </p>
+            <ul>
+              <li>Impurezas consideradas inertes.</li>
+              <li>Sem umidade, volatilização ou emissão gasosa.</li>
+              <li>Sem óxidos intermediários ou reações secundárias.</li>
+              <li>Sem previsão de temperatura ou balanço energético.</li>
+              <li>Sem estimativa da pureza real do produto metálico.</li>
+            </ul>
+            <p>
+              O vanádio não recuperado permanece contabilizado em uma
+              corrente separada; não desaparece do balanço.
+            </p>
+          </section>
+        </aside>
+
+        <section aria-label="Resultados do cálculo">
+          <section class="vl-card">
+            <h2>Reação global e oxirredução</h2>
+
+            <div class="vl-equation">
+              <math xmlns="http://www.w3.org/1998/Math/MathML"
+                display="block"
+                aria-label="Três V dois O cinco mais dez alumínios produzem seis vanádios e cinco Al dois O três">
+                <mrow>
+                  <mn>3</mn>
+                  <msub><mi>V</mi><mn>2</mn></msub>
+                  <msub><mi>O</mi><mn>5</mn></msub>
+                  <mo>+</mo><mn>10</mn><mi>Al</mi>
+                  <mo>→</mo><mn>6</mn><mi>V</mi>
+                  <mo>+</mo><mn>5</mn>
+                  <msub><mi>Al</mi><mn>2</mn></msub>
+                  <msub><mi>O</mi><mn>3</mn></msub>
+                </mrow>
+              </math>
+            </div>
+
+            <p class="vl-muted" style="margin-top: 14px; font-size: .84rem">
+              O vanádio é reduzido do estado de oxidação +5 para 0.
+              O alumínio é oxidado de 0 para +3.
+              A alumina é o coproduto estequiométrico.
+            </p>
+
+            <div class="vl-notice">
+              Simulação de engenharia: não fornece condições de ignição,
+              operação, contenção ou segurança de uma reação aluminotérmica.
+            </div>
+          </section>
+
+          <div id="vlResults" hidden>
+            <div class="vl-kpis" aria-live="polite">
+              <div class="vl-kpi">
+                <span>Vanádio recuperado</span>
+                <strong id="vlKpiProduct"></strong>
+                <small>Massa de V contida no produto</small>
+              </div>
+              <div class="vl-kpi">
+                <span>Alumínio comercial</span>
+                <strong id="vlKpiAl"></strong>
+                <small>Carga de redutor</small>
+              </div>
+              <div class="vl-kpi">
+                <span>Alumina formada</span>
+                <strong id="vlKpiAlumina"></strong>
+                <small>Somente Al₂O₃ de reação</small>
+              </div>
+              <div class="vl-kpi">
+                <span>Coeficiente global da cadeia</span>
+                <strong id="vlKpiChain"></strong>
+                <small>kg V recuperado / kg carga de óxido</small>
+              </div>
+            </div>
+
+            <section class="vl-card">
+              <div class="vl-header" style="margin-bottom: 12px">
+                <h2>Balanço de massa</h2>
+                <div class="vl-actions">
+                  <button class="vl-button" id="vlCsv" type="button">
+                    Exportar CSV
+                  </button>
+                  <button class="vl-button" id="vlJson" type="button">
+                    Exportar JSON
+                  </button>
+                  <button class="vl-button" id="vlPrint" type="button">
+                    Imprimir
+                  </button>
+                </div>
+              </div>
+
+              <div class="vl-table-wrap">
+                <table>
+                  <caption>
+                    Base mássica em quilogramas. Componentes contabilizados
+                    individualmente, não correntes físicas já separadas.
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Fronteira</th>
+                      <th>Componente</th>
+                      <th>Massa (kg)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vlBalance"></tbody>
+                </table>
+              </div>
+
+              <div class="vl-checks">
+                <div class="vl-check">
+                  Conversão efetiva
+                  <strong id="vlActualConversion"></strong>
+                </div>
+                <div class="vl-check">
+                  Limitação estequiométrica da carga
+                  <strong id="vlLimiting"></strong>
+                </div>
+                <div class="vl-check">
+                  Diferença entrada − saída
+                  <strong id="vlClosure"></strong>
+                </div>
+                <div class="vl-check">
+                  Rendimento sobre o V teórico
+                  <strong id="vlOverallYield"></strong>
+                </div>
+              </div>
+
+              <div class="vl-notice" id="vlLimitWarning" hidden>
+                A carga de alumínio não permite atingir a conversão
+                pretendida. O balanço utiliza a conversão máxima
+                estequiometricamente possível.
+              </div>
+            </section>
+
+            <section class="vl-card">
+              <h2>Distribuição mássica das saídas</h2>
+              <p class="vl-muted" style="font-size: .8rem">
+                Percentuais relativos à massa total alimentada.
+              </p>
+              <div id="vlBars"></div>
+            </section>
+
+            <section class="vl-card">
+              <h2>Coeficientes e indicadores</h2>
+              <div class="vl-table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Indicador</th>
+                      <th>Valor</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vlCoefficients"></tbody>
+                </table>
+              </div>
+              <p class="vl-muted" style="font-size: .78rem; margin-top: 14px">
+                “Coeficiente global da cadeia” é definido neste módulo
+                como a massa de V recuperado dividida pela massa comercial
+                de alimentação de V₂O₅. Não é uma constante universal do processo.
+              </p>
+            </section>
+
+            <section class="vl-card">
+              <h2>Auditoria por elemento</h2>
+              <div class="vl-table-wrap">
+                <table>
+                  <caption>
+                    Verificação independente das massas de V, Al e O.
+                    A composição das impurezas não é especificada.
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th>Elemento</th>
+                      <th>Entrada (kg)</th>
+                      <th>Saída (kg)</th>
+                      <th>Diferença (kg)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="vlElements"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+      </div>
+
+      <footer class="vl-muted" style="font-size: .75rem; padding: 12px 0">
+        EngenhaLab · Modelo estequiométrico idealizado ·
+        Validar com análises químicas, dados de processo e responsável técnico.
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const root = document.getElementById("vanadiumLab");
+      const $ = id => root.querySelector("#" + id);
+
+      /*
+        Massas atômicas em kg/kmol, numericamente iguais a g/mol.
+        As massas molares são derivadas destas constantes para
+        preservar a consistência do balanço.
+      */
+      const ATOMIC = Object.freeze({
+        V: 50.9415,
+        O: 15.999,
+        Al: 26.9815385
+      });
+
+      const MOLAR = Object.freeze({
+        V2O5: 2 * ATOMIC.V + 5 * ATOMIC.O,
+        Al2O3: 2 * ATOMIC.Al + 3 * ATOMIC.O
+      });
+
+      const STOICH = Object.freeze({
+        alPerOxide: (10 / 3) * ATOMIC.Al / MOLAR.V2O5,
+        vPerOxide: 2 * ATOMIC.V / MOLAR.V2O5,
+        aluminaPerOxide: (5 / 3) * MOLAR.Al2O3 / MOLAR.V2O5
+      });
+
+      const nf = new Intl.NumberFormat("pt-BR", {
+        minimumFractionDigits: 3,
+        maximumFractionDigits: 3
+      });
+
+      const cf = new Intl.NumberFormat("pt-BR", {
+        minimumFractionDigits: 6,
+        maximumFractionDigits: 6
+      });
+
+      let lastResult = null;
+
+      function mass(value) {
+        return nf.format(value) + " kg";
+      }
+
+      function percent(value) {
+        return nf.format(value * 100) + " %";
+      }
+
+      function readNumber(id, label, min, max = Infinity) {
+        const input = $(id);
+        const value = input.valueAsNumber;
+
+        if (!Number.isFinite(value) || value < min || value > max) {
+          throw new Error("Confira o campo: " + label + ".");
+        }
+
+        return value;
+      }
+
+      function readInputs() {
+        const mode = $("vlMode").value;
+
+        return {
+          feed: readNumber("vlFeed", "carga de V₂O₅", 0.000001),
+          oxidePurity: readNumber(
+            "vlOxidePurity", "pureza de V₂O₅", 0.000001, 100
+          ) / 100,
+          targetConversion: readNumber(
+            "vlConversion", "conversão pretendida", 0, 100
+          ) / 100,
+          recovery: readNumber(
+            "vlRecovery", "recuperação de vanádio", 0, 100
+          ) / 100,
+          alPurity: readNumber(
+            "vlAlPurity", "pureza do alumínio", 0.000001, 100
+          ) / 100,
+          mode,
+          excess: mode === "auto"
+            ? readNumber("vlExcess", "excesso de alumínio", 0) / 100
+            : 0,
+          manualAl: mode === "manual"
+            ? readNumber("vlAlMass", "carga de alumínio", 0)
+            : 0
+        };
+      }
+
+      /*
+        Núcleo independente da interface.
+        Base da reação: 1 kmol de V2O5 consumido.
+
+        V2O5 + (10/3) Al -> 2 V + (5/3) Al2O3
+
+        A extensão de reação é limitada por:
+        - conversão pretendida;
+        - quantidade de óxido;
+        - quantidade de Al puro.
+      */
+      function calculate(input) {
+        const oxidePure = input.feed * input.oxidePurity;
+        const oxideInerts = input.feed - oxidePure;
+        const oxideKmol = oxidePure / MOLAR.V2O5;
+
+        const alTheoretical = oxidePure * STOICH.alPerOxide;
+
+        const alCommercial = input.mode === "auto"
+          ? alTheoretical * (1 + input.excess) / input.alPurity
+          : input.manualAl;
+
+        const alPure = alCommercial * input.alPurity;
+        const alInerts = alCommercial - alPure;
+        const alKmol = alPure / ATOMIC.Al;
+
+        const extentFromAl = alKmol / (10 / 3);
+        const requestedExtent = oxideKmol * input.targetConversion;
+
+        const extent = Math.min(
+          requestedExtent,
+          oxideKmol,
+          extentFromAl
+        );
+
+        const oxideConsumed = extent * MOLAR.V2O5;
+        const alConsumed = extent * (10 / 3) * ATOMIC.Al;
+        const vFormed = extent * 2 * ATOMIC.V;
+        const alumina = extent * (5 / 3) * MOLAR.Al2O3;
+
+        const vRecovered = vFormed * input.recovery;
+        const vUnrecovered = vFormed - vRecovered;
+
+        const oxideResidual = Math.max(0, oxidePure - oxideConsumed);
+        const alResidual = Math.max(0, alPure - alConsumed);
+        const totalInerts = oxideInerts + alInerts;
+
+        const totalInput = input.feed + alCommercial;
+        const totalOutput =
+          vRecovered + vUnrecovered + alumina +
+          oxideResidual + alResidual + totalInerts;
+
+        const actualConversion = extent / oxideKmol;
+        const theoreticalV = oxidePure * STOICH.vPerOxide;
+
+        const ratioAl = alPure / alTheoretical;
+        const limitingTolerance = 1e-10;
+
+        let limiting;
+        if (Math.abs(ratioAl - 1) <= limitingTolerance) {
+          limiting = "Carga estequiométrica";
+        } else {
+          limiting = ratioAl < 1 ? "Alumínio" : "V₂O₅";
+        }
+
+        const oxygenIn = oxideKmol * 5 * ATOMIC.O;
+        const oxygenOut =
+          oxideResidual / MOLAR.V2O5 * 5 * ATOMIC.O +
+          alumina / MOLAR.Al2O3 * 3 * ATOMIC.O;
+
+        const vanadiumOut =
+          vFormed +
+          oxideResidual / MOLAR.V2O5 * 2 * ATOMIC.V;
+
+        const aluminumOut =
+          alResidual +
+          alumina / MOLAR.Al2O3 * 2 * ATOMIC.Al;
+
+        const result = {
+          model: "V2O5-Al",
+          version: "1.0",
+          timestamp: new Date().toISOString(),
+          input,
+          constants: { atomic: ATOMIC, molar: MOLAR, stoich: STOICH },
+          oxidePure,
+          oxideInerts,
+          oxideKmol,
+          alTheoretical,
+          alCommercial,
+          alPure,
+          alInerts,
+          extent,
+          oxideConsumed,
+          alConsumed,
+          vFormed,
+          vRecovered,
+          vUnrecovered,
+          alumina,
+          oxideResidual,
+          alResidual,
+          totalInerts,
+          totalInput,
+          totalOutput,
+          closure: totalInput - totalOutput,
+          actualConversion,
+          theoreticalV,
+          chainCoefficient: vRecovered / input.feed,
+          overallYield: vRecovered / theoreticalV,
+          specificAl: vRecovered > 0 ? alCommercial / vRecovered : null,
+          specificFeed: vRecovered > 0 ? input.feed / vRecovered : null,
+          alChargeRatio: ratioAl,
+          alLimited: requestedExtent - extent >
+            1e-10 * Math.max(1, oxideKmol),
+          limiting,
+          electronTransferKmol: extent * 10,
+          elements: [
+            { name: "V", input: theoreticalV, output: vanadiumOut },
+            { name: "Al", input: alPure, output: aluminumOut },
+            { name: "O", input: oxygenIn, output: oxygenOut }
+          ]
+        };
+
+        const finiteResults = [
+          totalInput, totalOutput, extent, vRecovered,
+          alumina, result.chainCoefficient, result.closure
+        ];
+
+        if (!finiteResults.every(Number.isFinite)) {
+          throw new Error(
+            "Valores fora da faixa numérica. Reduza a escala das entradas."
+          );
+        }
+
+        const closureTolerance = Math.max(1e-8, totalInput * 1e-10);
+
+        if (Math.abs(result.closure) > closureTolerance) {
+          throw new Error(
+            "O balanço não fechou dentro da tolerância numérica."
+          );
+        }
+
+        return result;
+      }
+
+      function balanceRows(r) {
+        return [
+          ["Entrada", "V₂O₅ puro", r.oxidePure],
+          ["Entrada", "Impurezas da carga de óxido", r.oxideInerts],
+          ["Entrada", "Al puro", r.alPure],
+          ["Entrada", "Impurezas da carga de alumínio", r.alInerts],
+          ["Total", "Massa total de entrada", r.totalInput],
+          ["Saída", "Vanádio recuperado", r.vRecovered],
+          ["Saída", "Vanádio formado não recuperado", r.vUnrecovered],
+          ["Saída", "Al₂O₃ formada", r.alumina],
+          ["Saída", "V₂O₅ não convertido", r.oxideResidual],
+          ["Saída", "Al residual", r.alResidual],
+          ["Saída", "Impurezas inertes totais", r.totalInerts],
+          ["Total", "Massa total de saída", r.totalOutput]
+        ];
+      }
+
+      /*
+        Montagem de tabelas com textContent:
+        nenhum conteúdo de entrada é interpretado como HTML.
+      */
+      function tableRow(values, className = "") {
+        const tr = document.createElement("tr");
+        if (className) tr.className = className;
+
+        values.forEach(value => {
+          const td = document.createElement("td");
+          td.textContent = value;
+          tr.appendChild(td);
+        });
+
+        return tr;
+      }
+
+      function render(r) {
+        $("vlKpiProduct").textContent = mass(r.vRecovered);
+        $("vlKpiAl").textContent = mass(r.alCommercial);
+        $("vlKpiAlumina").textContent = mass(r.alumina);
+        $("vlKpiChain").textContent =
+          cf.format(r.chainCoefficient) + " kg/kg";
+
+        $("vlActualConversion").textContent = percent(r.actualConversion);
+        $("vlLimiting").textContent = r.limiting;
+        $("vlOverallYield").textContent = percent(r.overallYield);
+
+        const displayClosure =
+          Math.abs(r.closure) < 1e-9 ? 0 : r.closure;
+
+        $("vlClosure").textContent =
+          displayClosure.toExponential(3) + " kg · balanço fechado";
+
+        $("vlLimitWarning").hidden = !r.alLimited;
+
+        const balance = $("vlBalance");
+        balance.replaceChildren();
+
+        balanceRows(r).forEach(([side, name, value]) => {
+          balance.appendChild(tableRow(
+            [side, name, nf.format(value)],
+            side === "Total" ? "vl-total" : ""
+          ));
+        });
+
+        const coefficients = [
+          ["Massa molar de V₂O₅", cf.format(MOLAR.V2O5) + " kg/kmol"],
+          ["Massa molar de Al₂O₃", cf.format(MOLAR.Al2O3) + " kg/kmol"],
+          ["Coeficiente estequiométrico de V₂O₅", "3"],
+          ["Coeficiente estequiométrico de Al", "10"],
+          ["Coeficiente estequiométrico de V", "6"],
+          ["Coeficiente estequiométrico de Al₂O₃", "5"],
+          ["Al puro / V₂O₅ puro — teórico",
+            cf.format(STOICH.alPerOxide) + " kg/kg"],
+          ["V formado / V₂O₅ consumido — teórico",
+            cf.format(STOICH.vPerOxide) + " kg/kg"],
+          ["Al₂O₃ / V₂O₅ consumido — teórico",
+            cf.format(STOICH.aluminaPerOxide) + " kg/kg"],
+          ["Extensão da reação — base de V₂O₅",
+            cf.format(r.extent) + " kmol"],
+          ["Transferência de elétrons — contabilidade redox",
+            cf.format(r.electronTransferKmol) + " kmol de elétrons"],
+          ["V teórico na carga de óxido", mass(r.theoreticalV)],
+          ["V formado antes da recuperação", mass(r.vFormed)],
+          ["Al consumido na reação", mass(r.alConsumed)],
+          ["Al carregado / Al estequiométrico",
+            cf.format(r.alChargeRatio)],
+          ["Coeficiente global da cadeia",
+            cf.format(r.chainCoefficient) + " kg V/kg carga"],
+          ["Consumo específico de carga de óxido",
+            r.specificFeed === null
+              ? "Não definido: produto zero"
+              : cf.format(r.specificFeed) + " kg/kg V recuperado"],
+          ["Carga específica de alumínio comercial",
+            r.specificAl === null
+              ? "Não definido: produto zero"
+              : cf.format(r.specificAl) + " kg/kg V recuperado"]
+        ];
+
+        const coefficientBody = $("vlCoefficients");
+        coefficientBody.replaceChildren();
+
+        coefficients.forEach(row => {
+          coefficientBody.appendChild(tableRow(row));
+        });
+
+        const elementBody = $("vlElements");
+        elementBody.replaceChildren();
+
+        r.elements.forEach(element => {
+          const difference = element.input - element.output;
+          elementBody.appendChild(tableRow([
+            element.name,
+            nf.format(element.input),
+            nf.format(element.output),
+            (Math.abs(difference) < 1e-9 ? 0 : difference)
+              .toExponential(3)
+          ]));
+        });
+
+        renderBars(r);
+        $("vlResults").hidden = false;
+      }
+
+      function renderBars(r) {
+        const bars = $("vlBars");
+        bars.replaceChildren();
+
+        const components = [
+          ["V recuperado", r.vRecovered, "#65d6ff"],
+          ["V não recuperado", r.vUnrecovered, "#93c5fd"],
+          ["Al₂O₃ formada", r.alumina, "#86efac"],
+          ["V₂O₅ residual", r.oxideResidual, "#facc75"],
+          ["Al residual", r.alResidual, "#c4b5fd"],
+          ["Impurezas inertes", r.totalInerts, "#94a3b8"]
+        ];
+
+        components.forEach(([name, value, color]) => {
+          const share = value / r.totalInput;
+          const row = document.createElement("div");
+          row.className = "vl-bar-row";
+
+          const label = document.createElement("div");
+          label.className = "vl-bar-label";
+
+          const title = document.createElement("span");
+          title.textContent = name;
+
+          const amount = document.createElement("span");
+          amount.textContent = mass(value) + " · " + percent(share);
+
+          label.append(title, amount);
+
+          const track = document.createElement("div");
+          track.className = "vl-bar-track";
+          track.setAttribute("aria-hidden", "true");
+
+          const fill = document.createElement("div");
+          fill.className = "vl-bar-fill";
+          fill.style.width = Math.max(0, Math.min(100, share * 100)) + "%";
+          fill.style.backgroundColor = color;
+
+          track.appendChild(fill);
+          row.append(label, track);
+          bars.appendChild(row);
+        });
+      }
+
+      function synchronizeMode() {
+        const auto = $("vlMode").value === "auto";
+
+        $("vlExcessField").hidden = !auto;
+        $("vlManualField").hidden = auto;
+
+        $("vlExcess").disabled = !auto;
+        $("vlExcess").required = auto;
+
+        $("vlAlMass").disabled = auto;
+        $("vlAlMass").required = !auto;
+      }
+
+      function invalidate() {
+        lastResult = null;
+        $("vlResults").hidden = true;
+        $("vlError").hidden = true;
+      }
+
+      function run() {
+        $("vlError").hidden = true;
+
+        try {
+          const result = calculate(readInputs());
+          lastResult = result;
+          render(result);
+        } catch (error) {
+          lastResult = null;
+          $("vlResults").hidden = true;
+          $("vlError").textContent = error.message;
+          $("vlError").hidden = false;
+        }
+      }
+
+      function download(filename, text, mimeType) {
+        const blob = new Blob([text], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function csvCell(value) {
+        return '"' + String(value).replaceAll('"', '""') + '"';
+      }
+
+      function exportCsv() {
+        if (!lastResult) return;
+        const r = lastResult;
+
+        const rows = [
+          ["EngenhaLab — balanço de vanádio"],
+          ["Modelo", r.model],
+          ["Versão", r.version],
+          ["Data UTC", r.timestamp],
+          [],
+          ["Entradas do cálculo", "Valor", "Unidade"],
+          ["Carga comercial de óxido", r.input.feed, "kg"],
+          ["Pureza do óxido", r.input.oxidePurity * 100, "%"],
+          ["Conversão pretendida", r.input.targetConversion * 100, "%"],
+          ["Recuperação", r.input.recovery * 100, "%"],
+          ["Pureza do alumínio", r.input.alPurity * 100, "%"],
+          ["Modo de dosagem", r.input.mode, ""],
+          ["Excesso programado", r.input.excess * 100, "%"],
+          ["Carga comercial de alumínio", r.alCommercial, "kg"],
+          [],
+          ["Fronteira", "Componente", "Massa (kg)"],
+          ...balanceRows(r),
+          [],
+          ["Indicador", "Valor", "Unidade"],
+          ["Conversão efetiva", r.actualConversion * 100, "%"],
+          ["Rendimento global", r.overallYield * 100, "%"],
+          ["Coeficiente global da cadeia", r.chainCoefficient, "kg/kg"],
+          ["Extensão da reação", r.extent, "kmol de V2O5"],
+          ["Diferença de massa", r.closure, "kg"],
+          [],
+          ["Elemento", "Entrada (kg)", "Saída (kg)", "Diferença (kg)"],
+          ...r.elements.map(e => [
+            e.name, e.input, e.output, e.input - e.output
+          ])
+        ];
+
+        // Separador compatível com uso comum do Excel no Brasil.
+        // Números exportados sem arredondamento deliberado do cálculo.
+        const csv = rows.map(row =>
+          row.map(value =>
+            csvCell(
+              typeof value === "number"
+                ? String(value).replace(".", ",")
+                : value
+            )
+          ).join(";")
+        ).join("\r\n");
+
+        download(
+          "engenhalab-balanco-vanadio.csv",
+          "\uFEFF" + csv,
+          "text/csv;charset=utf-8"
+        );
+      }
+
+      $("vlForm").addEventListener("submit", event => {
+        event.preventDefault();
+        run();
+      });
+
+      $("vlForm").addEventListener("input", invalidate);
+
+      $("vlMode").addEventListener("change", () => {
+        synchronizeMode();
+        invalidate();
+      });
+
+      $("vlReset").addEventListener("click", () => {
+        $("vlForm").reset();
+        synchronizeMode();
+        run();
+      });
+
+      $("vlCsv").addEventListener("click", exportCsv);
+
+      $("vlJson").addEventListener("click", () => {
+        if (!lastResult) return;
+
+        download(
+          "engenhalab-balanco-vanadio.json",
+          JSON.stringify(lastResult, null, 2),
+          "application/json;charset=utf-8"
+        );
+      });
+
+      $("vlPrint").addEventListener("click", () => {
+        if (lastResult) window.print();
+      });
+
+      synchronizeMode();
+      run();
+    })();
+  </script>
+</body>
+</html>

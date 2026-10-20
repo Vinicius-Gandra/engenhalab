@@ -1,0 +1,39 @@
+/* Relatório técnico (impressão A4) */
+.cv-report{display:none}
+@media print{
+  @page{size:A4;margin:0}
+  body.rp-printing>*:not(.cv-report){display:none!important}
+  body.rp-printing{background:#fff!important}
+  body.rp-printing .cv-report{display:block}
+}
+.cv-report{color-scheme:light;--bg:#f5f5ef;--bg2:#ecefe8;--panel:#fff;--panel2:#f7f8f4;--line:#d6dfdc;--line2:#b8c7c4;--text:#14232c;--muted:#4b5f6c;--soft:#586c79;--orange:#b45a22;--teal:#0f6f6a;--blue:#5866cf;--sea1:#cfe4e6;--sea2:#b4d3d6;--soil:#e7e1d6;--sediment:#b59a7d;--steel:#9fb6bd;color:var(--text);font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.rp-page{position:relative;box-sizing:border-box;width:210mm;height:297mm;padding:16mm 16mm 18mm;background:#fff;page-break-after:always;break-after:page;overflow:hidden}
+.rp-page:last-child{page-break-after:auto;break-after:auto}
+.rp-head{display:flex;justify-content:space-between;gap:10px;padding-bottom:8px;margin-bottom:12mm;border-bottom:1.5px solid var(--text);font:600 8pt "JetBrains Mono",monospace;color:var(--muted)}
+.rp-head b{color:var(--orange)}
+.rp-foot{position:absolute;left:16mm;right:16mm;bottom:9mm;display:flex;justify-content:space-between;padding-top:6px;border-top:1px solid var(--line);font:500 7.5pt "JetBrains Mono",monospace;color:var(--soft)}
+.rp-eyebrow{display:block;margin-bottom:6px;color:var(--orange);font:700 8pt "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase}
+.rp-title h1{margin:0 0 6px;font-size:24pt;letter-spacing:-.04em;line-height:1.05}
+.rp-title p{margin:0 0 8mm;max-width:150mm;color:var(--muted);font-size:9.5pt;line-height:1.55}
+.rp-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-bottom:8mm;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.rp-kpi{padding:9px 12px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.rp-kpi:nth-child(3n){border-right:0}.rp-kpi:nth-child(n+4){border-bottom:0}
+.rp-kpi span{display:block;color:var(--soft);font-size:7.5pt;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.rp-kpi strong{display:block;margin:3px 0 1px;font:700 15pt "JetBrains Mono",monospace;letter-spacing:-.03em}
+.rp-kpi small{color:var(--muted);font-size:7.5pt}
+.cv-report figure{margin:0 0 6mm}
+.rp-figbox{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.rp-figbox svg{display:block;width:100%;height:auto}
+.rp-figbox #cv-cursor{display:none}
+.cv-report figcaption{margin-top:5px;color:var(--muted);font-size:8pt}
+.cv-report h2{display:flex;align-items:center;gap:8px;margin:0 0 4mm;font-size:13pt;letter-spacing:-.02em}
+.cv-report h2 span{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--orange);color:#fff;font:700 8pt "JetBrains Mono",monospace}
+.rp-t{width:100%;margin-bottom:7mm;border-collapse:collapse;font-size:8.5pt}
+.rp-t th{padding:5px 8px;border-bottom:1.5px solid var(--text);text-align:left;font:700 7.5pt "JetBrains Mono",monospace;color:var(--muted);text-transform:uppercase}
+.rp-t td{padding:4.5px 8px;border-bottom:1px solid var(--line)}
+.rp-t .n{text-align:right;font-family:"JetBrains Mono",monospace;white-space:nowrap}
+.rp-t tr.rp-grp td{padding-top:8px;background:var(--panel2);font-weight:700;color:var(--orange);font-size:8pt}
+.rp-small{font-size:7.5pt}.rp-small td{padding:3px 8px}
+.rp-sw{display:inline-block;width:10px;height:3px;margin-right:6px;vertical-align:middle;border-radius:2px;background:var(--teal)}
+.rp-sw.poliester{background:var(--blue)}.rp-sw.enterrada{background:var(--orange)}
+.rp-note{margin:-4mm 0 6mm;color:var(--soft);font-size:7.5pt}

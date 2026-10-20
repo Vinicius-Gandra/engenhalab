@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#09131f"><meta name="color-scheme" content="dark light">
+  <meta name="description" content="Laboratório offshore, etapa 03: capacidade axial da estaca torpedo em argila.">
+  <title>Laboratório offshore · Capacidade axial | Vinicius Gandra</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2309131f'/%3E%3Cpath d='M8 50h48' stroke='%238195a2' stroke-width='3'/%3E%3Cpath d='M32 6v44' stroke='%23f5ad69' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M32 26l-12 8v8l12 8M32 26l12 8v8l-12 8' fill='none' stroke='%2389d6d2' stroke-width='3'/%3E%3C/svg%3E">
+  <script>try { var t = localStorage.getItem('vg-theme'); if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/capacidade-axial.css">
+</head>
+<body>
+  <a class="skip" href="#results">Pular para resultados</a>
+  <header class="s-appbar">
+    <a class="s-brand" href="../index.html" aria-label="EngenhaLab — todos os laboratórios">VG<b>.</b></a>
+    <a class="s-back" href="../index.html" title="Voltar a todos os laboratórios"><span aria-hidden="true">←</span><span class="s-back-label">Laboratórios</span></a>
+    <span class="s-header-divider" aria-hidden="true"></span>
+    <div class="s-appbar-title"><span class="overline">Laboratório offshore</span><strong>Estacas · capacidade axial</strong></div>
+    <div class="s-actions" aria-label="Ações">
+      <button type="button" class="s-act" id="export-csv" title="Baixar perfil em CSV"><span aria-hidden="true">⤓</span><span class="s-act-label">CSV</span></button>
+      <button type="button" class="s-act" id="export-svg" title="Baixar o gráfico em SVG"><span aria-hidden="true">◫</span><span class="s-act-label">SVG</span></button>
+      <button type="button" class="s-act s-act-primary" id="print-page" title="Imprimir ou salvar em PDF"><span aria-hidden="true">▣</span><span class="s-act-label">PDF</span></button>
+      <button type="button" class="s-act s-act-icon" id="theme-toggle" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
+    </div>
+  </header>
+
+  <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html" aria-current="page"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html"><span class="s-area-number">05</span> Torpedo 3D</a></nav>
+  <div class="workspace" id="workspace" data-view="resultados">
+    <aside class="inputs" aria-labelledby="inputs-title"><div class="inputs-head"><div><p class="eyebrow">01 / PARÂMETROS</p><h2 id="inputs-title">Dados da estaca</h2><p>Geometria, solo e ações para comparação.</p></div><span class="state" id="input-state">EXEMPLO</span></div><div class="input-error" id="input-error" role="alert" hidden></div>
+      <form id="case-form" novalidate>
+        <details class="input-group" open><summary><b>01</b><span>Geometria<small>Corpo e aletas</small></span></summary><div class="fields">
+          <label>Início enterrado <small>z [m]</small><input name="headDepth" inputmode="decimal" value="20"></label><label>Diâmetro externo <small>D [m]</small><input name="diameter" inputmode="decimal" value="1,219"></label>
+          <label>Diâmetro interno <small>Di [m] · 0 = ponta cheia</small><input name="innerDiameter" inputmode="decimal" value="0"></label><label>Número de aletas <small>inteiro</small><input name="fins" inputmode="numeric" value="4"></label>
+        </div></details>
+        <details class="input-group" open><summary><b>02</b><span>Solo argiloso<small>Su(z) e aderência</small></span></summary><div class="fields">
+          <label>Su na superfície <small>Su₀ [kPa]</small><input name="su0" inputmode="decimal" value="4"></label><label>Gradiente de Su <small>k [kPa/m]</small><input name="suGradient" inputmode="decimal" value="1,5"></label>
+          <label>Peso específico submerso <small>γ′ [kN/m³]</small><input name="gammaSoil" inputmode="decimal" value="6"></label><label>Fator de ponta <small>Nc</small><input name="nc" inputmode="decimal" value="9"></label>
+          <label class="wide">Aderência α <small>ao longo da profundidade</small><select name="alphaMode"><option value="auto">Automática</option><option value="fixed">Fixa</option></select></label><label>α fixo <small>usado se modo fixo</small><input name="alphaFixed" inputmode="decimal" value="0,8"></label><label>Fator de segurança <small>FS · hipótese de projeto</small><input name="factor" inputmode="decimal" value="2,5"></label>
+        </div></details>
+        <details class="input-group" open><summary><b>03</b><span>Trechos e aletas<small>Largura inicial → final</small></span></summary><div class="segment-inputs" id="segment-inputs"></div><div class="segment-tools"><button type="button" id="add-segment">+ Adicionar trecho</button><small>Largura das aletas no início e no fim de cada trecho.</small></div></details>
+        <details class="input-group"><summary><b>04</b><span>Peso e solicitações<small>Capacidade × carga</small></span></summary><div class="fields">
+          <label>ρ aço <small>kg/m³</small><input name="steelDensity" inputmode="decimal" value="7850"></label><label>ρ fluido <small>kg/m³</small><input name="fluidDensity" inputmode="decimal" value="1000"></label>
+          <label class="wide">Volume submerso da estaca <small>m³</small><input name="submergedVolume" inputmode="decimal" value="16,5"></label>
+          <label>Carga de compressão <small>kN</small><input name="compressionLoad" inputmode="decimal" value="2200"></label><label>Carga de tração <small>kN</small><input name="tensionLoad" inputmode="decimal" value="1400"></label>
+        </div></details>
+      </form><div class="input-foot"><button type="button" class="calculate" id="calculate">Calcular e atualizar <span>↗</span></button><button type="button" class="reset" id="reset">Restaurar exemplo</button><p>Vírgula ou ponto decimal. O caso fica salvo neste aparelho.</p></div>
+    </aside>
+    <main class="results" id="results"><section class="hero"><div class="hero-copy"><p class="eyebrow"><span class="live-dot"></span> CAPACIDADE AXIAL · SOLO ARGILOSO</p><h1>Capacidade axial da estaca</h1><p>Capacidade axial de estaca com aletas em argila: aderência ao longo da profundidade e contribuições de fuste, ponta e peso submerso.</p><div class="hero-tags"><span>● Geometria por trechos</span><span>● α por profundidade</span><span>● Compressão e tração</span></div></div><svg class="hero-art" viewBox="0 0 420 245" aria-hidden="true"><path d="M25 34H395M25 75H395M25 116H395M25 157H395M25 198H395" stroke="var(--line2)" stroke-dasharray="4 8"/><path d="M166 5V238M240 5V238" stroke="var(--teal)" stroke-width="10"/><path d="M166 84l-50 31v61l50 32M240 84l50 31v61l-50 32" fill="none" stroke="var(--orange)" stroke-width="8" stroke-linejoin="round"/><path d="M203 7v-41" stroke="var(--orange)" stroke-width="5"/><path d="M193 8l10 17 10-17" fill="none" stroke="var(--orange)" stroke-width="4"/></svg></section>
+      <div class="result-error" id="result-error" role="alert" hidden></div><div id="result-content">
+        <section class="kpis" aria-label="Resultados principais"><article class="kpi"><span>Resistência lateral</span><strong id="k-skin">—</strong><small>Q<sub>s</sub> · fuste + aletas</small></article><article class="kpi"><span>Resistência de ponta</span><strong id="k-tip">—</strong><small>Q<sub>p</sub> · na profundidade final</small></article><article class="kpi"><span>Peso submerso</span><strong id="k-weight">—</strong><small>W′ · na água</small></article><article class="kpi teal"><span>Compressão admissível</span><strong id="k-comp">—</strong><small>com o fator de segurança</small></article><article class="kpi blue"><span>Tração admissível</span><strong id="k-tens">—</strong><small>com o fator de segurança</small></article></section>
+        <section class="card chart-card"><div class="card-head"><div><p class="eyebrow">02 / PERFIL VERTICAL</p><h2>Resistência ao longo da estaca</h2><p>Curvas de Su, α, perímetro e resistência lateral acumulada.</p></div><div class="view-tabs" role="group" aria-label="Variável do gráfico"><button type="button" data-chart="cumulative" class="active" aria-pressed="true">Acumulada</button><button type="button" data-chart="su" aria-pressed="false">Su</button><button type="button" data-chart="alpha" aria-pressed="false">α</button><button type="button" data-chart="perimeter" aria-pressed="false">Perímetro</button></div></div><div class="chart-wrap" id="chart-wrap"><div id="chart-svg"></div><div class="chart-tip" id="chart-tip" hidden></div></div><div class="chart-foot"><span>HORIZONTAL · GRANDEZA SELECIONADA</span><span>VERTICAL · PROFUNDIDADE ABAIXO DO LEITO [m]</span></div></section>
+        <section class="detail-grid"><article class="card balance-card"><div class="card-head"><div><p class="eyebrow">03 / CAPACIDADE</p><h2>Composição da capacidade</h2></div></div><div class="balance-list" id="balance-list"></div><div class="capacity-stack" id="capacity-stack"></div></article><article class="card segment-card"><div class="card-head"><div><p class="eyebrow">04 / SOLICITAÇÕES</p><h2>Comparação com as cargas</h2></div></div><div id="load-checks" class="load-checks"></div><div class="segment-note">A comparação usa o fator de segurança informado. Cargas e critérios precisam corresponder ao caso de projeto.</div></article></section>
+        <section class="card data-card"><div class="card-head"><div><p class="eyebrow">05 / CONTRIBUIÇÕES</p><h2>Trecho por trecho</h2></div><button type="button" class="text-button" id="export-csv-bottom">Baixar perfil CSV ↗</button></div><div class="table-wrap"><table><thead><tr><th>Trecho</th><th>z inicial [m]</th><th>z final [m]</th><th>Comprimento [m]</th><th>Aleta inicial → final [m]</th><th>Resistência [kN]</th><th>Participação</th></tr></thead><tbody id="segment-rows"></tbody></table></div></section>
+        <section class="notes" hidden><div class="warning-list" id="warnings"></div></section>
+      </div><noscript><p class="result-error">Ative JavaScript para calcular.</p></noscript><footer>Laboratório offshore · etapa 03 · capacidade axial · <a href="../index.html">todos os laboratórios</a> · <a href="../sobre.html">sobre o autor</a></footer>
+    </main>
+  </div><nav class="mobilebar" aria-label="Alternar dados e resultados"><button type="button" data-panel="dados" aria-pressed="false">✎ Dados</button><button type="button" data-panel="resultados" aria-pressed="true">◫ Resultados</button></nav><script src="assets/js/config.js"></script>
+  <script src="assets/js/calc.js"></script>
+  <script src="assets/js/paginas/capacidade-axial.js"></script>
+  <script src="assets/js/fluxo.js"></script>
+  <script src="assets/js/tema-legado.js"></script>
+</body></html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09131f">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Laboratório offshore, etapa 02: perfil da linha de ancoragem, do trecho enterrado ao topo.">
+  <title>Laboratório offshore · Catenária | Vinicius Gandra</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2309131f'/%3E%3Cpath d='M8 50h48' stroke='%238195a2' stroke-width='3'/%3E%3Cpath d='M10 50C22 50 30 46 36 34S46 14 54 12' fill='none' stroke='%23f5ad69' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script>try { var t = localStorage.getItem('vg-theme'); if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/catenaria.css">
+  <link rel="stylesheet" href="assets/css/catenaria-visual.css">
+  <link rel="stylesheet" href="assets/css/catenaria-relatorio.css">
+</head>
+<body>
+  <a class="skip" href="#results">Pular para resultados</a>
+  <header class="s-appbar">
+    <a class="s-brand" href="../index.html" aria-label="EngenhaLab — todos os laboratórios">VG<b>.</b></a>
+    <a class="s-back" href="../index.html" title="Voltar a todos os laboratórios"><span aria-hidden="true">←</span><span class="s-back-label">Laboratórios</span></a>
+    <span class="s-header-divider" aria-hidden="true"></span>
+    <div class="s-appbar-title"><span class="overline">Laboratório offshore</span><strong>Catenária · do solo ao topo da linha</strong></div>
+    <div class="s-actions" aria-label="Ações">
+      <button type="button" class="s-act" id="export-csv" title="Baixar pontos em CSV"><span aria-hidden="true">⤓</span><span class="s-act-label">CSV</span></button>
+      <button type="button" class="s-act" id="export-svg" title="Baixar o gráfico em SVG"><span aria-hidden="true">◫</span><span class="s-act-label">SVG</span></button>
+      <button type="button" class="s-act s-act-primary" id="print-page" title="Imprimir ou salvar em PDF"><span aria-hidden="true">▣</span><span class="s-act-label">PDF</span></button>
+      <button type="button" class="s-act s-act-icon" id="theme-toggle" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
+    </div>
+  </header>
+
+  <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html" aria-current="page"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html"><span class="s-area-number">05</span> Torpedo 3D</a></nav>
+
+  <div class="workspace" id="workspace" data-view="resultados">
+    <aside class="inputs" aria-labelledby="inputs-title">
+      <div class="inputs-head">
+        <div><p class="eyebrow">01 / PARÂMETROS</p><h2 id="inputs-title">Dados do caso</h2><p>Edite as propriedades e acompanhe a solução.</p></div>
+        <span class="state" id="input-state">EXEMPLO</span>
+      </div>
+      <div class="input-error" id="input-error" role="alert" hidden></div>
+      <form id="case-form" novalidate>
+        <details class="input-group" open><summary><b>01</b><span>Solo e interação<small>Resistência e aderência</small></span></summary><div class="fields">
+          <label>Su<sub>0</sub> <small>kPa</small><input name="su0" inputmode="decimal" value="1,241"></label>
+          <label>Gradiente k <small>kPa/m</small><input name="gradient" inputmode="decimal" value="1,9938"></label>
+          <label>Se <small>sensibilidade</small><input name="se" inputmode="decimal" value="2,95"></label>
+          <label>Et <small>fator tangencial</small><input name="et" inputmode="decimal" value="10"></label>
+          <label>En <small>fator normal</small><input name="en" inputmode="decimal" value="2,5"></label>
+          <label>Nc <small>capacidade</small><input name="nc" inputmode="decimal" value="11"></label>
+        </div></details>
+        <details class="input-group" open><summary><b>02</b><span>Linha e TDP<small>Geometria e tração</small></span></summary><div class="fields">
+          <label>Diâmetro d <small>m</small><input name="diameter" inputmode="decimal" value="0,120"></label>
+          <label>Peso submerso w <small>kN/m</small><input name="wChain" inputmode="decimal" value="2,471"></label>
+          <label>Profundidade D <small>m</small><input name="depth" inputmode="decimal" value="17,1"></label>
+          <label>Ângulo no TDP <small>graus</small><input name="theta0Deg" inputmode="decimal" value="33"></label>
+          <label class="wide">Tração no TDP T<sub>0</sub> <small>kN</small><input name="tension0" inputmode="decimal" value="4.944,24"></label>
+        </div></details>
+        <details class="input-group"><summary><b>03</b><span>Trecho suspenso<small>Corrente e poliéster</small></span></summary><div class="fields">
+          <label class="wide">Altura de chegada <small>m sobre o leito</small><input name="targetHeight" inputmode="decimal" value="1487"></label>
+          <label>Peso poliéster <small>kN/m</small><input name="wPoly" inputmode="decimal" value="0,0057"></label>
+          <label>EA corrente <small>kN</small><input name="eaChain" inputmode="decimal" value="118247"></label>
+          <label>EA poliéster <small>kN</small><input name="eaPoly" inputmode="decimal" value="31594"></label>
+          <label>Corrente inicial <small>m</small><input name="chain1" inputmode="decimal" value="250"></label>
+          <label>Poliéster principal <small>m</small><input name="poly1" inputmode="decimal" value="1075"></label>
+          <label>Corrente de ligação <small>m</small><input name="chain2" inputmode="decimal" value="10"></label>
+          <label>Poliéster superior <small>m</small><input name="poly2" inputmode="decimal" value="1075"></label>
+          <label class="wide check-field"><input name="stretch" type="checkbox" checked><span>Incluir alongamento axial T/EA<small>Aplicado somente no trecho suspenso.</small></span></label>
+        </div></details>
+      </form>
+      <div class="input-foot"><button type="button" class="calculate" id="calculate">Calcular e atualizar <span>↗</span></button><button type="button" class="reset" id="reset">Restaurar exemplo</button><p>Campos aceitam vírgula ou ponto decimal. O caso fica salvo neste aparelho.</p></div>
+    </aside>
+
+    <main class="results" id="results">
+      <section class="hero cv-hero">
+        <p class="eyebrow">ETAPA 02 DE 05</p>
+        <h1>Catenária da linha</h1>
+        <p class="lead">Perfil da linha de ancoragem desde o olhal da estaca, passando pelo trecho enterrado até o ponto de toque no leito (TDP) e subindo em corrente e poliéster até o FPSO. Ajuste solo, geometria e tração para ver a linha mudar.</p>
+        <ol class="cv-flow" aria-label="Trechos da linha"><li><i style="background:var(--orange)">1</i>Trecho enterrado</li><li><i style="background:var(--teal)">2</i>TDP</li><li><i style="background:var(--teal)">3</i>Corrente</li><li><i style="background:var(--blue)">4</i>Poliéster</li><li><i style="background:var(--soft)">5</i>FPSO</li></ol>
+      </section>
+
+      <div class="result-error" id="result-error" role="alert" hidden></div>
+      <div id="result-content">
+        <section class="kpis" aria-label="Resultados principais">
+          <article class="kpi"><span>Ângulo enterrado</span><strong id="k-angle">—</strong><small>θ<sub>a</sub> / junto à âncora</small></article>
+          <article class="kpi"><span>Tração enterrada</span><strong id="k-ta">—</strong><small>T<sub>a</sub> / na âncora</small></article>
+          <article class="kpi"><span>Alcance no leito</span><strong id="k-tdp">—</strong><small>x do TDP</small></article>
+          <article class="kpi teal"><span>Tração no topo</span><strong id="k-top-t">—</strong><small>na altura solicitada</small></article>
+          <article class="kpi blue"><span>Alcance total</span><strong id="k-top-x">—</strong><small>âncora → topo</small></article>
+        </section>
+
+        <section class="card cv-card" aria-labelledby="chart-title">
+          <div class="cv-head"><div><p class="eyebrow">02 / GEOMETRIA</p><h2 id="chart-title">Linha de ancoragem</h2><p>Passe o mouse sobre a linha para ler tração, ângulo e posição em cada ponto.</p></div>
+            <div class="cv-tabs" id="cv-tabs" role="group" aria-label="Vista"><button type="button" data-v="full" aria-pressed="true">Conjunto</button><button type="button" data-v="buried" aria-pressed="false">Trecho enterrado</button><button type="button" data-v="tension" aria-pressed="false">Tração</button></div></div>
+          <div class="cv-stage" id="cv-stage"><svg id="cv-svg" viewBox="0 0 1000 580" role="img" aria-label="Perfil da linha de ancoragem"></svg><div class="cv-tip" id="cv-tip"></div></div>
+          <div class="cv-foot"><span><i style="background:var(--orange)"></i>Trecho enterrado</span><span><i style="background:var(--teal)"></i>Corrente</span><span><i style="background:var(--blue)"></i>Poliéster</span><span><i style="background:var(--sediment)"></i>Leito marinho</span></div>
+          <div hidden><div class="view-tabs" role="group" aria-label="Escala do gráfico"><button type="button" data-chart="full" class="active" aria-pressed="true">Conjunto</button><button type="button" data-chart="buried" aria-pressed="false">Enterrada</button><button type="button" data-chart="free" aria-pressed="false">Suspensa</button></div><div class="legend"><span><i class="buried"></i>Solo / corrente</span><span><i class="chain"></i>Corrente suspensa</span><span><i class="poly"></i>Poliéster</span><span><i class="seabed"></i>Leito marinho</span></div>
+          <div class="chart-wrap" id="chart-wrap"><div id="chart-svg"></div><div class="chart-tip" id="chart-tip" hidden></div></div>
+          </div>
+        </section>
+
+        <section class="detail-grid"><article class="card balance-card"><div class="card-head"><div><p class="eyebrow">03 / EQUILÍBRIO ENTERRADO</p><h2>Equilíbrio no solo</h2></div><span class="mini-badge" id="solver-badge">—</span></div><div class="balance-list" id="balance-list"></div><div class="convergence" id="convergence" hidden></div></article><article class="card segment-card"><div class="card-head"><div><p class="eyebrow">04 / COMPOSIÇÃO</p><h2>Materiais no trecho livre</h2></div></div><div class="segments" id="segments"></div><div class="segment-note">Comprimentos configurados são nominais. O último trecho de corrente continua até atingir a altura especificada.</div></article></section>
+
+        <section class="card data-card"><div class="card-head"><div><p class="eyebrow">05 / PONTOS DA CURVA</p><h2>Pontos da curva</h2><p>Profundidade negativa abaixo do leito; altura positiva acima dele.</p></div><button type="button" id="export-csv-bottom" class="text-button">Baixar tabela CSV ↗</button></div><div class="table-wrap"><table><thead><tr><th>Trecho</th><th>x [m]</th><th>z [m]</th><th>s [m]</th><th>T [kN]</th><th>θ [°]</th></tr></thead><tbody id="point-rows"></tbody></table></div></section>
+
+        <div id="warnings" hidden></div>
+      </div>
+      <noscript><p class="result-error">Ative JavaScript para calcular e desenhar os perfis.</p></noscript>
+      <footer>Laboratório offshore · etapa 02 · catenária · <a href="../index.html">todos os laboratórios</a> · <a href="../sobre.html">sobre o autor</a></footer>
+    </main>
+  </div>
+  <nav class="mobilebar" aria-label="Alternar dados e resultados"><button type="button" data-panel="dados" aria-pressed="false">✎ Dados</button><button type="button" data-panel="resultados" aria-pressed="true">◫ Resultados</button></nav>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/calc.js"></script>
+  <script src="assets/js/paginas/catenaria.js"></script>
+  <script src="assets/js/catenaria-visual.js"></script>
+  <script src="assets/js/catenaria-relatorio.js"></script>
+  <script src="assets/js/fluxo.js"></script>
+  <script src="assets/js/tema-legado.js"></script>
+</body>
+</html>
