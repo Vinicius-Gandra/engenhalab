@@ -89,3 +89,15 @@
 .ac-nota { margin: 16px 0 0; color: var(--soft); font-size: .78rem; }
 .ac-form-linha .ac-curto { flex: 0 1 160px; }
 .ac-rodape { padding: 12px 18px; }
+
+/* dados comuns vindos de Lançamento e cravação */
+.dc-oculto { display: none !important; }
+.dc-proj { grid-column: 1 / -1; margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel2, transparent); }
+.dc-cab { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 8px; }
+.dc-tit { color: var(--orange); font: 700 .62rem var(--mono, monospace); letter-spacing: .14em; text-transform: uppercase; }
+.dc-link { color: var(--muted); font-size: .76rem; text-decoration: none; }
+.dc-link:hover { color: var(--orange); }
+.dc-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px 14px; margin: 0; }
+.dc-lista dt { color: var(--soft, var(--muted)); font-size: .68rem; }
+.dc-lista dd { margin: 1px 0 0; font: 650 .84rem var(--mono, monospace); }
+.dc-nota { margin: 10px 0 0; color: var(--muted); font-size: .74rem; line-height: 1.45; }
