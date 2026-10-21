@@ -1,5 +1,6 @@
 /* Laboratório offshore · acesso: conta, painel do administrador, memorial e barra de projeto */
 .s-conta { gap: 7px; border-color: var(--line); }
+.s-av { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-left: -4px; border-radius: 50%; background: var(--orange); color: var(--orange-ink, #fff); font: 700 .62rem var(--sans, sans-serif); }
 .s-conta-pt { width: 8px; height: 8px; border-radius: 50%; background: var(--green, #4cc38a); box-shadow: 0 0 8px var(--green, #4cc38a); }
 
 /* barra do projeto (páginas do offshore, só com login) */

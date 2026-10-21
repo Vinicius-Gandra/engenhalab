@@ -77,7 +77,7 @@
     const lugar = document.querySelector('.s-actions'); if (!lugar) return;
     let b = lugar.querySelector('.s-conta'); if (!b) { b = document.createElement('a'); b.className = 's-act s-conta'; lugar.prepend(b); }
     const s = sessao();
-    if (s) { b.href = 'conta.html'; b.innerHTML = `<span class="s-conta-pt" aria-hidden="true"></span>${esc(s.usuario.nome.split(' ')[0])}`; b.title = 'Sua conta: ' + s.usuario.email; }
+    if (s) { b.href = 'conta.html'; b.innerHTML = `<span class="s-av" aria-hidden="true">${esc(s.usuario.nome.trim().split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase())}</span>${esc(s.usuario.nome.split(' ')[0])}`; b.title = 'Sua conta: ' + s.usuario.email; }
     else { b.href = 'conta.html?volta=' + volta; b.textContent = 'Entrar'; b.title = 'Entrar com o seu acesso'; }
   }
   function estado(txt, erro) { const e = barra && barra.querySelector('.sb-estado'); if (e) { e.textContent = txt; e.classList.toggle('erro', !!erro); } }
