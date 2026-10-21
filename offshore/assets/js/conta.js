@@ -52,7 +52,7 @@
   }
 
   /* --------------------------------------------------- login */
-  function login(msg) {
+  function telaEntrar(msg) {
     tela(`<section class="ac-cartao"><span class="ac-olho">Laboratório offshore</span><h1>Entrar</h1>
       <p>Acesso para profissionais convidados. Quem entra pode alterar todos os parâmetros de entrada, salvar projetos e emitir memoriais.</p>
       <p class="ac-msg${msg ? ' ac-ok' : ''}"${msg ? '' : ' hidden'}>${esc(msg || '')}</p>
@@ -71,7 +71,7 @@
 
   /* --------------------------------------------------- minha conta */
   async function minhaConta() {
-    const s = S.sessao(); if (!s) return login();
+    const s = S.sessao(); if (!s) return telaEntrar();
     const u = s.usuario, ativo = S.projetoAtivo();
     tela(`<div class="ac-titulo"><div><span class="ac-olho">Minha conta</span><h1>${esc(u.nome)}</h1><p>${esc(u.email)}${u.papel === 'admin' ? ' · administrador' : ''}</p></div>
       <div class="ac-acoes">${u.papel === 'admin' ? '<a class="ac-btn sec" href="admin.html">Painel do administrador</a>' : ''}<a class="ac-btn sec" href="01-lancamento.html">Abrir o laboratório</a><button type="button" class="ac-btn perigo" data-a="sair">Sair</button></div></div>
@@ -79,7 +79,7 @@
       <section class="ac-bloco"><header><h2>Projetos</h2><button type="button" class="ac-btn peq" data-a="novo">Novo projeto com os dados deste navegador</button></header><div data-p="projetos" class="ac-rolar"><p class="ac-vazio">Carregando…</p></div></section>
       <section class="ac-bloco"><header><h2>Memoriais emitidos</h2></header><div data-p="docs" class="ac-rolar"><p class="ac-vazio">Carregando…</p></div></section>
       <section class="ac-bloco"><header><h2>Sessões abertas</h2><button type="button" class="ac-btn peq sec" data-a="outras">Encerrar as outras</button></header><div data-p="sessoes" class="ac-rolar"><p class="ac-vazio">Carregando…</p></div></section>`);
-    app.querySelector('[data-a="sair"]').addEventListener('click', () => { S.sair(); login('Você saiu.'); });
+    app.querySelector('[data-a="sair"]').addEventListener('click', () => { S.sair(); telaEntrar('Você saiu.'); });
     app.querySelector('[data-a="outras"]').addEventListener('click', async () => { try { const r = await S.pedir('conta/encerrar-outras'); carregarSessoes(); const m = app.querySelector('.ac-msg'); m.className = 'ac-msg ac-ok'; m.hidden = false; m.textContent = `${r.encerradas} sessão(ões) encerrada(s).`; } catch (e) { erro(null, e.message); } });
     app.querySelector('[data-a="novo"]').addEventListener('click', async () => {
       const nome = (prompt('Nome do projeto:', 'Estudo ' + new Date().toLocaleDateString('pt-BR')) || '').trim(); if (!nome) return;
@@ -94,7 +94,7 @@
         alvo.querySelectorAll('[data-abrir]').forEach(b => b.addEventListener('click', async () => { try { const r = await S.pedir('projetos/abrir', { id: b.dataset.abrir }); S.aplicarDados(r.dados); S.definirProjeto({ id: r.id, nome: r.nome, versao: r.versao }); location.href = volta || '01-lancamento.html'; } catch (e) { erro(null, e.message); } }));
         alvo.querySelectorAll('[data-ren]').forEach(b => b.addEventListener('click', async () => { const nome = (prompt('Novo nome:') || '').trim(); if (!nome) return; try { await S.pedir('projetos/renomear', { id: b.dataset.ren, nome }); const a = S.projetoAtivo(); if (a && a.id === b.dataset.ren) S.definirProjeto({ ...a, nome }); carregarProjetos(); } catch (e) { erro(null, e.message); } }));
         alvo.querySelectorAll('[data-exc]').forEach(b => b.addEventListener('click', async () => { if (!confirm('Excluir este projeto? Os memoriais já emitidos continuam no histórico.')) return; try { await S.pedir('projetos/excluir', { id: b.dataset.exc }); const a = S.projetoAtivo(); if (a && a.id === b.dataset.exc) S.definirProjeto(null); carregarProjetos(); } catch (e) { erro(null, e.message); } }));
-      } catch (e) { if (e.sessao === false) return login(e.message); alvo.innerHTML = `<p class="ac-vazio">${esc(e.message)}</p>`; }
+      } catch (e) { if (e.sessao === false) return telaEntrar(e.message); alvo.innerHTML = `<p class="ac-vazio">${esc(e.message)}</p>`; }
     }
     async function carregarDocs() {
       const alvo = app.querySelector('[data-p="docs"]');
@@ -111,5 +111,5 @@
     void ativo; carregarProjetos(); carregarDocs(); carregarSessoes();
   }
 
-  if (convite) fluxoConvite(); else if (S.sessao()) minhaConta(); else login();
+  if (convite) fluxoConvite(); else if (S.sessao()) minhaConta(); else telaEntrar();
 })();
