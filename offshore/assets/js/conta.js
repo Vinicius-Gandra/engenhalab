@@ -3,7 +3,6 @@
   'use strict';
   const S = window.Sessao, app = document.getElementById('app');
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const quando = t => t ? new Date(t * 1000).toLocaleString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).replace('.', '') : '—';
   const primeiro = nome => String(nome || '').trim().split(/\s+/)[0] || '';
   // volta só para páginas do próprio laboratório
   const voltaParam = new URLSearchParams(location.search).get('volta');
@@ -31,8 +30,8 @@
   };
 
   /* ------------------------------------------------------------- utilidades */
-  function tela(html, foco) { app.innerHTML = html; const f = app.querySelector(foco || 'input:not([type=hidden]):not([hidden])'); if (f) f.focus(); }
-  function aviso(msg, tipo) { const e = app.querySelector('.v-msg'); if (!e) return; e.className = 'v-msg ' + (tipo || 'erro'); e.textContent = msg; e.hidden = !msg; }
+  function tela(html, foco) { document.body.className = 'v-pagina'; window.onhashchange = null; app.innerHTML = html; const f = app.querySelector(foco || 'input:not([type=hidden]):not([hidden])'); if (f) f.focus(); }
+  function aviso(msg, tipo) { const e = app.querySelector('[data-msg]'); if (!e) return; e.className = e.dataset.msg + ' ' + (tipo || 'erro'); e.textContent = msg; e.hidden = !msg; }
   function enviar(form, fn) {
     form.addEventListener('submit', async ev => {
       ev.preventDefault(); const b = form.querySelector('button[type="submit"]'); if (b) b.disabled = true; aviso('');
@@ -45,7 +44,7 @@
   const campo = (nome, icone, rotulo, extra) => `<label class="v-campo">${IC[icone]}<input name="${nome}" placeholder="${rotulo}" aria-label="${rotulo}" ${extra || ''}></label>`;
   function ligarMostrar() { app.querySelectorAll('[data-mostrar]').forEach(c => c.addEventListener('change', () => app.querySelectorAll('input[data-senha]').forEach(i => { i.type = c.checked ? 'text' : 'password'; }))); }
   const cena = corpo => `<div class="v-cena"><span class="v-luz l1"></span><span class="v-luz l2"></span><span class="v-luz l3"></span>${corpo}</div>`;
-  const cartao = (topo, corpo) => cena(`<div class="v-centro"><section class="v-cartao">${topo}<p class="v-msg" hidden></p>${corpo}</section>
+  const cartao = (topo, corpo) => cena(`<div class="v-centro"><section class="v-cartao">${topo}<p class="v-msg" data-msg="v-msg" hidden></p>${corpo}</section>
     <footer class="v-rodape"><span>Laboratório offshore · acesso por convite</span><a href="../index.html">EngenhaLab</a></footer></div>`);
   const retrato = (u, titulo, sub) => `<div class="v-retrato">${u ? S.avatar(u, 'v-av-g') : `<span class="v-av-vazio">${IC.silhueta}</span>`}</div>${titulo ? `<h1 class="v-tit">${titulo}</h1>` : ''}${sub ? `<p class="v-sub">${sub}</p>` : ''}`;
   function entrou(s, primeiraVez) {
@@ -114,9 +113,9 @@
   /* ------------------------------------------------------------- diálogo */
   function dialogo({ titulo, texto, valor, confirmar, perigo }) {
     return new Promise(resolve => {
-      const d = document.createElement('dialog'); d.className = 'v-dialogo';
-      d.innerHTML = `<form method="dialog"><h2>${esc(titulo)}</h2>${texto ? `<p>${esc(texto)}</p>` : ''}${valor != null ? `<label class="v-campo">${IC.pasta}<input name="valor" maxlength="80" value="${esc(valor)}" aria-label="Nome"></label>` : ''}
-        <div class="v-dial-botoes"><button class="v-btn v-sec v-peq" value="nao" type="submit">Cancelar</button><button class="v-btn v-peq${perigo ? ' v-perigo' : ''}" value="sim" type="submit">${esc(confirmar || 'OK')}</button></div></form>`;
+      const d = document.createElement('dialog'); d.className = 'c-dialogo';
+      d.innerHTML = `<form method="dialog"><span class="eyebrow">Confirmação</span><h2>${esc(titulo)}</h2>${texto ? `<p>${esc(texto)}</p>` : ''}${valor != null ? `<label class="c-dial-campo">Nome<input name="valor" maxlength="80" value="${esc(valor)}"></label>` : ''}
+        <div class="c-dial-botoes"><button class="button ghost" value="nao" type="submit">Cancelar</button><button class="button primary${perigo ? ' c-perigo' : ''}" value="sim" type="submit">${esc(confirmar || 'OK')}</button></div></form>`;
       document.body.appendChild(d);
       d.addEventListener('close', () => { const ok = d.returnValue === 'sim', i = d.querySelector('input'); const v = i ? i.value.trim() : true; d.remove(); resolve(ok ? v : null); });
       d.showModal(); const i = d.querySelector('input'); if (i) { i.focus(); i.select(); }
@@ -138,8 +137,9 @@
     throw new Error('Não consegui reduzir a imagem. Tente outra.');
   }
 
-  /* ------------------------------------------------------------- minha conta */
-  const SECOES = [['perfil', 'Perfil'], ['projetos', 'Projetos'], ['memoriais', 'Memoriais'], ['seguranca', 'Segurança']];
+  /* ------------------------------------------------------------- minha conta (painel no padrão do laboratório) */
+  const SECOES = [['perfil', 'Perfil', 'Identidade e assinatura'], ['projetos', 'Projetos', 'Estudos salvos'], ['memoriais', 'Memoriais', 'Documentos emitidos'], ['seguranca', 'Segurança', 'Acesso e dispositivos']];
+  const ETAPAS = [['index.html', '00', 'Visão geral'], ['01-lancamento.html', '01', 'Lançamento e cravação'], ['02-catenaria.html', '02', 'Catenária'], ['03-capacidade-axial.html', '03', 'Capacidade axial'], ['04-carga-lateral.html', '04', 'Carga lateral'], ['05-estaca-3d.html', '05', 'Torpedo 3D']];
   const cache = {};
   function aparelho(ua) {
     ua = String(ua || '');
@@ -149,37 +149,77 @@
   }
   const secaoAtual = () => { const h = location.hash.replace('#', ''); return SECOES.some(s => s[0] === h) ? h : 'perfil'; };
   const qtd = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+  const dataCurta = t => t ? new Date(t * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '') : '—';
+  const hora = t => t ? new Date(t * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
 
   async function minhaConta(primeiraVez) {
     const s = S.sessao(); if (!s) return telaEntrar();
     let u = s.usuario; const admin = u.papel === 'admin';
     try { const r = await S.pedir('conta/eu'); u = r.usuario; S.guardar({ ...S.sessao(), usuario: u }); } catch (e) { if (e.sessao === false) { S.sair(); return telaEntrar(e.message); } }
-    app.innerHTML = cena(`<div class="v-conta">
-      <header class="v-topo"><a class="v-marca" href="index.html"><span class="v-vg">VG<b>.</b></span><span class="v-largo">Laboratório offshore</span></a>
-        <nav class="v-topo-dir"><a class="v-btn v-sec v-peq" href="01-lancamento.html">${IC.lab}<span class="v-largo">Abrir o laboratório</span></a>${admin ? `<a class="v-btn v-sec v-peq" href="admin.html">${IC.admin}<span class="v-largo">Administração</span></a>` : ''}
-        <button type="button" class="v-btn v-sec v-peq" data-sair title="Sair">${IC.sair}<span class="v-largo">Sair</span></button></nav></header>
-      <main class="v-main">
-        <section class="v-heroi"><button type="button" class="v-heroi-av" data-ir aria-label="Alterar foto ou ícone">${S.avatar(u, 'v-av-h')}<span class="v-cam">${IC.camera}</span></button>
-          <div class="v-heroi-txt"><h1 data-nome>${esc(u.nome)}</h1><p><span data-empresa>${esc(u.empresa || 'Empresa não informada')}</span><span class="v-ponto">·</span>${esc(u.email)}</p><span class="v-selo">${admin ? 'Administrador' : 'Profissional convidado'}</span></div>
-          <dl class="v-numeros"><div><dt>Projetos</dt><dd data-n="projetos">—</dd></div><div><dt>Memoriais</dt><dd data-n="documentos">—</dd></div><div><dt>Sessões</dt><dd data-n="sessoes">—</dd></div></dl></section>
-        <nav class="v-abas" aria-label="Seções">${SECOES.map(([id, rot]) => `<a href="#${id}" data-sec="${id}">${rot}</a>`).join('')}</nav>
-        <p class="v-msg" hidden></p><div data-conteudo></div></main></div>`);
-    app.querySelector('[data-sair]').addEventListener('click', () => { S.sair(); history.replaceState(null, '', location.pathname); telaEntrar('Você saiu da sua conta.'); });
+    document.body.className = 'c-pagina';
+    app.innerHTML = `<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+      <header class="s-appbar">
+        <a class="s-brand" href="../index.html" aria-label="EngenhaLab — todos os laboratórios">VG<b>.</b></a>
+        <a class="s-back" href="index.html" title="Voltar ao laboratório offshore"><span aria-hidden="true">←</span><span class="s-back-label">Offshore</span></a>
+        <span class="s-header-divider" aria-hidden="true"></span>
+        <div class="s-appbar-title"><span class="overline">Laboratório offshore</span><strong>Minha conta</strong></div>
+        <div class="s-actions">
+          <a class="s-act s-act-primary" href="01-lancamento.html">${IC.lab}<span class="c-txt">Abrir o laboratório</span></a>
+          ${admin ? `<a class="s-act" href="admin.html">${IC.admin}<span class="c-txt">Administração</span></a>` : ''}
+          <button type="button" class="s-act s-act-icon" data-tema title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
+          <div class="c-menu-caixa"><button type="button" class="s-act c-conta-btn" data-menu aria-haspopup="true" aria-expanded="false"><span data-av-topo>${S.avatar(u, 'c-av-s')}</span><span class="c-txt" data-primeiro>${esc(primeiro(u.nome))}</span></button>
+            <div class="c-menu" hidden><span data-av-menu>${S.avatar(u, 'c-av-m')}</span><b data-nome-menu>${esc(u.nome)}</b><small>${esc(u.email)}</small>
+              <a href="#perfil" data-fechar>Editar perfil</a>${admin ? '<a href="admin.html">Painel do administrador</a>' : ''}<button type="button" data-sair>Sair da conta</button></div></div>
+        </div>
+      </header>
+      <nav class="s-areas" aria-label="Etapas do laboratório offshore">${ETAPAS.map(([h, n, t]) => `<a class="s-area" href="${h}"><span class="s-area-number">${n}</span> ${t}</a>`).join('')}</nav>
+      <main class="container c-conta" id="conteudo">
+        <section class="page-head c-head">
+          <div><span class="eyebrow">Minha conta · ${admin ? 'administrador' : 'profissional convidado'}</span><h1 data-nome>${esc(u.nome)}</h1>
+            <p><span data-empresa>${esc(u.empresa || 'Empresa não informada')}</span> · ${esc(u.email)}</p>
+            <div class="head-links"><a href="#perfil">Editar perfil</a><a href="#projetos">Projetos</a><a href="01-lancamento.html">Abrir o laboratório ↗</a></div></div>
+          <button type="button" class="c-head-av" data-ir aria-label="Alterar foto ou ícone"><span data-av-head>${S.avatar(u, 'c-av-xl')}</span><span class="c-cam">${IC.camera}</span></button>
+        </section>
+        <div class="stats c-stats">
+          <div class="stat"><span>Projetos</span><strong data-n="projetos">—</strong><small>salvos no servidor</small></div>
+          <div class="stat"><span>Memoriais</span><strong data-n="documentos">—</strong><small>emitidos com número</small></div>
+          <div class="stat"><span>Sessões</span><strong data-n="sessoes">—</strong><small>abertas agora</small></div>
+          <div class="stat"><span>Segundo fator</span><strong class="c-ok">Ativo</strong><small>aplicativo autenticador</small></div>
+        </div>
+        <div class="c-corpo">
+          <nav class="c-nav" aria-label="Seções da conta">${SECOES.map(([id, rot, sub], i) => `<a href="#${id}" data-sec="${id}"><b>0${i + 1}</b><span>${rot}<small>${sub}</small></span></a>`).join('')}</nav>
+          <div class="c-conteudo"><p class="c-msg" data-msg="c-msg" hidden></p><div data-conteudo></div></div>
+        </div>
+        <footer class="section-footer"><span>EngenhaLab · Laboratório offshore</span><span>Acesso por convite · verificação em duas etapas</span></footer>
+      </main>`;
+
+    // tema, menu e sair
+    app.querySelector('[data-tema]').addEventListener('click', () => { const r = document.documentElement, t = r.dataset.theme === 'light' ? 'dark' : 'light'; r.dataset.theme = t; try { localStorage.setItem('vg-theme', t); } catch (_) { /* sem armazenamento */ } });
+    const bMenu = app.querySelector('[data-menu]'), menu = app.querySelector('.c-menu');
+    const fecharMenu = () => { menu.hidden = true; bMenu.setAttribute('aria-expanded', 'false'); };
+    bMenu.addEventListener('click', ev => { ev.stopPropagation(); menu.hidden = !menu.hidden; bMenu.setAttribute('aria-expanded', String(!menu.hidden)); });
+    document.addEventListener('click', ev => { if (!menu.hidden && !menu.contains(ev.target)) fecharMenu(); });
+    document.addEventListener('keydown', ev => { if (ev.key === 'Escape') fecharMenu(); });
+    menu.querySelector('[data-fechar]').addEventListener('click', fecharMenu);
+    menu.querySelector('[data-sair]').addEventListener('click', () => { S.sair(); history.replaceState(null, '', location.pathname); telaEntrar('Você saiu da sua conta.'); });
     app.querySelector('[data-ir]').addEventListener('click', () => { if (secaoAtual() === 'perfil') { const b = app.querySelector('[data-arquivo]'); if (b) b.click(); } else location.hash = 'perfil'; });
-    const falha = qual => cache['erro_' + qual] ? `<p class="v-vazio">${esc(cache['erro_' + qual])}</p>` : '';
-    window.onhashchange = () => { if (app.querySelector('.v-conta')) mostrar(); };
+
+    const titulo = (n, eyebrow, h2, p, extra) => `<div class="panel-title"><div><span class="eyebrow">${n} / ${eyebrow}</span><h2>${h2}</h2>${p ? `<p>${p}</p>` : ''}</div>${extra || ''}</div>`;
+    const falha = qual => cache['erro_' + qual] ? `<p class="c-vazio">${esc(cache['erro_' + qual])}</p>` : '';
+    window.onhashchange = () => { if (app.querySelector('.c-conta')) mostrar(true); };
     mostrar();
-    if (primeiraVez) aviso('Acesso ativado. Confira seu nome e escolha uma foto ou ícone: eles aparecem nos memoriais e relatórios.', 'ok');
+    if (primeiraVez) aviso('Acesso ativado. Confira seu nome e escolha uma foto ou ícone: eles assinam os memoriais e relatórios.', 'ok');
     await Promise.all([carregar('projetos'), carregar('documentos'), carregar('sessoes')]);
     numeros(); if (secaoAtual() !== 'perfil') mostrar();
 
     function numeros() { ['projetos', 'documentos', 'sessoes'].forEach(k => { const e = app.querySelector(`[data-n="${k}"]`); if (e) e.textContent = cache[k] ? cache[k].length : '—'; }); }
-    function mostrar() {
+    function mostrar(rolar) {
       const sec = secaoAtual();
       app.querySelectorAll('[data-sec]').forEach(a => a.setAttribute('aria-current', a.dataset.sec === sec ? 'page' : 'false'));
       const alvo = app.querySelector('[data-conteudo]');
       alvo.innerHTML = sec === 'projetos' ? projetos() : sec === 'memoriais' ? memoriais() : sec === 'seguranca' ? seguranca() : perfil();
       ligar(sec, alvo);
+      if (rolar) { const c = app.querySelector('.c-corpo'); if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ block: 'start' }); }
     }
     async function carregar(qual) {
       const rota = { projetos: 'projetos/listar', documentos: 'documentos/listar', sessoes: 'conta/sessoes' }[qual];
@@ -187,51 +227,61 @@
       catch (e) { if (e.sessao === false) { S.sair(); telaEntrar(e.message); throw e; } cache[qual] = []; cache['erro_' + qual] = e.message; }
     }
     function atualizarCabecalho() {
-      app.querySelector('.v-heroi-av').innerHTML = `${S.avatar(u, 'v-av-h')}<span class="v-cam">${IC.camera}</span>`;
+      app.querySelector('[data-av-head]').innerHTML = S.avatar(u, 'c-av-xl');
+      app.querySelector('[data-av-topo]').innerHTML = S.avatar(u, 'c-av-s');
+      app.querySelector('[data-av-menu]').innerHTML = S.avatar(u, 'c-av-m');
       app.querySelector('[data-nome]').textContent = u.nome;
+      app.querySelector('[data-nome-menu]').textContent = u.nome;
+      app.querySelector('[data-primeiro]').textContent = primeiro(u.nome);
       app.querySelector('[data-empresa]').textContent = u.empresa || 'Empresa não informada';
     }
 
     function perfil() {
       const atual = u.avatar || '';
-      return `<form class="v-painel v-perfil" novalidate data-perfil>
-        <div class="v-bloco"><h2>Foto ou ícone</h2><p class="v-nota">Aparece no topo do laboratório, na sua conta e no bloco de responsável técnico dos relatórios.</p>
-          <div class="v-escolha"><div class="v-previa" data-previa>${S.avatar({ ...u, avatar: atual }, 'v-av-p')}</div>
-            <div class="v-escolha-info"><span class="v-escolha-rot">Seu avatar</span><strong class="v-escolha-nome" data-avatar-nome></strong><div class="v-escolha-acoes"><label class="v-btn v-sec v-peq">${IC.camera}<span>Enviar foto</span><input type="file" accept="image/*" data-arquivo hidden></label>
-            <button type="button" class="v-btn v-txt v-peq" data-iniciais>Usar iniciais</button></div></div></div>
-          <div class="v-icones" role="radiogroup" aria-label="Ícones">${Object.entries(S.ICONES).map(([id, [rot]]) => `<button type="button" role="radio" class="v-icone" data-icone="${id}" aria-checked="${atual === 'icone:' + id}" tabindex="${atual === 'icone:' + id || (!atual.startsWith('icone:') && id === Object.keys(S.ICONES)[0]) ? 0 : -1}" title="${esc(rot)}">${S.avatar({ avatar: 'icone:' + id }, 'v-av-i')}<span>${esc(rot)}</span></button>`).join('')}</div>
-          <p class="v-nota">Quer usar o logotipo da sua empresa? Envie a imagem dele em “Enviar foto”.</p></div>
-        <div class="v-bloco"><h2>Dados do responsável</h2>
-          <div class="v-grade">${campo('nome', 'pessoa', 'Nome completo', `required maxlength="80" value="${esc(u.nome)}" autocomplete="name"`)}${campo('empresa', 'empresa', 'Empresa', `maxlength="80" value="${esc(u.empresa || '')}" autocomplete="organization"`)}</div>
-          <p class="v-nota">Assim sai nos memoriais e nos relatórios em PDF:</p>
-          <div class="v-assinatura" data-assinatura></div></div>
-        <div class="v-perfil-pe"><button class="v-btn v-auto" type="submit">Salvar alterações</button></div></form>`;
+      return `<form class="c-grade" novalidate data-perfil>
+        <section class="panel">${titulo('01', 'Identidade', 'Foto ou ícone', 'Aparece no topo do laboratório, nesta conta e nos relatórios.')}
+          <div class="c-escolha"><div class="c-previa" data-previa>${S.avatar({ ...u, avatar: atual }, 'c-av-l')}</div>
+            <div class="c-escolha-acoes"><span class="c-escolha-rot">Seu avatar · <strong data-avatar-nome></strong></span><label class="button">${IC.camera}<span>Enviar foto</span><input type="file" accept="image/*" data-arquivo hidden></label>
+              <button type="button" class="button ghost" data-iniciais>Usar iniciais</button>
+              <small>JPG, PNG ou WebP. Recortada em quadrado; serve também o logotipo da sua empresa.</small></div></div>
+          <span class="c-rot">Ícones do setor</span>
+          <div class="c-icones" role="radiogroup" aria-label="Ícones">${Object.entries(S.ICONES).map(([id, [rot]]) => `<button type="button" role="radio" class="c-icone" data-icone="${id}" aria-checked="${atual === 'icone:' + id}" tabindex="${atual === 'icone:' + id || (!atual.startsWith('icone:') && id === Object.keys(S.ICONES)[0]) ? 0 : -1}">${S.avatar({ avatar: 'icone:' + id }, 'c-av-i')}<span>${esc(rot)}</span></button>`).join('')}</div>
+        </section>
+        <section class="panel">${titulo('02', 'Responsável técnico', 'Dados nos relatórios', 'Nome e empresa que assinam os memoriais e os PDFs.')}
+          <div class="form-grid">
+            <label class="full">Nome completo <small>obrigatório</small><input name="nome" required maxlength="80" value="${esc(u.nome)}" autocomplete="name"></label>
+            <label class="full">Empresa <small>opcional</small><input name="empresa" maxlength="80" value="${esc(u.empresa || '')}" autocomplete="organization" placeholder="Ex.: nome da sua empresa"></label>
+            <label class="full">E-mail <small>definido pelo administrador</small><input value="${esc(u.email)}" readonly tabindex="-1"></label>
+          </div>
+          <span class="c-rot">Prévia no relatório</span>
+          <div class="c-assinatura" data-assinatura></div>
+          <div class="action-row"><button class="button primary" type="submit">Salvar alterações</button></div>
+        </section></form>`;
     }
     function projetos() {
       const lista = cache.projetos, atual = S.projetoAtivo();
-      if (!lista) return '<section class="v-painel"><p class="v-vazio">Carregando…</p></section>';
-      return `<section class="v-painel"><header class="v-painel-cab"><div><h2>Projetos</h2><p class="v-nota">Seus estudos salvos no servidor. Só você tem acesso a eles.</p></div><button type="button" class="v-btn v-peq v-auto" data-novo>+ Novo projeto</button></header>${falha('projetos')}
-        ${lista.length ? `<div class="v-lista">${lista.map(p => `<div class="v-item"><span class="v-item-ic">${IC.pasta}</span>
-          <div class="v-item-txt"><b>${esc(p.nome)}</b>${atual && atual.id === p.id ? '<span class="v-selo">Aberto aqui</span>' : ''}<small>Versão ${esc(p.versao)} · ${quando(p.atualizado_em)}</small></div>
-          <div class="v-item-acoes"><button class="v-btn v-peq" data-abrir="${esc(p.id)}">Abrir</button><button class="v-btn v-txt v-peq" data-ren="${esc(p.id)}" data-nome="${esc(p.nome)}">Renomear</button><button class="v-btn v-txt v-peq v-vermelho" data-exc="${esc(p.id)}" data-nome="${esc(p.nome)}">Excluir</button></div></div>`).join('')}</div>`
-          : `<div class="v-vazio-g">${IC.pasta}<b>Nenhum projeto ainda</b><p>Ajuste os parâmetros no laboratório e salve pela barra do topo, ou crie um aqui com os dados deste navegador.</p></div>`}</section>`;
+      const corpo = !lista ? '<p class="c-vazio">Carregando…</p>' : lista.length
+        ? `<div class="table-wrap c-tabela"><table><thead><tr><th>Projeto</th><th>Versão</th><th>Alterado</th><th></th></tr></thead><tbody>${lista.map(p => `<tr>
+            <td><b>${esc(p.nome)}</b>${atual && atual.id === p.id ? '<span class="c-selo">aberto neste navegador</span>' : ''}</td><td>v${esc(p.versao)}</td><td>${dataCurta(p.atualizado_em)} <small>${hora(p.atualizado_em)}</small></td>
+            <td><div class="c-acoes"><button class="button primary" data-abrir="${esc(p.id)}">Abrir</button><button class="button ghost" data-ren="${esc(p.id)}" data-nome="${esc(p.nome)}">Renomear</button><button class="button ghost c-vermelho" data-exc="${esc(p.id)}" data-nome="${esc(p.nome)}">Excluir</button></div></td></tr>`).join('')}</tbody></table></div>`
+        : `<div class="c-vazio-g">${IC.pasta}<b>Nenhum projeto ainda</b><p>Ajuste os parâmetros no laboratório e use “Novo projeto com estes dados” na barra do topo, ou crie aqui com o que está neste navegador.</p></div>`;
+      return `<section class="panel">${titulo('02', 'Projetos', 'Seus estudos', 'Salvos no servidor e vinculados à sua conta. Só você tem acesso.', lista ? '<button type="button" class="button primary" data-novo>+ Novo projeto</button>' : '')}${falha('projetos')}${corpo}</section>`;
     }
     function memoriais() {
       const lista = cache.documentos;
-      if (!lista) return '<section class="v-painel"><p class="v-vazio">Carregando…</p></section>';
-      return `<section class="v-painel"><header class="v-painel-cab"><div><h2>Memoriais</h2><p class="v-nota">Emitidos pelo servidor, com número e código de verificação.</p></div></header>${falha('documentos')}
-        ${lista.length ? `<div class="v-lista">${lista.map(d => `<a class="v-item v-item-link" href="documento.html#id=${esc(d.id)}" target="_blank" rel="noopener"><span class="v-item-ic">${IC.doc}</span>
-          <div class="v-item-txt"><b>${esc(d.numero)}</b><small>${esc(d.projeto)} · ${quando(d.emitido_em)}</small></div><span class="v-seta">${IC.seta}</span></a>`).join('')}</div>`
-          : `<div class="v-vazio-g">${IC.doc}<b>Nenhum memorial emitido</b><p>Use “Emitir memorial” na barra do projeto, dentro do laboratório.</p></div>`}</section>`;
+      const corpo = !lista ? '<p class="c-vazio">Carregando…</p>' : lista.length
+        ? `<div class="c-docs">${lista.map(d => `<a class="c-doc" href="documento.html#id=${esc(d.id)}" target="_blank" rel="noopener"><span class="c-doc-ic">${IC.doc}</span><span class="c-doc-num">${esc(d.numero)}</span><b>${esc(d.projeto)}</b><small>${dataCurta(d.emitido_em)} · ${hora(d.emitido_em)}</small><span class="c-doc-abrir">Abrir ↗</span></a>`).join('')}</div>`
+        : `<div class="c-vazio-g">${IC.doc}<b>Nenhum memorial emitido</b><p>Abra um projeto no laboratório e use “Emitir memorial” na barra do topo.</p></div>`;
+      return `<section class="panel">${titulo('03', 'Memoriais', 'Documentos emitidos', 'Calculados pelo servidor, com número e código de verificação.')}${falha('documentos')}${corpo}</section>`;
     }
     function seguranca() {
       const lista = cache.sessoes;
-      return `<section class="v-painel"><header class="v-painel-cab"><div><h2>Como você entra</h2></div></header><div class="v-lista">
-          <div class="v-item"><span class="v-item-ic">${IC.senha}</span><div class="v-item-txt"><b>Senha</b><small>Para trocar, peça ao administrador um novo link de acesso.</small></div></div>
-          <div class="v-item"><span class="v-item-ic">${IC.celular}</span><div class="v-item-txt"><b>Verificação em duas etapas</b><small>Aplicativo autenticador</small></div><span class="v-status">Ativada</span></div></div></section>
-        <section class="v-painel"><header class="v-painel-cab"><div><h2>Seus dispositivos</h2><p class="v-nota">Onde sua conta está conectada agora.</p></div>
-          ${lista && lista.length > 1 ? '<button type="button" class="v-btn v-sec v-peq v-auto" data-outras>Sair dos outros</button>' : ''}</header>${falha('sessoes')}
-          ${lista ? `<div class="v-lista">${lista.map(x => { const a = aparelho(x.agente); return `<div class="v-item"><span class="v-item-ic">${a.movel ? IC.celular : IC.tela}</span><div class="v-item-txt"><b>${esc(a.nome)}</b>${x.atual ? '<span class="v-selo">Este dispositivo</span>' : ''}<small>Entrou em ${quando(x.criada_em)} · ativo em ${quando(x.ultima_atividade)}</small></div></div>`; }).join('')}</div>` : '<p class="v-vazio">Carregando…</p>'}</section>`;
+      return `<div class="c-grade">
+        <section class="panel">${titulo('04', 'Acesso', 'Como você entra')}
+          <div class="kv"><div><span>E-mail</span><strong>${esc(u.email)}</strong></div><div><span>Senha</span><strong>Definida</strong></div><div><span>Verificação em duas etapas</span><strong class="c-ok">Ativa</strong></div><div><span>Papel</span><strong>${admin ? 'Administrador' : 'Profissional'}</strong></div></div>
+          <p class="c-nota">Para trocar a senha ou o aplicativo autenticador, peça ao administrador um novo link de acesso.</p></section>
+        <section class="panel">${titulo('04', 'Dispositivos', 'Onde sua conta está aberta', '', lista && lista.length > 1 ? '<button type="button" class="button" data-outras>Sair dos outros</button>' : '')}${falha('sessoes')}
+          ${lista ? `<div class="c-disp">${lista.map(x => { const a = aparelho(x.agente); return `<div><span class="c-disp-ic">${a.movel ? IC.celular : IC.tela}</span><span><b>${esc(a.nome)}</b>${x.atual ? '<span class="c-selo">este dispositivo</span>' : ''}<small>Entrou em ${dataCurta(x.criada_em)} · ativo às ${hora(x.ultima_atividade)}</small></span></div>`; }).join('')}</div>` : '<p class="c-vazio">Carregando…</p>'}</section></div>`;
     }
 
     function ligar(sec, alvo) {
@@ -240,12 +290,11 @@
         const f = alvo.querySelector('[data-perfil]'); let escolha = u.avatar || '';
         const assinatura = () => {
           const fd = new FormData(f), nome = String(fd.get('nome') || '').trim() || u.nome, emp = String(fd.get('empresa') || '').trim();
-          alvo.querySelector('[data-assinatura]').innerHTML = `${S.avatar({ nome, avatar: escolha }, 'v-av-a')}<div><span>Responsável técnico</span><b>${esc(nome)}</b><small>${esc([emp, u.email].filter(Boolean).join(' · '))}</small></div>`;
-          alvo.querySelector('[data-previa]').innerHTML = S.avatar({ nome, avatar: escolha }, 'v-av-p');
+          alvo.querySelector('[data-assinatura]').innerHTML = `${S.avatar({ nome, avatar: escolha }, 'c-av-a')}<div><span>Responsável técnico</span><b>${esc(nome)}</b><small>${esc([emp, u.email].filter(Boolean).join(' · '))}</small></div>`;
+          alvo.querySelector('[data-previa]').innerHTML = S.avatar({ nome, avatar: escolha }, 'c-av-l');
           const icone = escolha.startsWith('icone:') && S.ICONES[escolha.slice(6)];
-          alvo.querySelector('[data-avatar-nome]').textContent = icone ? icone[0] : escolha ? 'Sua foto' : 'Suas iniciais';
-          const botoes = [...alvo.querySelectorAll('[data-icone]')];
-          botoes.forEach((b, i) => {
+          alvo.querySelector('[data-avatar-nome]').textContent = icone ? icone[0] : escolha ? 'sua foto' : 'suas iniciais';
+          [...alvo.querySelectorAll('[data-icone]')].forEach((b, i) => {
             const selecionado = escolha === 'icone:' + b.dataset.icone;
             b.setAttribute('aria-checked', String(selecionado));
             b.tabIndex = selecionado || (!icone && i === 0) ? 0 : -1;
