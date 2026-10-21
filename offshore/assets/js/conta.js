@@ -197,9 +197,9 @@
       return `<form class="v-painel v-perfil" novalidate data-perfil>
         <div class="v-bloco"><h2>Foto ou ícone</h2><p class="v-nota">Aparece no topo do laboratório, na sua conta e no bloco de responsável técnico dos relatórios.</p>
           <div class="v-escolha"><div class="v-previa" data-previa>${S.avatar({ ...u, avatar: atual }, 'v-av-p')}</div>
-            <div class="v-escolha-acoes"><label class="v-btn v-sec v-peq">${IC.camera}<span>Enviar foto</span><input type="file" accept="image/*" data-arquivo hidden></label>
-            <button type="button" class="v-btn v-txt v-peq" data-iniciais>Usar iniciais</button></div></div>
-          <div class="v-icones" role="radiogroup" aria-label="Ícones">${Object.entries(S.ICONES).map(([id, [rot]]) => `<button type="button" role="radio" class="v-icone" data-icone="${id}" aria-checked="${atual === 'icone:' + id}" title="${esc(rot)}">${S.avatar({ avatar: 'icone:' + id }, 'v-av-i')}<span>${esc(rot)}</span></button>`).join('')}</div>
+            <div class="v-escolha-info"><span class="v-escolha-rot">Seu avatar</span><strong class="v-escolha-nome" data-avatar-nome></strong><div class="v-escolha-acoes"><label class="v-btn v-sec v-peq">${IC.camera}<span>Enviar foto</span><input type="file" accept="image/*" data-arquivo hidden></label>
+            <button type="button" class="v-btn v-txt v-peq" data-iniciais>Usar iniciais</button></div></div></div>
+          <div class="v-icones" role="radiogroup" aria-label="Ícones">${Object.entries(S.ICONES).map(([id, [rot]]) => `<button type="button" role="radio" class="v-icone" data-icone="${id}" aria-checked="${atual === 'icone:' + id}" tabindex="${atual === 'icone:' + id || (!atual.startsWith('icone:') && id === Object.keys(S.ICONES)[0]) ? 0 : -1}" title="${esc(rot)}">${S.avatar({ avatar: 'icone:' + id }, 'v-av-i')}<span>${esc(rot)}</span></button>`).join('')}</div>
           <p class="v-nota">Quer usar o logotipo da sua empresa? Envie a imagem dele em “Enviar foto”.</p></div>
         <div class="v-bloco"><h2>Dados do responsável</h2>
           <div class="v-grade">${campo('nome', 'pessoa', 'Nome completo', `required maxlength="80" value="${esc(u.nome)}" autocomplete="name"`)}${campo('empresa', 'empresa', 'Empresa', `maxlength="80" value="${esc(u.empresa || '')}" autocomplete="organization"`)}</div>
@@ -242,10 +242,27 @@
           const fd = new FormData(f), nome = String(fd.get('nome') || '').trim() || u.nome, emp = String(fd.get('empresa') || '').trim();
           alvo.querySelector('[data-assinatura]').innerHTML = `${S.avatar({ nome, avatar: escolha }, 'v-av-a')}<div><span>Responsável técnico</span><b>${esc(nome)}</b><small>${esc([emp, u.email].filter(Boolean).join(' · '))}</small></div>`;
           alvo.querySelector('[data-previa]').innerHTML = S.avatar({ nome, avatar: escolha }, 'v-av-p');
-          alvo.querySelectorAll('[data-icone]').forEach(b => b.setAttribute('aria-checked', String(escolha === 'icone:' + b.dataset.icone)));
+          const icone = escolha.startsWith('icone:') && S.ICONES[escolha.slice(6)];
+          alvo.querySelector('[data-avatar-nome]').textContent = icone ? icone[0] : escolha ? 'Sua foto' : 'Suas iniciais';
+          const botoes = [...alvo.querySelectorAll('[data-icone]')];
+          botoes.forEach((b, i) => {
+            const selecionado = escolha === 'icone:' + b.dataset.icone;
+            b.setAttribute('aria-checked', String(selecionado));
+            b.tabIndex = selecionado || (!icone && i === 0) ? 0 : -1;
+          });
         };
         assinatura(); f.addEventListener('input', assinatura);
-        alvo.querySelectorAll('[data-icone]').forEach(b => b.addEventListener('click', () => { escolha = 'icone:' + b.dataset.icone; assinatura(); }));
+        const botoes = [...alvo.querySelectorAll('[data-icone]')];
+        botoes.forEach((b, i) => {
+          b.addEventListener('click', () => { escolha = 'icone:' + b.dataset.icone; assinatura(); });
+          b.addEventListener('keydown', ev => {
+            const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[ev.key];
+            if (!passo && ev.key !== 'Home' && ev.key !== 'End') return;
+            ev.preventDefault();
+            const n = ev.key === 'Home' ? 0 : ev.key === 'End' ? botoes.length - 1 : (i + passo + botoes.length) % botoes.length;
+            botoes[n].click(); botoes[n].focus();
+          });
+        });
         alvo.querySelector('[data-iniciais]').addEventListener('click', () => { escolha = ''; assinatura(); });
         alvo.querySelector('[data-arquivo]').addEventListener('change', async ev => {
           const arq = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (!arq) return;
