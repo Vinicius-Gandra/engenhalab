@@ -43,8 +43,9 @@ test('coleta somente após permissão e retira consultas e fragmentos dos endere
   const commands = view.window.dataLayer.map(args => Array.from(args));
   const encoded = JSON.stringify(commands);
   assert.equal(encoded.includes('secret'), false); assert.equal(encoded.includes('private@example.test'), false);
-  assert.ok(encoded.includes('https://engenhalab.com.br/index.html'));
-  assert.ok(encoded.includes('https://example.test/'));
+  const pageContext = commands.find(args => args[0] === 'set')[1];
+  assert.equal(pageContext.page_location, 'https://engenhalab.com.br/index.html');
+  assert.equal(pageContext.page_referrer, 'https://example.test/');
   assert.equal(commands.filter(args => args[0] === 'event' && args[1] === 'page_view').length, 1);
   assert.equal(commands.find(args => args[0] === 'config')[2].allow_google_signals, false);
   view.buttons[1].click(); assert.equal(view.scripts().length, 1);
