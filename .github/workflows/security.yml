@@ -27,6 +27,6 @@ jobs:
       - name: Validar a proteção com casos de regressão
         run: python3 -m unittest discover -s tests/security -v
       - name: Validar a edição de campos
-        run: node --test tests/security/test_set_path.cjs
+        run: node --test tests/security/*.cjs
       - name: Verificar os arquivos que serão publicados
         run: python3 scripts/security/check_publication.py
