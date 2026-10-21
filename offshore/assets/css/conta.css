@@ -101,3 +101,30 @@
 .dc-lista dt { color: var(--soft, var(--muted)); font-size: .68rem; }
 .dc-lista dd { margin: 1px 0 0; font: 650 .84rem var(--mono, monospace); }
 .dc-nota { margin: 10px 0 0; color: var(--muted); font-size: .74rem; line-height: 1.45; }
+
+/* avatar: foto, ícone do setor ou iniciais */
+.av { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #6d3bd8, #d9466f); color: #fff; font: 650 13px/1 var(--sans, Inter, sans-serif); letter-spacing: .02em; }
+.av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.av svg { width: 58%; height: 58%; }
+.av-plataforma { background: linear-gradient(135deg, #1f4fd1, #3fb6e8); }
+.av-torpedo { background: linear-gradient(135deg, #d4581f, #f2a24a); }
+.av-navio { background: linear-gradient(135deg, #0e6f86, #2fc6b1); }
+.av-capacete { background: linear-gradient(135deg, #d99a12, #f5d04b); color: #3a2600; }
+.av-ancora { background: linear-gradient(135deg, #24305e, #5468c9); }
+.av-sonda { background: linear-gradient(135deg, #7a2b2b, #e0624f); }
+.av-duto { background: linear-gradient(135deg, #3d4b57, #8aa0ae); }
+.av-onda { background: linear-gradient(135deg, #0b5ec2, #59c2ff); }
+.av-helice { background: linear-gradient(135deg, #5a2ca0, #b26bf2); }
+.av-valvula { background: linear-gradient(135deg, #1b7a43, #69d08f); }
+.av-boia { background: linear-gradient(135deg, #c2263c, #ff8a5c); }
+.av-engrenagem { background: linear-gradient(135deg, #34353b, #7d8190); }
+.s-conta .av.s-av { width: 24px; height: 24px; margin-left: -4px; font-size: 10px; }
+
+/* responsável técnico nos relatórios impressos */
+.rp-resp { display: flex; align-items: center; gap: 12px; margin: 10px 0 14px; padding: 10px 14px; border: 1px solid #d5d9de; border-radius: 10px; color: #111; break-inside: avoid; }
+.rp-resp .av-rp { width: 42px; height: 42px; font-size: 15px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.rp-resp span:not(.av) { display: block; color: #666; font: 600 9px/1.3 var(--mono, monospace); letter-spacing: .12em; text-transform: uppercase; }
+.rp-resp b { display: block; font-size: 14px; }
+.rp-resp small { display: block; color: #555; font-size: 11px; }
+.rp-resp-pagina { display: none; }
+@media print { .rp-resp-pagina { display: flex; } }

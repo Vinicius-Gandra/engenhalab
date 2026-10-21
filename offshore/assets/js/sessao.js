@@ -37,7 +37,41 @@
   // cálculos: com sessão, parâmetros liberados; se a sessão caiu, refaz sem login
   const calc = rota => async corpo => { try { return await pedir(rota, corpo); } catch (e) { if (e.sessao === false) return pedir(rota, corpo, { auth: false }); throw e; } };
   window.Calc = Object.fromEntries(['lancamento', 'secao', 'resumo', 'catenaria', 'capacidade', 'lateral', 'py'].map(k => [k, calc(k)]));
-  window.Sessao = { pedir, sessao, sair, BASE, guardar: s => { gravar(K_SESSAO, s); document.dispatchEvent(new CustomEvent('engenha-sessao')); }, projetoAtivo: () => ler(K_PROJ, null), definirProjeto: p => gravar(K_PROJ, p), dadosLocais, aplicarDados, CHAVES };
+
+  /* --------------------------------------------- avatar: foto, ícone do setor ou iniciais */
+  const ICONES = {
+    plataforma: ['Plataforma', 'M4 21h16M6.5 21 8 13M17.5 21 16 13M5 13h14M8 13v-3h8v3M12 10V3l3.5 7M9 17h6'],
+    torpedo: ['Estaca torpedo', 'M12 2v3M10 5h4v12l-2 5-2-5zM10 9l-3 3v4l3-2M14 9l3 3v4l-3-2'],
+    navio: ['Navio', 'M3 14h18l-2.5 5h-13zM6 14v-4h8l3 4M9 10V6h3v4M2 22c2 0 2-1.2 4-1.2s2 1.2 4 1.2 2-1.2 4-1.2 2 1.2 4 1.2 2-1.2 4-1.2'],
+    capacete: ['Capacete', 'M3 18h18M4.5 18a7.5 7.5 0 0 1 15 0M10 10.8V7h4v3.8M7.5 12.5A6 6 0 0 1 10 10.8M16.5 12.5A6 6 0 0 0 14 10.8'],
+    ancora: ['Âncora', 'M12 7.5V21M8 11h8M4.5 14.5A7.5 7.5 0 0 0 12 21a7.5 7.5 0 0 0 7.5-6.5M12 3a2.2 2.2 0 1 1 0 4.4A2.2 2.2 0 0 1 12 3z'],
+    sonda: ['Sonda', 'M12 2 6.5 22M12 2l5.5 20M9 13.5h6M8 17.5h8M10.2 8.5h3.6M4 22h16'],
+    duto: ['Duto', 'M2 6h7a5 5 0 0 1 5 5v2a2 2 0 0 0 2 2h6M2 10h7a1 1 0 0 1 1 1v2a6 6 0 0 0 6 6h6M5 4.5v7M19 13.5v7'],
+    onda: ['Ondas', 'M2 8c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 13c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 18c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2'],
+    helice: ['Hélice', 'M12 10.5c-.6-3.6.6-7.2 3-8 1.3 2.2-.2 5.7-3 8zM13.3 12.8c3.4 1.3 5.8 4.2 5.2 6.6-2.5.3-4.8-2.7-5.2-6.6zM10.6 12.7c-2.8 2.3-6.5 3-8.3 1.3 1.1-2.3 4.8-2.8 8.3-1.3zM13.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z'],
+    valvula: ['Válvula', 'M3 8v8l9-4zM21 8v8l-9-4zM12 12V6M8.5 4h7M2 12h1M21 12h1'],
+    boia: ['Boia', 'M8 20h8l-1.2-8H9.2zM9.2 12l1.3-5h3l1.3 5M12 7V2.5M10 2.5h4M2 21.5c2 0 2-1 4-1M18 20.5c2 0 2 1 4 1'],
+    engrenagem: ['Engrenagem', 'M12 8.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zM12 2v3.5M12 18.5V22M2 12h3.5M18.5 12H22M4.9 4.9l2.5 2.5M16.6 16.6l2.5 2.5M4.9 19.1l2.5-2.5M16.6 7.4l2.5-2.5']
+  };
+  const iniciais = nome => String(nome || '?').trim().split(/\s+/).filter(Boolean).map(p => p[0]).slice(0, 2).join('').toUpperCase() || '?';
+  function iconeSvg(id) { const i = ICONES[id]; return i ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${i[1]}"/></svg>` : ''; }
+  function avatar(u, cls) {
+    u = u || {}; const a = String(u.avatar || ''), c = 'av' + (cls ? ' ' + cls : '');
+    if (/^data:image\/(png|jpeg|webp);base64,/.test(a)) return `<span class="${c} av-foto"><img src="${esc(a)}" alt=""></span>`;
+    if (a.startsWith('icone:') && ICONES[a.slice(6)]) { const id = a.slice(6); return `<span class="${c} av-ic av-${id}">${iconeSvg(id)}</span>`; }
+    return `<span class="${c} av-ini">${esc(iniciais(u.nome || u.email))}</span>`;
+  }
+
+  /* --------------------------------------------- responsável técnico nos relatórios impressos */
+  function blocoResponsavel() {
+    const s = sessao(); document.querySelectorAll('.rp-resp').forEach(e => e.remove()); if (!s) return;
+    const u = s.usuario, html = `${avatar(u, 'av-rp')}<div><span>Responsável técnico</span><b>${esc(u.nome)}</b><small>${esc([u.empresa, u.email].filter(Boolean).join(' · '))}</small></div>`;
+    const alvos = document.querySelectorAll('.rp-title');
+    if (alvos.length) alvos.forEach(t => { const d = document.createElement('div'); d.className = 'rp-resp'; d.innerHTML = html; t.after(d); });
+    else { const m = document.querySelector('main'); if (m) { const d = document.createElement('div'); d.className = 'rp-resp rp-resp-pagina'; d.innerHTML = html; m.prepend(d); } }
+  }
+  window.addEventListener('beforeprint', blocoResponsavel);
+  window.Sessao = { pedir, sessao, sair, BASE, guardar: s => { gravar(K_SESSAO, s); document.dispatchEvent(new CustomEvent('engenha-sessao')); }, projetoAtivo: () => ler(K_PROJ, null), definirProjeto: p => gravar(K_PROJ, p), dadosLocais, aplicarDados, CHAVES, avatar, ICONES, iconeSvg, iniciais };
 
   /* ------------------------------------------------- projeto no servidor */
   function dadosLocais() { const o = {}; for (const k of CHAVES) { const v = ler(k, null); if (v && typeof v === 'object') o[k] = v; } return o; }
@@ -77,7 +111,7 @@
     const lugar = document.querySelector('.s-actions'); if (!lugar) return;
     let b = lugar.querySelector('.s-conta'); if (!b) { b = document.createElement('a'); b.className = 's-act s-conta'; lugar.prepend(b); }
     const s = sessao();
-    if (s) { b.href = 'conta.html'; b.innerHTML = `<span class="s-conta-pt" aria-hidden="true"></span>${esc(s.usuario.nome.split(' ')[0])}`; b.title = 'Sua conta: ' + s.usuario.email; }
+    if (s) { b.href = 'conta.html'; b.innerHTML = `${avatar(s.usuario, 's-av')}${esc(s.usuario.nome.split(' ')[0])}`; b.title = 'Sua conta: ' + s.usuario.email; }
     else { b.href = 'conta.html?volta=' + volta; b.textContent = 'Entrar'; b.title = 'Entrar com o seu acesso'; }
   }
   function estado(txt, erro) { const e = barra && barra.querySelector('.sb-estado'); if (e) { e.textContent = txt; e.classList.toggle('erro', !!erro); } }

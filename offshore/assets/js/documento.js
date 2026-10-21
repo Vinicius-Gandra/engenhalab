@@ -11,7 +11,7 @@
     document.title = `${c.numero} · Memorial`;
     app.innerHTML = `<div class="doc-acoes"><button type="button" class="ac-btn" data-imp>Imprimir ou salvar em PDF</button></div>
       <header class="doc-cab"><div><span class="ac-olho">EngenhaLab · Laboratório offshore</span><h1>${esc(c.tipo)}</h1><p>Projeto: <b>${esc(c.projeto)}</b> (versão ${esc(c.versao)})</p></div>
-      <div class="doc-num">${esc(c.numero)}<p class="doc-meta">${esc(quando)}<br>${esc(c.emitido_por.nome)}<br>${esc(c.emitido_por.email)}</p></div></header>
+      <div class="doc-num">${esc(c.numero)}<p class="doc-meta">${esc(quando)}<br>Responsável técnico<br><b>${esc(c.emitido_por.nome)}</b>${c.emitido_por.empresa ? '<br>' + esc(c.emitido_por.empresa) : ''}<br>${esc(c.emitido_por.email)}</p></div></header>
       ${c.secoes.map(s => `<h2>${esc(s.titulo)}</h2><table><tbody>${s.itens.map(([r, v, u]) => `<tr><td>${esc(r)}</td><td>${esc(v)}</td><td>${esc(u)}</td></tr>`).join('')}</tbody></table>`).join('')}
       <p class="doc-rod">Documento ${esc(c.numero)} emitido pelo servidor do EngenhaLab a partir do projeto salvo. Código de verificação: ${esc(d.hash)}</p>`;
     app.querySelector('[data-imp]').addEventListener('click', () => print());
