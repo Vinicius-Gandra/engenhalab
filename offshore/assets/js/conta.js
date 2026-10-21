@@ -241,11 +241,11 @@
       return `<form class="c-grade" novalidate data-perfil>
         <section class="panel">${titulo('01', 'Identidade', 'Foto ou ícone', 'Aparece no topo do laboratório, nesta conta e nos relatórios.')}
           <div class="c-escolha"><div class="c-previa" data-previa>${S.avatar({ ...u, avatar: atual }, 'c-av-l')}</div>
-            <div class="c-escolha-acoes"><label class="button">${IC.camera}<span>Enviar foto</span><input type="file" accept="image/*" data-arquivo hidden></label>
+            <div class="c-escolha-acoes"><span class="c-escolha-rot">Seu avatar · <strong data-avatar-nome></strong></span><label class="button">${IC.camera}<span>Enviar foto</span><input type="file" accept="image/*" data-arquivo hidden></label>
               <button type="button" class="button ghost" data-iniciais>Usar iniciais</button>
               <small>JPG, PNG ou WebP. Recortada em quadrado; serve também o logotipo da sua empresa.</small></div></div>
           <span class="c-rot">Ícones do setor</span>
-          <div class="c-icones" role="radiogroup" aria-label="Ícones">${Object.entries(S.ICONES).map(([id, [rot]]) => `<button type="button" role="radio" class="c-icone" data-icone="${id}" aria-checked="${atual === 'icone:' + id}">${S.avatar({ avatar: 'icone:' + id }, 'c-av-i')}<span>${esc(rot)}</span></button>`).join('')}</div>
+          <div class="c-icones" role="radiogroup" aria-label="Ícones">${Object.entries(S.ICONES).map(([id, [rot]]) => `<button type="button" role="radio" class="c-icone" data-icone="${id}" aria-checked="${atual === 'icone:' + id}" tabindex="${atual === 'icone:' + id || (!atual.startsWith('icone:') && id === Object.keys(S.ICONES)[0]) ? 0 : -1}">${S.avatar({ avatar: 'icone:' + id }, 'c-av-i')}<span>${esc(rot)}</span></button>`).join('')}</div>
         </section>
         <section class="panel">${titulo('02', 'Responsável técnico', 'Dados nos relatórios', 'Nome e empresa que assinam os memoriais e os PDFs.')}
           <div class="form-grid">
@@ -292,10 +292,26 @@
           const fd = new FormData(f), nome = String(fd.get('nome') || '').trim() || u.nome, emp = String(fd.get('empresa') || '').trim();
           alvo.querySelector('[data-assinatura]').innerHTML = `${S.avatar({ nome, avatar: escolha }, 'c-av-a')}<div><span>Responsável técnico</span><b>${esc(nome)}</b><small>${esc([emp, u.email].filter(Boolean).join(' · '))}</small></div>`;
           alvo.querySelector('[data-previa]').innerHTML = S.avatar({ nome, avatar: escolha }, 'c-av-l');
-          alvo.querySelectorAll('[data-icone]').forEach(b => b.setAttribute('aria-checked', String(escolha === 'icone:' + b.dataset.icone)));
+          const icone = escolha.startsWith('icone:') && S.ICONES[escolha.slice(6)];
+          alvo.querySelector('[data-avatar-nome]').textContent = icone ? icone[0] : escolha ? 'sua foto' : 'suas iniciais';
+          [...alvo.querySelectorAll('[data-icone]')].forEach((b, i) => {
+            const selecionado = escolha === 'icone:' + b.dataset.icone;
+            b.setAttribute('aria-checked', String(selecionado));
+            b.tabIndex = selecionado || (!icone && i === 0) ? 0 : -1;
+          });
         };
         assinatura(); f.addEventListener('input', assinatura);
-        alvo.querySelectorAll('[data-icone]').forEach(b => b.addEventListener('click', () => { escolha = 'icone:' + b.dataset.icone; assinatura(); }));
+        const botoes = [...alvo.querySelectorAll('[data-icone]')];
+        botoes.forEach((b, i) => {
+          b.addEventListener('click', () => { escolha = 'icone:' + b.dataset.icone; assinatura(); });
+          b.addEventListener('keydown', ev => {
+            const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[ev.key];
+            if (!passo && ev.key !== 'Home' && ev.key !== 'End') return;
+            ev.preventDefault();
+            const n = ev.key === 'Home' ? 0 : ev.key === 'End' ? botoes.length - 1 : (i + passo + botoes.length) % botoes.length;
+            botoes[n].click(); botoes[n].focus();
+          });
+        });
         alvo.querySelector('[data-iniciais]').addEventListener('click', () => { escolha = ''; assinatura(); });
         alvo.querySelector('[data-arquivo]').addEventListener('change', async ev => {
           const arq = ev.target.files && ev.target.files[0]; ev.target.value = ''; if (!arq) return;

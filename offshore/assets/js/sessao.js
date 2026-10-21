@@ -40,21 +40,59 @@
 
   /* --------------------------------------------- avatar: foto, ícone do setor ou iniciais */
   const ICONES = {
-    plataforma: ['Plataforma', 'M4 21h16M6.5 21 8 13M17.5 21 16 13M5 13h14M8 13v-3h8v3M12 10V3l3.5 7M9 17h6'],
-    torpedo: ['Estaca torpedo', 'M12 2v3M10 5h4v12l-2 5-2-5zM10 9l-3 3v4l3-2M14 9l3 3v4l-3-2'],
-    navio: ['Navio', 'M3 14h18l-2.5 5h-13zM6 14v-4h8l3 4M9 10V6h3v4M2 22c2 0 2-1.2 4-1.2s2 1.2 4 1.2 2-1.2 4-1.2 2 1.2 4 1.2 2-1.2 4-1.2'],
-    capacete: ['Capacete', 'M3 18h18M4.5 18a7.5 7.5 0 0 1 15 0M10 10.8V7h4v3.8M7.5 12.5A6 6 0 0 1 10 10.8M16.5 12.5A6 6 0 0 0 14 10.8'],
-    ancora: ['Âncora', 'M12 7.5V21M8 11h8M4.5 14.5A7.5 7.5 0 0 0 12 21a7.5 7.5 0 0 0 7.5-6.5M12 3a2.2 2.2 0 1 1 0 4.4A2.2 2.2 0 0 1 12 3z'],
-    sonda: ['Sonda', 'M12 2 6.5 22M12 2l5.5 20M9 13.5h6M8 17.5h8M10.2 8.5h3.6M4 22h16'],
-    duto: ['Duto', 'M2 6h7a5 5 0 0 1 5 5v2a2 2 0 0 0 2 2h6M2 10h7a1 1 0 0 1 1 1v2a6 6 0 0 0 6 6h6M5 4.5v7M19 13.5v7'],
-    onda: ['Ondas', 'M2 8c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 13c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 18c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2'],
-    helice: ['Hélice', 'M12 10.5c-.6-3.6.6-7.2 3-8 1.3 2.2-.2 5.7-3 8zM13.3 12.8c3.4 1.3 5.8 4.2 5.2 6.6-2.5.3-4.8-2.7-5.2-6.6zM10.6 12.7c-2.8 2.3-6.5 3-8.3 1.3 1.1-2.3 4.8-2.8 8.3-1.3zM13.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z'],
-    valvula: ['Válvula', 'M3 8v8l9-4zM21 8v8l-9-4zM12 12V6M8.5 4h7M2 12h1M21 12h1'],
-    boia: ['Boia', 'M8 20h8l-1.2-8H9.2zM9.2 12l1.3-5h3l1.3 5M12 7V2.5M10 2.5h4M2 21.5c2 0 2-1 4-1M18 20.5c2 0 2 1 4 1'],
-    engrenagem: ['Engrenagem', 'M12 8.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zM12 2v3.5M12 18.5V22M2 12h3.5M18.5 12H22M4.9 4.9l2.5 2.5M16.6 16.6l2.5 2.5M4.9 19.1l2.5-2.5M16.6 7.4l2.5-2.5']
+    plataforma: ['Plataforma', `<path class="av-sombra" d="M17 41h30l5 15H12z"/>
+      <path class="av-metal" d="M18 37h6l-4 18h-6zm22 0h6l4 18h-6z"/>
+      <path class="av-cor" d="M12 30h40v10H12z"/><path d="M12 35h40M18 30v-8h13v8M21 25h2m4 0h1M18 40l26 15M46 40 20 55"/>
+      <path class="av-metal" d="m36 8-8 22h17z"/><path d="M36 8v22M33 17h7M30 24h13M11 30v-4m42 4v-4"/>
+      <path class="av-agua" d="M7 55q6-4 12 0t12 0 12 0 14 0"/>`],
+    torpedo: ['Estaca torpedo', `<path class="av-sombra" d="m26 31-11 11 2 9 12-7m9-13 11 11-2 9-12-7"/>
+      <path class="av-cor" d="M26 14h12v31l-6 12-6-12z"/><path class="av-metal" d="M26 14h6v38l-6-7z"/>
+      <path d="M26 23h12M26 41h12M32 7v7M28 7h8M23 19v16m18-16v16"/>
+      <path class="av-detalhe" d="M29 28h6m-6 5h6"/>`],
+    navio: ['Navio', `<path class="av-metal" d="M19 23h22l7 14H16z"/><path class="av-cor" d="M25 15h12v9H25z"/>
+      <path d="M31 8v7m0-4h9M21 28h3m5 0h3m5 0h3"/>
+      <path class="av-cor" d="m8 35 23 5 25-5-8 15H18z"/><path class="av-sombra" d="m31 40 25-5-8 15H31z"/>
+      <path d="M31 40v8M13 39l11 3"/><path class="av-agua" d="M7 53q6-4 12 0t12 0 12 0 14 0"/>`],
+    capacete: ['Capacete', `<path class="av-sombra" d="M15 45h34v6H15z"/>
+      <path class="av-cor" d="M12 40c0-14 8-24 20-24s20 10 20 24z"/>
+      <path class="av-metal" d="M28 13h8v25h-8z"/><path d="M21 23c-3 4-4 8-4 13m26-13c3 4 4 8 4 13"/>
+      <path class="av-cor" d="M8 39h48v7H8z"/><path d="M11 46h42M32 19v13"/>`],
+    ancora: ['Âncora', `<circle class="av-metal" cx="32" cy="14" r="6"/><circle class="av-sombra" cx="32" cy="14" r="2.5" stroke="none"/>
+      <path class="av-metal" d="M29 20h6v28c6-1 11-5 13-10l-5 1 7-10 6 11-4-1c-2 10-10 16-20 19-10-3-18-9-20-19l-4 1 6-11 7 10-5-1c2 5 7 9 13 10z"/>
+      <path class="av-cor" d="M20 25h24v5H20z"/><path class="av-detalhe" d="M32 23v26"/>`],
+    sonda: ['Sonda', `<path class="av-sombra" d="M14 51h36v6H14z"/><path class="av-cor" d="m29 9-13 42h7l9-33 9 33h7L35 9z"/>
+      <path d="M28 20h8M25 30h14M22 40h20M28 21l11 9-17 10 19 10M36 21l-11 9 17 10-19 10M32 7v43"/>
+      <path class="av-metal" d="M11 50h42v6H11z"/><path d="M8 56h48"/>`],
+    duto: ['Duto', `<path class="av-sombra" d="M8 18h20c9 0 14 6 14 14v3c0 4 2 6 6 6h9v12h-9c-12 0-18-7-18-18v-3H8z"/>
+      <path class="av-metal" d="M8 14h20c9 0 14 6 14 14v3c0 4 2 6 6 6h9v12h-9c-12 0-18-7-18-18v-3H8z"/>
+      <path class="av-cor" d="M12 10h7v22h-7zm35 23h7v20h-7z"/><path class="av-detalhe" d="M23 19h5c6 0 9 4 9 9v4M17 15v2m0 8v2m33 11v2m0 8v2"/>`],
+    onda: ['Ondas', `<path class="av-sombra" d="M7 42c9 0 11-5 17-17 7-14 22-13 27-4-11-4-18 7-12 14 4 5 10 6 18 5v14H7z"/>
+      <path class="av-cor" d="M7 39c9 0 11-5 17-17 7-14 22-13 27-4-11-4-18 7-12 14 4 5 10 6 18 5v13H7z"/>
+      <path class="av-metal" d="M24 22c7-14 22-13 27-4-10-4-17 5-13 12-8-7-3-14 2-15-6-1-11 2-16 7z" stroke="none"/>
+      <path class="av-agua" d="M8 47q6-4 12 0t12 0 12 0 12 0M12 54q5-3 10 0t10 0 10 0 10 0"/>`],
+    helice: ['Hélice', `<path class="av-cor" d="M29 30C17 18 24 6 35 8c8 2 9 14-2 22z"/>
+      <path class="av-metal" d="M34 30c16-5 23 7 17 16-5 7-16 1-18-12z"/>
+      <path class="av-cor" d="M31 35c-4 16-19 17-24 7-4-8 7-15 20-11z"/>
+      <path class="av-detalhe" d="M31 25c-5-6-5-11-1-13M39 33c8 0 11 4 10 7M26 37c-4 6-9 8-12 5"/>
+      <circle class="av-sombra" cx="32" cy="32" r="7"/><circle class="av-metal" cx="32" cy="32" r="4"/>`],
+    valvula: ['Válvula', `<path class="av-sombra" d="M9 34h46v14H9z"/>
+      <path class="av-metal" d="m14 31 18 8-18 9zm36 0-18 8 18 9z"/>
+      <path class="av-cor" d="M8 29h6v21H8zm42 0h6v21h-6zM29 23h6v16h-6z"/>
+      <ellipse class="av-cor" cx="32" cy="17" rx="15" ry="6"/><path d="M17 17h30m-15-6v12"/>
+      <path class="av-detalhe" d="M10 34v3m0 7v2m43-12v3m0 7v2"/>`],
+    boia: ['Boia', `<path class="av-cor" d="m25 29-5 20h24l-5-20z"/><path class="av-metal" d="m23 37-2 7h22l-2-7z"/>
+      <path class="av-metal" d="M27 22h10l2 7H25z"/><path class="av-cor" d="M28 16h8v6h-8z"/>
+      <path d="M32 9v7m-4-7h8M17 49h30"/><path class="av-detalhe" d="m22 12-3-3m23 3 3-3"/>
+      <path class="av-agua" d="M7 54q6-4 12 0t12 0 12 0 14 0"/>`],
+    engrenagem: ['Engrenagem', `<path class="av-metal" d="m27 8 10 0 1 7 5 3 7-3 5 9-6 5v6l6 5-5 9-7-3-5 3-1 7H27l-1-7-5-3-7 3-5-9 6-5v-6l-6-5 5-9 7 3 5-3z"/>
+      <circle class="av-cor" cx="32" cy="32" r="14"/><circle class="av-sombra" cx="32" cy="32" r="7"/>
+      <path class="av-detalhe" d="M22 32a10 10 0 0 1 10-10m10 10a10 10 0 0 1-10 10"/>`]
   };
   const iniciais = nome => String(nome || '?').trim().split(/\s+/).filter(Boolean).map(p => p[0]).slice(0, 2).join('').toUpperCase() || '?';
-  function iconeSvg(id) { const i = ICONES[id]; return i ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${i[1]}"/></svg>` : ''; }
+  function iconeSvg(id) {
+    const i = ICONES[id];
+    return i ? `<svg class="av-arte" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${i[1]}</svg>` : '';
+  }
   function avatar(u, cls) {
     u = u || {}; const a = String(u.avatar || ''), c = 'av' + (cls ? ' ' + cls : '');
     if (/^data:image\/(png|jpeg|webp);base64,/.test(a)) return `<span class="${c} av-foto"><img src="${esc(a)}" alt=""></span>`;
