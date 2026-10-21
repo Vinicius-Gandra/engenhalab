@@ -178,7 +178,7 @@
       const sec = secaoAtual();
       app.querySelectorAll('[data-sec]').forEach(a => a.setAttribute('aria-current', a.dataset.sec === sec ? 'page' : 'false'));
       const alvo = app.querySelector('[data-conteudo]');
-      alvo.innerHTML = ({ perfil, projetos, memoriais, seguranca })[sec]();
+      alvo.innerHTML = sec === 'projetos' ? projetos() : sec === 'memoriais' ? memoriais() : sec === 'seguranca' ? seguranca() : perfil();
       ligar(sec, alvo);
     }
     async function carregar(qual) {
