@@ -3,11 +3,13 @@
    - os cálculos vão com a sessão e o servidor libera todos os parâmetros de entrada;
    - o caso de estudo fica salvo no servidor, num projeto do próprio usuário;
    - o memorial é emitido pelo servidor a partir do projeto salvo.
-   O servidor confere a sessão em cada pedido; esta página só mostra o que ele permitir. */
+   O servidor confere a sessão em cada pedido; esta página só mostra o que ele permitir.
+   No domínio próprio, a sessão fica num cookie HttpOnly que o JavaScript não lê; aqui fica só o nome e o prazo, para a tela. */
 (function () {
   'use strict';
   const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
-  const BASE = (local ? 'http://127.0.0.1:8787' : (window.ENGENHA_API || '')).replace(/\/$/, '');
+  // em teste local, o mesmo nome de máquina da página: o cookie da sessão é do mesmo site
+  const BASE = (local ? 'http://' + location.hostname + ':8787' : (window.ENGENHA_API || '')).replace(/\/$/, '');
   const K_SESSAO = 'engenha-offshore-sessao', K_PROJ = 'engenha-offshore-projeto';
   const CHAVES = ['offshore-project-v8', 'catenaria-lab-case-v1', 'capacidade-axial-caso-v1'];
   const ler = (k, padrao) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? padrao : v; } catch (_) { return padrao; } };
@@ -15,19 +17,21 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   /* ------------------------------------------------------------ sessão */
-  const sessao = () => { const s = ler(K_SESSAO, null); return s && s.sessao && s.expira * 1000 > Date.now() ? s : null; };
+  const sessao = () => { const s = ler(K_SESSAO, null); return s && s.usuario && s.expira * 1000 > Date.now() ? s : null; };
+  // modo anterior (endereço workers.dev): o servidor ainda devolve o token e ele vai no cabeçalho
+  const cabecalho = (s, h) => { if (s && s.sessao) h.Authorization = 'Bearer ' + s.sessao; return h; };
   function sair(local) {
     const s = sessao();
     gravar(K_SESSAO, null); gravar(K_PROJ, null);
-    if (s && !local) fetch(BASE + '/v1/conta/sair', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + s.sessao }, body: '{}' }).catch(() => {});
+    if (s && !local) fetch(BASE + '/v1/conta/sair', { method: 'POST', credentials: 'include', headers: cabecalho(s, { 'Content-Type': 'application/json' }), body: '{}' }).catch(() => {});
     document.dispatchEvent(new CustomEvent('engenha-sessao'));
   }
-  // pedido ao servidor; com sessão, vai o cabeçalho Authorization. 401 com sessão = sessão encerrada
+  // pedido ao servidor; a sessão vai no cookie (ou no cabeçalho, no modo anterior). 401 com sessão = sessão encerrada
   async function pedir(rota, corpo, { auth = true } = {}) {
     const s = auth ? sessao() : null, h = { 'Content-Type': s ? 'application/json' : 'text/plain;charset=UTF-8' };
-    if (s) h.Authorization = 'Bearer ' + s.sessao;
+    cabecalho(s, h);
     let r;
-    try { r = await fetch(BASE + '/v1/' + rota, { method: 'POST', headers: h, body: JSON.stringify(corpo || {}) }); }
+    try { r = await fetch(BASE + '/v1/' + rota, { method: 'POST', credentials: 'include', headers: h, body: JSON.stringify(corpo || {}) }); }
     catch (_) { throw new Error('Sem conexão com o servidor. Verifique a internet e tente de novo.'); }
     let j = null; try { j = await r.json(); } catch (_) { /* resposta vazia */ }
     if (r.status === 401 && s) { sair(true); const e = new Error((j && j.erro) || 'Sua sessão terminou. Entre de novo.'); e.sessao = false; throw e; }
@@ -127,7 +131,7 @@
     finally { salvando = false; }
   }
   setInterval(() => { if (!ler(K_PROJ, null) || !sessao()) return; if (JSON.stringify(dadosLocais()) !== ultimo) { clearTimeout(espera); espera = setTimeout(salvar, 1200); } }, 1500);
-  addEventListener('pagehide', () => { const p = ler(K_PROJ, null), s = sessao(), atual = JSON.stringify(dadosLocais()); if (p && s && atual !== ultimo) fetch(BASE + '/v1/projetos/salvar', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + s.sessao }, body: JSON.stringify({ id: p.id, dados: JSON.parse(atual) }) }).catch(() => {}); });
+  addEventListener('pagehide', () => { const p = ler(K_PROJ, null), s = sessao(), atual = JSON.stringify(dadosLocais()); if (p && s && atual !== ultimo) fetch(BASE + '/v1/projetos/salvar', { method: 'POST', keepalive: true, credentials: 'include', headers: cabecalho(s, { 'Content-Type': 'application/json' }), body: JSON.stringify({ id: p.id, dados: JSON.parse(atual) }) }).catch(() => {}); });
 
   // ao abrir a página: se o projeto mudou em outro lugar (e aqui não há mudança pendente), traz a versão salva
   async function conferirVersao() {
