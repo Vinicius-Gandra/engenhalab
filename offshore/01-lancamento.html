@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
-  <link rel="stylesheet" href="assets/css/lancamento.css">
+  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261021-4">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
@@ -99,18 +99,36 @@
       <div class="lx-busy" id="lx-busy" role="status" hidden><i></i>Calculando…</div>
       <div class="lx-scene"><svg id="lx-scene" viewBox="0 0 900 560" role="img" aria-label="Trajetória do torpedo da soltura até a parada no solo"></svg></div>
       <aside class="lx-hud" aria-live="off">
-        <div class="lx-phase"><i id="hud-dot"></i><span id="hud-phase">Soltura</span></div>
-        <div class="lx-hud-big"><strong id="hud-v">0,0</strong><span>m/s</span></div>
-        <div class="lx-hud-bar"><div id="hud-vbar"></div></div>
-        <small class="lx-hud-cap" id="hud-vcap">da velocidade terminal</small>
-        <dl class="lx-hud-kv">
-          <div><dt>Tempo</dt><dd id="hud-t">0,00 s</dd></div>
-          <div><dt>Profundidade</dt><dd id="hud-z">—</dd></div>
-          <div><dt>Ponta no solo</dt><dd id="hud-pen">—</dd></div>
-          <div><dt>Aceleração</dt><dd id="hud-a">—</dd></div>
-          <div><dt>Energia cinética</dt><dd id="hud-e">—</dd></div>
-        </dl>
-        <div class="lx-spark"><svg id="hud-spark" viewBox="0 0 220 70" preserveAspectRatio="none"></svg></div>
+        <div class="lx-hud-top">
+          <div class="lx-phase"><i id="hud-dot"></i><span id="hud-phase">Soltura</span></div>
+          <span class="lx-hud-t" id="hud-t">0,00 s</span>
+        </div>
+        <ol class="lx-hud-steps" aria-hidden="true"><li data-st="rel"></li><li data-st="fall"></li><li data-st="soil"></li><li data-st="rest"></li></ol>
+        <div class="lx-hud-main">
+          <small class="lx-hud-lab" id="hud-mlab">Velocidade</small>
+          <div class="lx-hud-big"><strong id="hud-v">0,0</strong><span id="hud-munit">m/s</span></div>
+          <div class="lx-hud-bar"><div id="hud-vbar"></div></div>
+          <small class="lx-hud-cap" id="hud-vcap">da velocidade terminal</small>
+        </div>
+        <section class="lx-hud-grp">
+          <h3>Na água</h3>
+          <dl class="lx-hud-kv">
+            <div><dt>Até o leito</dt><dd id="hud-rem">—</dd></div>
+            <div><dt>Velocidade no impacto</dt><dd id="hud-vi">—</dd></div>
+            <div><dt>Energia no impacto</dt><dd id="hud-e">—</dd></div>
+            <div><dt>Tempo de queda</dt><dd id="hud-tq">—</dd></div>
+          </dl>
+        </section>
+        <section class="lx-hud-grp">
+          <h3>No solo</h3>
+          <dl class="lx-hud-kv">
+            <div class="lx-hud-key"><dt>Olhal abaixo do leito</dt><dd id="hud-eye">—</dd></div>
+            <div><dt>Ponta abaixo do leito</dt><dd id="hud-pen">—</dd></div>
+            <div><dt>Tempo de cravação</dt><dd id="hud-tc">—</dd></div>
+          </dl>
+        </section>
+        <div class="lx-spark"><small>Velocidade ao longo do tempo</small><svg id="hud-spark" viewBox="0 0 220 70" preserveAspectRatio="none"></svg><span class="lx-spark-x"><b>água</b><b>solo</b></span></div>
+        <div class="lx-spark lx-spark-a"><small>Aceleração <span id="hud-acur"></span></small><svg id="hud-aspark" viewBox="0 0 220 70" preserveAspectRatio="none"></svg><span class="lx-spark-y" id="hud-arng"></span></div>
       </aside>
       <div class="lx-timeline">
         <button type="button" class="lx-play" id="lx-play" aria-label="Reproduzir"><span class="i-play">▶</span><span class="i-pause">❚❚</span></button>
@@ -168,7 +186,7 @@
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261021-cookie"></script>
   <script src="assets/js/torpedo.js"></script>
-  <script src="assets/js/paginas/lancamento.js?v=20261021-2"></script>
+  <script src="assets/js/paginas/lancamento.js?v=20261021-4"></script>
   <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>

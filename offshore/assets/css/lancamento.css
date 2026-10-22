@@ -259,3 +259,30 @@ html[data-theme="light"] #soil-section{--pa-hi:#ffffff;--pa-mid:#aebfc6;--pa-dar
 .lx-busy i{width:10px;height:10px;border:2px solid var(--line2);border-top-color:var(--orange);border-radius:50%;animation:lx-spin .8s linear infinite}
 @keyframes lx-spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.lx-busy i{animation:none}}
+/* painel de leitura: etapa, valor principal e grupos água / solo */
+.lx-hud{gap:12px}
+.lx-hud-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lx-hud-t{font:600 .72rem var(--mono);color:var(--soft);font-variant-numeric:tabular-nums}
+.lx-hud-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0;padding:0;list-style:none}
+.lx-hud-steps li{height:3px;border-radius:2px;background:var(--panel2)}
+.lx-hud-steps li.ok{background:color-mix(in srgb,var(--teal) 70%,transparent)}
+.lx-hud-steps li.on{background:var(--orange)}
+.lx-hud-main{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--panel2) 55%,transparent)}
+.lx-hud-main.rest{border-color:color-mix(in srgb,var(--orange) 55%,var(--line));background:color-mix(in srgb,var(--orange) 8%,var(--panel))}
+.lx-hud-lab{font:700 .64rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lx-hud-main .lx-hud-big{margin:0}
+.lx-hud-main .lx-hud-cap{margin:0;font-size:.68rem;line-height:1.35}
+.lx-hud-main.rest .lx-hud-bar div{background:var(--orange)}
+.lx-hud-grp h3{margin:0 0 2px;font:700 .62rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.lx-hud-grp .lx-hud-kv div:last-child{border-bottom:0}
+.lx-hud-kv dd.na{color:var(--soft);font-weight:400}
+.lx-hud-kv .lx-hud-key dt{color:var(--text)}
+.lx-hud-kv .lx-hud-key dd{color:var(--orange)}
+.lx-spark small{display:block;margin-bottom:4px;font-size:.64rem;color:var(--soft)}
+.lx-spark-x{display:flex;font:600 .58rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.lx-spark-x b{font-weight:600;flex:none;white-space:nowrap}.lx-spark-x b+b{flex:1;padding-left:4px;color:var(--orange)}
+@media(max-width:860px){.lx-hud-top,.lx-hud-steps,.lx-hud-main{grid-column:1/-1}}
+.lx-spark+.lx-spark{margin-top:0}
+.lx-spark svg{height:52px}
+.lx-spark small span{font-family:var(--mono);color:var(--text)}
+.lx-spark-y{display:block;font:600 .58rem var(--mono);color:var(--soft);text-align:right}
