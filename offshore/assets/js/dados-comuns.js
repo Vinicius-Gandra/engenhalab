@@ -11,7 +11,8 @@
   var MODELOS = {
     24: { nome: 'T-24', d: 0.762, l: 13.35, aletas: 0, volume: 3.381 },
     35: { nome: 'T-35', d: 0.762, l: 13.85, aletas: 4, volume: 4.594104307352 },
-    66: { nome: 'T-66', d: 0.762, l: 8.77, aletas: 4, volume: 4 },
+    66: { nome: 'T-66', d: 1.1755, l: 14, aletas: 4, volume: 9.249,
+      trechos: [{ length: 9.0, finStart: 0.658, finEnd: 0.658 }, { length: 5.0, finStart: 0, finEnd: 0 }], volumeCap: 8.319 },
     120: { nome: 'T-120', d: 1.219, l: 20.93, aletas: 4, volume: 16.21 }
   };
   // trechos de referência do T-120 (padrão da página de capacidade axial)
@@ -44,6 +45,7 @@
   }
 
   function trechosDo(modelo) {
+    if (MODELOS[modelo].trechos) return MODELOS[modelo].trechos.map(function (t) { return { length: t.length, finStart: t.finStart, finEnd: t.finEnd }; });
     if (modelo === 120) return TRECHOS_120.map(function (s) { return { length: s.length, finStart: s.finStart, finEnd: s.finEnd }; });
     var M = MODELOS[modelo], fl = M.l / MODELOS[120].l, fd = M.aletas ? M.d / MODELOS[120].d : 0;
     return TRECHOS_120.map(function (s) { return { length: r3(s.length * fl), finStart: r3(s.finStart * fd), finEnd: r3(s.finEnd * fd) }; });
@@ -66,7 +68,7 @@
     if (anterior === null && !trocou) try { localStorage.setItem(MODELO_CAP, String(P.modelo)); } catch (e) { /* sem armazenamento */ }
     if (semTrechos || trocou) {
       caso.segments = trechosDo(P.modelo);
-      caso.submergedVolume = P.modelo === 120 ? VOLUME_120 : r3(M.volume);
+      caso.submergedVolume = P.modelo === 120 ? VOLUME_120 : r3(M.volumeCap || M.volume);
       try { localStorage.setItem(MODELO_CAP, String(P.modelo)); } catch (e) { /* sem armazenamento */ }
     }
     gravar(CASO_CAP, caso);
@@ -79,7 +81,7 @@
     'capacidade-axial': {
       antes: prepararCapacidade,
       campos: [['headDepth', 'Início enterrado', 'm'], ['diameter', 'Diâmetro externo', 'm'], ['fins', 'Aletas', ''], ['su0', 'Su₀', 'kPa'], ['suGradient', 'Gradiente k', 'kPa/m'], ['gammaSoil', 'γ′', 'kN/m³'], ['nc', 'Nc', '']],
-      nota: function (P) { return P.modelo === 120 ? '' : 'Trechos e volume gerados em escala a partir do T-120. Ajuste se tiver a geometria do ' + MODELOS[P.modelo].nome + '.'; }
+      nota: function (P) { return P.modelo === 120 || MODELOS[P.modelo].trechos ? '' : 'Trechos e volume gerados em escala a partir do T-120. Ajuste se tiver a geometria do ' + MODELOS[P.modelo].nome + '.'; }
     },
     'carga-lateral': {
       campos: [['D', 'Diâmetro externo', 'm'], ['length', 'Comprimento enterrado', 'm'], ['su0', 'Su₀', 'kPa'], ['suGradient', 'Gradiente k', 'kPa/m'], ['gamma', 'γ′', 'kN/m³']]
