@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
-  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261021-8">
+  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261022-1">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
@@ -37,13 +37,7 @@
   <div class="lx-head-main">
     <span class="eyebrow">Etapa 01 de 05</span>
     <h1>Lançamento e cravação</h1>
-    <p>Simula a queda livre do torpedo na coluna d’água e a cravação no solo. Escolha o modelo, ajuste a altura de soltura, a lâmina d’água e o solo, e acompanhe velocidade, energia e penetração a cada instante.</p>
-    <ol class="lx-flow" aria-label="Fases do lançamento">
-      <li data-ph="rel"><b>1</b>Soltura</li>
-      <li data-ph="fall"><b>2</b>Queda livre</li>
-      <li data-ph="soil"><b>3</b>Cravação</li>
-      <li data-ph="rest"><b>4</b>Repouso</li>
-    </ol>
+    <p>Queda livre na água e cravação no solo, da soltura até a parada. O resultado principal é a profundidade do olhal, usada nas etapas seguintes.</p>
   </div>
   <div class="lx-head-actions">
     <button type="button" class="button lx-report-btn" id="lx-report"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13 M6 8.5h5M6 11h5"/></svg>Relatório PDF</button>
@@ -126,7 +120,6 @@
           </dl>
         </section>
         <div class="lx-spark"><small>Velocidade ao longo do tempo</small><svg id="hud-spark" viewBox="0 0 220 70" preserveAspectRatio="none"></svg><span class="lx-spark-x"><b>água</b><b>solo</b></span></div>
-        <div class="lx-spark lx-spark-a"><small>Aceleração <span id="hud-acur"></span></small><svg id="hud-aspark" viewBox="0 0 220 70" preserveAspectRatio="none"></svg><span class="lx-spark-y" id="hud-arng"></span></div>
       </aside>
       <div class="lx-timeline">
         <button type="button" class="lx-play" id="lx-play" aria-label="Reproduzir"><span class="i-play">▶</span><span class="i-pause">❚❚</span></button>
@@ -138,12 +131,7 @@
 
     <section class="lx-results" id="lx-results"></section>
 
-    <section class="panel lx-campo" id="lx-campo" hidden></section>
 
-    <section class="panel lx-compare" hidden>
-      <div class="panel-title"><div><span class="eyebrow">Comparação</span><h2>Os quatro torpedos nas mesmas condições</h2><p>Mesma altura de soltura, mesma lâmina d’água e mesmo solo. Toque numa linha para trocar de modelo.</p></div></div>
-      <div class="lx-cmp" id="lx-cmp"></div>
-    </section>
 
     <section class="panel">
       <div class="panel-title"><div><span class="eyebrow">Perfil completo</span><h2>Velocidade da soltura à parada</h2><p>Água à esquerda do leito, solo à direita. Toque ou passe o mouse para ler os valores.</p></div>
@@ -174,6 +162,11 @@
         <div class="kv" id="soil-values"></div>
       </aside>
     </section>
+    <section class="panel lx-compare">
+      <div class="panel-title"><div><span class="eyebrow">Comparação</span><h2>Os quatro torpedos nas mesmas condições</h2><p>Mesma altura de soltura, mesma lâmina d’água e mesmo solo. Toque numa linha para trocar de modelo.</p></div></div>
+      <div class="lx-cmp" id="lx-cmp"></div>
+    </section>
+    <section class="panel lx-campo" id="lx-campo" hidden></section>
   </div>
 </div>
 
@@ -185,7 +178,7 @@
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261021-cookie"></script>
   <script src="assets/js/torpedo.js"></script>
-  <script src="assets/js/paginas/lancamento.js?v=20261021-8"></script>
+  <script src="assets/js/paginas/lancamento.js?v=20261022-2"></script>
   <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>
