@@ -293,3 +293,23 @@ html[data-theme="light"] #soil-section{--pa-hi:#ffffff;--pa-mid:#aebfc6;--pa-dar
 .lx-acc-k i{display:inline-block;width:12px;height:8px;margin-right:6px;border-radius:2px;background:color-mix(in srgb,var(--teal) 50%,transparent)}
 .lx-acc-k i.dn{background:color-mix(in srgb,var(--orange) 50%,transparent)}
 #lx-acc-btn[aria-pressed="true"]{border-color:var(--orange);color:var(--orange)}
+/* resultado: olhal em destaque, água e solo agrupados */
+body[data-page="lancamento"] .lx-results{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr);gap:12px}
+.lx-res-hero,.lx-res-grp{padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+.lx-res-hero{display:flex;flex-direction:column;gap:4px;border-color:color-mix(in srgb,var(--orange) 55%,var(--line));background:color-mix(in srgb,var(--orange) 8%,var(--panel))}
+.lx-res-hero .eyebrow{margin:0 0 6px}
+.lx-res-hero b{font-size:.86rem;font-weight:650;color:var(--muted)}
+.lx-res-hero strong{font:760 3rem/1 var(--mono);letter-spacing:-.05em;color:var(--text);font-variant-numeric:tabular-nums}
+.lx-res-hero strong small{margin-left:6px;font-size:.38em;color:var(--soft);letter-spacing:0}
+.lx-res-hero em{margin-top:6px;font-style:normal;font-size:.76rem;line-height:1.45;color:var(--soft)}
+.lx-res-grp h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font:700 .64rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.lx-res-grp h3::before{content:"";width:8px;height:8px;border-radius:2px;background:currentColor}
+.lx-res-grp.solo h3{color:var(--orange)}
+.lx-res-grp dl{margin:0}
+.lx-res-grp dl div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.lx-res-grp dl div:last-child{border-bottom:0;padding-bottom:0}
+.lx-res-grp dt{color:var(--muted);font-size:.8rem}
+.lx-res-grp dd{margin:0;text-align:right;font:650 .9rem var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lx-res-grp dd i{display:block;font-family:inherit;font-weight:400;font-size:.66rem;font-style:normal;color:var(--soft)}
+@media(max-width:1100px){body[data-page="lancamento"] .lx-results{grid-template-columns:1fr 1fr}.lx-res-hero{grid-column:1/-1}}
+@media(max-width:640px){body[data-page="lancamento"] .lx-results{grid-template-columns:1fr}.lx-res-hero strong{font-size:2.5rem}}
