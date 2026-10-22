@@ -286,3 +286,10 @@ html[data-theme="light"] #soil-section{--pa-hi:#ffffff;--pa-mid:#aebfc6;--pa-dar
 .lx-spark svg{height:52px}
 .lx-spark small span{font-family:var(--mono);color:var(--text)}
 .lx-spark-y{display:block;font:600 .58rem var(--mono);color:var(--soft);text-align:right}
+.lx-acc-wrap{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+.lx-acc-wrap[hidden]{display:none}
+.lx-acc-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;margin-bottom:4px;font-size:.78rem;color:var(--soft)}
+.lx-acc-head b{color:var(--text);font-size:.95rem;margin-right:4px}
+.lx-acc-k i{display:inline-block;width:12px;height:8px;margin-right:6px;border-radius:2px;background:color-mix(in srgb,var(--teal) 50%,transparent)}
+.lx-acc-k i.dn{background:color-mix(in srgb,var(--orange) 50%,transparent)}
+#lx-acc-btn[aria-pressed="true"]{border-color:var(--orange);color:var(--orange)}

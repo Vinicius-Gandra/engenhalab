@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
-  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261021-4">
+  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261021-8">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
@@ -147,9 +147,10 @@
 
     <section class="panel">
       <div class="panel-title"><div><span class="eyebrow">Perfil completo</span><h2>Velocidade da soltura à parada</h2><p>Água à esquerda do leito, solo à direita. Toque ou passe o mouse para ler os valores.</p></div>
-        <div class="action-row" style="margin:0"><button type="button" class="button ghost" id="download-launch">CSV da queda</button><button type="button" class="button ghost" id="download-true">CSV da cravação</button></div></div>
+        <div class="action-row" style="margin:0"><button type="button" class="button ghost" id="lx-acc-btn" aria-pressed="false">Mostrar aceleração</button><button type="button" class="button ghost" id="download-csv">Baixar CSV</button></div></div>
       <div class="lx-chart" id="lx-vchart"></div>
       <div class="legend"><span><i></i>Velocidade</span><span><i class="teal"></i>Velocidade terminal na água</span><span><i style="background:var(--sediment)"></i>Leito marinho</span></div>
+      <div class="lx-acc-wrap" id="lx-acc-wrap" hidden><div class="lx-acc-head"><b>Aceleração</b><span>mesmo eixo horizontal do gráfico acima</span><span class="lx-acc-k"><i class="up"></i>acelerando</span><span class="lx-acc-k"><i class="dn"></i>freando</span></div><div class="lx-chart" id="lx-achart"></div></div>
     </section>
 
     <section class="panel">
@@ -184,7 +185,7 @@
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261021-cookie"></script>
   <script src="assets/js/torpedo.js"></script>
-  <script src="assets/js/paginas/lancamento.js?v=20261021-5"></script>
+  <script src="assets/js/paginas/lancamento.js?v=20261021-8"></script>
   <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>
