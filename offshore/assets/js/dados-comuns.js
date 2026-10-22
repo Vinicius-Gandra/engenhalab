@@ -56,9 +56,10 @@
     var P = projeto(), M = MODELOS[P.modelo];
     var caso = ler(CASO_CAP) || {
       innerDiameter: 0, alphaMode: 'auto', alphaFixed: 0.8, factor: 2.5,
-      steelDensity: 7850, fluidDensity: 1000, compressionLoad: 2200, tensionLoad: 1400
+      steelDensity: 7850, fluidDensity: 1036.9, compressionLoad: 2200, tensionLoad: 1400
     };
     caso.headDepth = P.embed; caso.diameter = M.d; caso.fins = M.aletas;
+    if (caso.fluidDensity === 1000 || caso.fluidDensity === 1025) caso.fluidDensity = 1036.9;
     caso.su0 = P.su0; caso.suGradient = P.k; caso.gammaSoil = P.gama; caso.nc = P.nc;
     if (!(caso.innerDiameter < M.d)) caso.innerDiameter = 0;
     var anterior = null; try { anterior = localStorage.getItem(MODELO_CAP); } catch (e) { /* sem armazenamento */ }
