@@ -282,3 +282,7 @@ html[data-theme="light"] #soil-section{--pa-hi:#ffffff;--pa-mid:#aebfc6;--pa-dar
 .lx-spark-x{display:flex;font:600 .58rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
 .lx-spark-x b{font-weight:600;flex:none;white-space:nowrap}.lx-spark-x b+b{flex:1;padding-left:4px;color:var(--orange)}
 @media(max-width:860px){.lx-hud-top,.lx-hud-steps,.lx-hud-main{grid-column:1/-1}}
+.lx-spark+.lx-spark{margin-top:0}
+.lx-spark svg{height:52px}
+.lx-spark small span{font-family:var(--mono);color:var(--text)}
+.lx-spark-y{display:block;font:600 .58rem var(--mono);color:var(--soft);text-align:right}
