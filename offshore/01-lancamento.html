@@ -149,9 +149,9 @@
 
     <section class="panel">
       <div class="panel-title"><div><span class="eyebrow">Perfil completo</span><h2>Velocidade da soltura à parada</h2><p>Água à esquerda do leito, solo à direita. Toque ou passe o mouse para ler os valores.</p></div>
-        <div class="action-row" style="margin:0"><button type="button" class="button ghost" id="download-launch">CSV da queda</button><button type="button" class="button ghost" id="download-true">CSV da cravação</button></div></div>
+        <div class="action-row" style="margin:0"><button type="button" class="button ghost" id="lx-acc-btn" aria-pressed="false">Mostrar aceleração</button><button type="button" class="button ghost" id="download-launch">CSV da queda</button><button type="button" class="button ghost" id="download-true">CSV da cravação</button></div></div>
       <div class="lx-chart" id="lx-vchart"></div>
-      <div class="legend"><span><i></i>Velocidade</span><span><i class="teal"></i>Velocidade terminal na água</span><span><i style="background:var(--sediment)"></i>Leito marinho</span></div>
+      <div class="legend"><span><i></i>Velocidade</span><span><i class="teal"></i>Velocidade terminal na água</span><span><i style="background:var(--sediment)"></i>Leito marinho</span><span id="lx-acc-leg" hidden><i style="background:var(--blue)"></i>Aceleração (escala à direita)</span></div>
     </section>
 
     <section class="panel">
