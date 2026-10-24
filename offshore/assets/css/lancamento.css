@@ -313,3 +313,9 @@ body[data-page="lancamento"] .lx-results{display:grid;grid-template-columns:minm
 .lx-res-grp dd i{display:block;font-family:inherit;font-weight:400;font-size:.66rem;font-style:normal;color:var(--soft)}
 @media(max-width:1100px){body[data-page="lancamento"] .lx-results{grid-template-columns:1fr 1fr}.lx-res-hero{grid-column:1/-1}}
 @media(max-width:640px){body[data-page="lancamento"] .lx-results{grid-template-columns:1fr}.lx-res-hero strong{font-size:2.5rem}}
+.lx-adv-grid h4{grid-column:1/-1;margin:6px 0 0;font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+.lx-adv-grid h4:first-child{margin-top:0}
+.lx-restore{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font:600 .7rem var(--sans,inherit);cursor:pointer;white-space:nowrap}
+.lx-restore svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lx-restore:hover{color:var(--text);border-color:var(--orange)}
+.lx-restore:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
