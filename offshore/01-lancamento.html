@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
-  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261024-3">
+  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261024-4">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
@@ -68,10 +68,10 @@
 
       <section class="lx-casos" id="lx-casos" aria-label="Casos salvos">
         <div class="lx-card-h"><span class="eyebrow">Casos salvos</span><span class="lx-caso-st" id="lx-caso-st" role="status"></span></div>
-        <select class="lx-caso-sel" id="lx-caso-sel" aria-label="Caso salvo"></select>
-        <p class="lx-caso-resumo" id="lx-caso-resumo"></p>
-        <div class="lx-caso-nome" id="lx-caso-nome" hidden><input type="text" maxlength="60" aria-label="Nome do caso" placeholder="Nome do caso"><button type="button" class="lx-caso-b prim" data-a="ok">Salvar</button><button type="button" class="lx-caso-b" data-a="cancelar">Cancelar</button></div>
-        <div class="lx-caso-acoes"><button type="button" class="lx-caso-b prim" data-a="salvar">Salvar alterações</button><button type="button" class="lx-caso-b" data-a="novo">Salvar caso</button><button type="button" class="lx-caso-b" data-a="descartar">Descartar alterações</button><button type="button" class="lx-caso-b" data-a="excluir">Excluir</button></div>
+        <button type="button" class="lx-caso-trig" id="lx-caso-trig" aria-haspopup="listbox" aria-expanded="false" aria-controls="lx-caso-lista"><span class="lx-caso-trig-t"><b id="lx-caso-nome-atual">Escolher ou cadastrar caso</b><small id="lx-caso-resumo"></small></span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+        <ul class="lx-caso-lista" id="lx-caso-lista" role="listbox" aria-label="Casos salvos" hidden></ul>
+        <div class="lx-caso-nome" id="lx-caso-nome" hidden><input type="text" maxlength="60" aria-label="Nome do novo caso" placeholder="Nome do novo caso"><button type="button" class="lx-caso-b prim" data-a="ok">Cadastrar</button><button type="button" class="lx-caso-b" data-a="cancelar">Cancelar</button></div>
+        <div class="lx-caso-acoes"><button type="button" class="lx-caso-b prim" data-a="salvar">Salvar alterações</button><button type="button" class="lx-caso-b" data-a="descartar">Descartar alterações</button><button type="button" class="lx-caso-b" data-a="excluir">Excluir caso</button></div>
         <small class="lx-caso-onde" id="lx-caso-onde"></small>
       </section>
       <details class="lx-adv">
@@ -194,7 +194,7 @@
   <script src="assets/js/sessao.js?v=20261024-casos"></script>
   <script src="assets/js/torpedo.js"></script>
   <script src="assets/js/paginas/lancamento.js?v=20261024-3"></script>
-  <script src="assets/js/casos-lancamento.js?v=20261024-1"></script>
+  <script src="assets/js/casos-lancamento.js?v=20261024-2"></script>
   <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>
