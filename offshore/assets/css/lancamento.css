@@ -325,13 +325,30 @@ body[data-page="lancamento"] .lx-results{display:grid;grid-template-columns:minm
 .lx-caso-st{font-size:.7rem;color:var(--soft)}
 .lx-caso-st.ok{color:var(--teal)}
 .lx-caso-st.alterado{color:var(--orange);font-weight:650}
-.lx-caso-sel{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-family:inherit;font-weight:600;font-size:.82rem}
-.lx-caso-sel:focus{outline:none;border-color:var(--orange)}
-.lx-caso-resumo{margin:6px 0 8px;font-size:.72rem;color:var(--muted)}
-.lx-caso-nome{display:flex;gap:6px;margin-bottom:8px}
+.lx-caso-trig{display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font-family:inherit;text-align:left;cursor:pointer}
+.lx-caso-trig:hover,.lx-caso-trig[aria-expanded="true"]{border-color:var(--orange)}
+.lx-caso-trig:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.lx-caso-trig-t{flex:1;min-width:0;display:grid;gap:2px}
+.lx-caso-trig-t b{font-size:.84rem;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lx-caso-trig-t small{font-size:.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lx-caso-trig svg{width:14px;height:14px;flex:none;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.lx-caso-trig[aria-expanded="true"] svg{transform:rotate(180deg)}
+.lx-caso-lista{list-style:none;margin:6px 0 0;padding:4px;border:1px solid var(--line);border-radius:9px;background:var(--panel);max-height:280px;overflow:auto}
+.lx-caso-lista li{display:grid;grid-template-columns:1fr auto;gap:1px 8px;padding:7px 9px;border-radius:7px;cursor:pointer}
+.lx-caso-lista li b{font-size:.8rem;font-weight:650;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lx-caso-lista li small{grid-column:1;font-size:.66rem;color:var(--muted)}
+.lx-caso-lista li i{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;font-size:.64rem;color:var(--soft)}
+.lx-caso-lista li[aria-selected="true"] b::before{content:"✓ ";color:var(--orange)}
+.lx-caso-lista li:hover,.lx-caso-lista li.foco{background:var(--panel2)}
+.lx-caso-lista li.novo{border-top:1px solid var(--line);border-radius:0 0 7px 7px;margin-top:2px;color:var(--orange)}
+.lx-caso-lista li.novo:first-child{border-top:0;margin-top:0;border-radius:7px}
+.lx-caso-lista li.novo b{color:var(--orange)}
+.lx-caso-lista li.vazio{cursor:default;color:var(--soft);font-size:.72rem}
+.lx-caso-lista li.vazio:hover{background:none}
+.lx-caso-nome{display:flex;gap:6px;margin-top:8px}
 .lx-caso-nome input{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--orange);border-radius:8px;background:var(--panel);color:var(--text);font-family:inherit;font-size:.8rem}
 .lx-caso-nome input:focus{outline:none}
-.lx-caso-acoes{display:flex;flex-wrap:wrap;gap:6px}
+.lx-caso-acoes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.lx-caso-acoes:empty,.lx-caso-acoes:not(:has(button:not([hidden]))){display:none}
 .lx-caso-b{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:.72rem;cursor:pointer}
 .lx-caso-b:hover:not(:disabled){color:var(--text);border-color:var(--orange)}
 .lx-caso-b.prim{background:var(--orange);border-color:var(--orange);color:#1b1208}
@@ -340,5 +357,5 @@ body[data-page="lancamento"] .lx-results{display:grid;grid-template-columns:minm
 .lx-caso-b.perigo{border-color:#e5484d;color:#e5484d}
 .lx-caso-b:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .lx-caso-onde{display:block;margin-top:8px;font-size:.66rem;color:var(--soft)}
-@media (max-width:640px){.lx-caso-b{padding:9px 12px;font-size:.8rem}.lx-caso-sel,.lx-caso-nome input{font-size:16px;padding:10px}}
+@media (max-width:640px){.lx-caso-b{padding:9px 12px;font-size:.8rem}.lx-caso-nome input{font-size:16px;padding:10px}.lx-caso-lista li{padding:11px 10px}}
 [data-theme="light"] .lx-caso-b.prim,[data-theme="light"] .lx-caso-b.prim:hover:not(:disabled){color:#fff}
