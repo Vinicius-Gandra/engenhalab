@@ -319,3 +319,26 @@ body[data-page="lancamento"] .lx-results{display:grid;grid-template-columns:minm
 .lx-restore svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .lx-restore:hover{color:var(--text);border-color:var(--orange)}
 .lx-restore:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.lx-casos{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2)}
+.lx-casos.sujo{border-color:color-mix(in srgb,var(--orange) 55%,var(--line))}
+.lx-casos .lx-card-h{margin-bottom:8px}
+.lx-caso-st{font-size:.7rem;color:var(--soft)}
+.lx-caso-st.ok{color:var(--teal)}
+.lx-caso-st.alterado{color:var(--orange);font-weight:650}
+.lx-caso-sel{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);font-family:inherit;font-weight:600;font-size:.82rem}
+.lx-caso-sel:focus{outline:none;border-color:var(--orange)}
+.lx-caso-resumo{margin:6px 0 8px;font-size:.72rem;color:var(--muted)}
+.lx-caso-nome{display:flex;gap:6px;margin-bottom:8px}
+.lx-caso-nome input{flex:1;min-width:0;padding:6px 8px;border:1px solid var(--orange);border-radius:8px;background:var(--panel);color:var(--text);font-family:inherit;font-size:.8rem}
+.lx-caso-nome input:focus{outline:none}
+.lx-caso-acoes{display:flex;flex-wrap:wrap;gap:6px}
+.lx-caso-b{padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-family:inherit;font-weight:600;font-size:.72rem;cursor:pointer}
+.lx-caso-b:hover:not(:disabled){color:var(--text);border-color:var(--orange)}
+.lx-caso-b.prim{background:var(--orange);border-color:var(--orange);color:#1b1208}
+.lx-caso-b.prim:hover:not(:disabled){color:#1b1208;filter:brightness(1.08)}
+.lx-caso-b:disabled{opacity:.45;cursor:default}
+.lx-caso-b.perigo{border-color:#e5484d;color:#e5484d}
+.lx-caso-b:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.lx-caso-onde{display:block;margin-top:8px;font-size:.66rem;color:var(--soft)}
+@media (max-width:640px){.lx-caso-b{padding:9px 12px;font-size:.8rem}.lx-caso-sel,.lx-caso-nome input{font-size:16px;padding:10px}}
+[data-theme="light"] .lx-caso-b.prim,[data-theme="light"] .lx-caso-b.prim:hover:not(:disabled){color:#fff}

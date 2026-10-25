@@ -11,7 +11,7 @@
   // em teste local, o mesmo nome de máquina da página: o cookie da sessão é do mesmo site
   const BASE = (local ? 'http://' + location.hostname + ':8787' : (window.ENGENHA_API || '')).replace(/\/$/, '');
   const K_SESSAO = 'engenha-offshore-sessao', K_PROJ = 'engenha-offshore-projeto';
-  const CHAVES = ['offshore-project-v8', 'catenaria-lab-case-v1', 'capacidade-axial-caso-v1'];
+  const CHAVES = ['offshore-project-v8', 'catenaria-lab-case-v1', 'capacidade-axial-caso-v1', 'offshore-casos-v1'];
   const ler = (k, padrao) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? padrao : v; } catch (_) { return padrao; } };
   const gravar = (k, v) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* sem armazenamento */ } };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -192,30 +192,7 @@
     catch (e) { if (janela) janela.close(); estado(e.message, true); }
   }
 
-  /* ------------------- parâmetros internos, liberados para quem tem acesso */
-  const INTERNOS = [['se', 'Fator de taxa máx.', 'Sₑ', 4, 1, 10], ['ce', 'Constante de taxa', 'Cₑ · kPa·s', .147, 0, 2], ['rateN', 'Expoente de taxa', 'n · só T-120', .123, 0, .5]];
-  function camposInternos() {
-    const grade = document.querySelector('.lx-adv-grid'); if (!grade) return;
-    grade.querySelectorAll('.sb-interno').forEach(e => e.remove());
-    if (!sessao() || !window.Lab) return;
-    const proj = window.Lab.project || {};
-    for (const [k, rot, sub, padrao, min, max] of INTERNOS) {
-      const l = document.createElement('label'); l.className = 'sb-interno';
-      const v = proj[k] != null ? proj[k] : padrao;
-      l.innerHTML = `${esc(rot)} <small>${esc(sub)}</small><input name="${k}" inputmode="decimal" value="${esc(String(v).replace('.', ','))}" data-min="${min}" data-max="${max}">`;
-      grade.append(l);
-      const inp = l.querySelector('input');
-      inp.addEventListener('change', () => {
-        const n = Number(String(inp.value).replace(/\./g, '').replace(',', '.'));
-        if (!Number.isFinite(n) || n < min || n > max) { inp.setCustomValidity(`Use um valor entre ${min} e ${max}.`); inp.reportValidity(); return; }
-        inp.setCustomValidity(''); window.Lab.saveProject({ [k]: n });
-        // recalcula: a página escuta mudanças nos campos do formulário
-        const outro = grade.querySelector('input[name="nc"]') || grade.querySelector('input'); if (outro && outro !== inp) outro.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-    }
-  }
-
-  function atualizar() { botaoConta(); montarBarra(); camposInternos(); }
+  function atualizar() { botaoConta(); montarBarra(); }
   document.addEventListener('engenha-sessao', atualizar);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { atualizar(); conferirVersao(); }); else { atualizar(); conferirVersao(); }
   // confere a sessão em segundo plano (pode ter sido encerrada pelo administrador)
