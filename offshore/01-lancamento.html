@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
-  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261024-2">
+  <link rel="stylesheet" href="assets/css/lancamento.css?v=20261024-3">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
@@ -66,6 +66,14 @@
       <div class="lx-field" data-k="su0"><div class="lx-fh"><label for="f-su0">Su no leito <i>Su₀</i></label><span><input id="f-su0" name="su0" inputmode="decimal"><small>kPa</small></span></div><input type="range" min="0" max="30" step="0.5" data-for="su0" aria-label="Su no leito"></div>
       <div class="lx-field" data-k="suGradient"><div class="lx-fh"><label for="f-suGradient">Gradiente de Su <i>k</i></label><span><input id="f-suGradient" name="suGradient" inputmode="decimal"><small>kPa/m</small></span></div><input type="range" min="0.2" max="4" step="0.02" data-for="suGradient" aria-label="Gradiente de Su"></div>
 
+      <section class="lx-casos" id="lx-casos" aria-label="Casos salvos">
+        <div class="lx-card-h"><span class="eyebrow">Casos salvos</span><span class="lx-caso-st" id="lx-caso-st" role="status"></span></div>
+        <select class="lx-caso-sel" id="lx-caso-sel" aria-label="Caso salvo"></select>
+        <p class="lx-caso-resumo" id="lx-caso-resumo"></p>
+        <div class="lx-caso-nome" id="lx-caso-nome" hidden><input type="text" maxlength="60" aria-label="Nome do caso" placeholder="Nome do caso"><button type="button" class="lx-caso-b prim" data-a="ok">Salvar</button><button type="button" class="lx-caso-b" data-a="cancelar">Cancelar</button></div>
+        <div class="lx-caso-acoes"><button type="button" class="lx-caso-b prim" data-a="salvar">Salvar alterações</button><button type="button" class="lx-caso-b" data-a="novo">Salvar caso</button><button type="button" class="lx-caso-b" data-a="descartar">Descartar alterações</button><button type="button" class="lx-caso-b" data-a="excluir">Excluir</button></div>
+        <small class="lx-caso-onde" id="lx-caso-onde"></small>
+      </section>
       <details class="lx-adv">
         <summary>Parâmetros avançados <span>água, solo e integração</span></summary>
         <div class="lx-adv-grid">
@@ -183,9 +191,10 @@
   <script src="assets/js/core.js?v=20261024-2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/calc.js"></script>
-  <script src="assets/js/sessao.js?v=20261021-cookie"></script>
+  <script src="assets/js/sessao.js?v=20261024-casos"></script>
   <script src="assets/js/torpedo.js"></script>
   <script src="assets/js/paginas/lancamento.js?v=20261024-3"></script>
+  <script src="assets/js/casos-lancamento.js?v=20261024-1"></script>
   <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>
