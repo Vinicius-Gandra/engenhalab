@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <script src="/assets/js/anti-quadro.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#09131f"><meta name="color-scheme" content="dark light">
+  <meta name="description" content="Laboratório offshore: registro da garrafa instrumentada e profundidade de cravação.">
+  <title>Laboratório offshore · Registro da garrafa | Vinicius Gandra</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2309131f'/%3E%3Cpath d='M8 50h48' stroke='%238195a2' stroke-width='3'/%3E%3Cpath d='M10 50C22 50 30 46 36 34S46 14 54 12' fill='none' stroke='%23f5ad69' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script>try { var t = localStorage.getItem('vg-theme'); if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); } catch (e) {}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/offshore.css">
+  <link rel="stylesheet" href="assets/css/garrafa.css?v=20261025-1">
+  <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
+  <script defer src="/assets/js/analytics-config.js"></script>
+  <script defer src="/assets/js/analytics.js"></script>
+</head>
+<body data-page="garrafa">
+  <a class="skip" href="#main">Pular para o conteúdo</a>
+  <header class="s-appbar">
+    <a class="s-brand" href="../index.html" aria-label="EngenhaLab — todos os laboratórios">VG<b>.</b></a>
+    <a class="s-back" href="../index.html" title="Voltar a todos os laboratórios"><span aria-hidden="true">←</span><span class="s-back-label">Laboratórios</span></a>
+    <span class="s-header-divider" aria-hidden="true"></span>
+    <div class="s-appbar-title"><span class="overline">Laboratório offshore</span><strong>Registro da garrafa instrumentada</strong></div>
+    <div class="s-actions" aria-label="Ações">
+      <button type="button" class="s-act s-act-icon" id="theme-toggle" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
+    </div>
+  </header>
+  <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html"><span class="s-area-number">05</span> Torpedo 3D</a></nav>
+  <main class="container" id="main">
+<section class="g-head">
+  <div>
+    <span class="eyebrow">Acelerômetro · garrafa instrumentada</span>
+    <h1>Profundidade de cravação registrada</h1>
+    <p>Envie o TXT da garrafa. O sinal é limpo, a soltura, o contato e a parada são identificados e a aceleração é integrada até a parada. O resultado é a profundidade da ponta e do olhal abaixo do leito.</p>
+  </div>
+  <div class="g-head-actions"><a class="button ghost" data-flow-link href="01-lancamento.html">← Lançamento e cravação</a></div>
+</section>
+
+<section class="panel g-login" id="garrafa-login">
+  <h2>Disponível para quem tem acesso</h2>
+  <p>Entre com a sua conta para enviar registros da garrafa e calcular a profundidade de cravação.</p>
+  <a class="button primary" href="conta.html?volta=registro-garrafa.html">Entrar</a>
+</section>
+
+<div id="garrafa-app" hidden>
+  <div class="g-layout">
+    <aside class="g-side">
+      <div class="panel g-card">
+        <span class="eyebrow">Registro</span>
+        <label class="g-zona" id="g-zona"><input type="file" id="g-arquivo" accept=".txt,.csv,.dat,.log,text/plain" multiple><b>Escolher ou soltar arquivos TXT</b><small>Um ou vários lançamentos. O arquivo é lido aqui; só o trecho do lançamento vai para o cálculo.</small></label>
+        <p class="g-lido" id="g-leitura" role="status"></p>
+      </div>
+      <form class="panel g-card" id="g-leitura-form" autocomplete="off">
+        <span class="eyebrow">Leitura do arquivo</span>
+        <div class="g-grade2">
+          <label>Eixo vertical<select id="g-eixo"><option value="">Automático</option><option value="0">Canal 1</option><option value="1">Canal 2</option><option value="2">Canal 3</option><option value="3">Canal 4</option></select></label>
+          <label>Unidade<select id="g-unidade"><option value="">Automática</option><option value="g">g</option><option value="ms2">m/s²</option></select></label>
+          <label>Taxa sem coluna de tempo<input id="g-taxa" inputmode="decimal" value="100" aria-describedby="g-taxa-d"><small id="g-taxa-d">Hz</small></label>
+          <label class="g-check"><input type="checkbox" id="g-inverter"> Inverter o sinal</label>
+        </div>
+      </form>
+      <form class="panel g-card" id="g-opcoes" autocomplete="off">
+        <div class="g-card-h"><span class="eyebrow">Processamento</span><button type="button" class="g-restaurar" id="g-restaurar">Restaurar padrões</button></div>
+        <label class="g-campo">Torpedo<select id="g-modelo"></select></label>
+        <div class="g-grade2">
+          <label>Antecipação do contato<input name="lead" inputmode="decimal"><small>s</small></label>
+          <label>Sensor até a ponta<input name="sensorToTip" inputmode="decimal"><small>m</small></label>
+          <label>Filtro passa-baixa<input name="filterHz" inputmode="decimal"><small>Hz</small></label>
+          <label>Faixa do platô<input name="saturationBand" inputmode="decimal"><small>m/s²</small></label>
+        </div>
+      </form>
+    </aside>
+
+    <div class="g-main">
+      <section class="panel g-resultado" id="g-resultado" hidden>
+        <div><span class="eyebrow">Ponta abaixo do leito</span><div class="g-num"><strong id="g-ponta">—</strong><span>m</span></div><p id="g-detalhe"></p></div>
+        <div class="g-olhal"><span class="eyebrow">Olhal</span><b id="g-olhal">—</b></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title"><div><span class="eyebrow">Curvas do registro</span><h2>Velocidade, aceleração e profundidade</h2></div><button type="button" class="button ghost" id="g-csv" disabled>Baixar CSV</button></div>
+        <div class="g-ferramentas">
+          <div class="modebar" role="group" aria-label="Grandeza"><button type="button" data-tipo="velocidade" aria-pressed="true">Velocidade</button><button type="button" data-tipo="aceleracao" aria-pressed="false">Aceleração</button><button type="button" data-tipo="profundidade" aria-pressed="false">Profundidade</button></div>
+          <div class="modebar" role="group" aria-label="Alinhamento"><button type="button" data-alinhar="soltura" aria-pressed="false">Soltura</button><button type="button" data-alinhar="contato" aria-pressed="true">Contato</button><button type="button" data-alinhar="parada" aria-pressed="false">Parada</button></div>
+          <label class="g-check"><input type="checkbox" id="g-bruto"> Sinal bruto ao fundo</label>
+        </div>
+        <div class="g-grafico" id="g-grafico"></div>
+      </section>
+
+      <section class="panel g-tabela" id="g-tabela" hidden>
+        <div class="g-rolagem"><table><thead><tr><th>Registro</th><th>Soltura · s</th><th>Contato · s</th><th>Parada · s</th><th>v₀ do balanço</th><th>Resíduo · ganho · platô</th><th>v no contato</th><th>Queda na água</th><th>Ponta</th><th>Olhal</th><th></th></tr></thead><tbody id="g-linhas"></tbody></table></div>
+      </section>
+    </div>
+  </div>
+</div>
+  </main>
+  <script src="assets/js/core.js?v=20261024-2"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/calc.js"></script>
+  <script src="assets/js/sessao.js?v=20261025-garrafa"></script>
+  <script src="assets/js/garrafa.js?v=20261025-1"></script>
+  <script src="assets/js/movel.js?v=20261020-1"></script>
+  <script src="assets/js/tema.js"></script>
+</body>
+</html>

@@ -40,7 +40,7 @@
   }
   // cálculos: com sessão, parâmetros liberados; se a sessão caiu, refaz sem login
   const calc = rota => async corpo => { try { return await pedir(rota, corpo); } catch (e) { if (e.sessao === false) return pedir(rota, corpo, { auth: false }); throw e; } };
-  window.Calc = Object.fromEntries(['lancamento', 'secao', 'resumo', 'catenaria', 'capacidade', 'lateral', 'py'].map(k => [k, calc(k)]));
+  window.Calc = Object.fromEntries(['lancamento', 'secao', 'resumo', 'catenaria', 'capacidade', 'lateral', 'py', 'garrafa'].map(k => [k, calc(k)]));
 
   /* --------------------------------------------- avatar: foto, ícone do setor ou iniciais */
   const ICONES = {
