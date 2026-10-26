@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <link rel="stylesheet" href="assets/css/catenaria.css?v=20261026-1">
+  <link rel="stylesheet" href="assets/css/catenaria.css?v=20261026-2">
   <link rel="stylesheet" href="assets/css/catenaria-visual.css">
   <link rel="stylesheet" href="assets/css/catenaria-relatorio.css">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261026-menu">
@@ -53,13 +53,19 @@
           <label>Et <small>fator tangencial</small><input name="et" inputmode="decimal" value="11,3"></label>
           <label>En <small>fator normal</small><input name="en" inputmode="decimal" value="2,5"></label>
           <label>Nc <small>capacidade</small><input name="nc" inputmode="decimal" value="11,42"></label>
+          <label class="wide check-field"><input name="ncDepth" type="checkbox" checked><span>Nc reduzido junto ao leito<small>Cresce de 5,14 na superfície até Nc a 2,5 larguras de apoio de profundidade.</small></span></label>
         </div></details>
         <details class="input-group" open><summary><b>02</b><span>Linha e TDP<small>Geometria e tração</small></span></summary><div class="fields">
           <label>Diâmetro d <small>m</small><input name="diameter" inputmode="decimal" value="0,120"></label>
           <label>Peso submerso w <small>kN/m</small><input name="wChain" inputmode="decimal" value="2,471"></label>
-          <label>Profundidade D <small>m</small><input name="depth" inputmode="decimal" value="17,1"></label>
-          <label>Ângulo no TDP <small>graus</small><input name="theta0Deg" inputmode="decimal" value="33"></label>
-          <label class="wide">Tração no TDP T<sub>0</sub> <small>kN</small><input name="tension0" inputmode="decimal" value="4.944,24"></label>
+          <label class="wide">Profundidade D <small>m</small><input name="depth" inputmode="decimal" value="17,1"></label>
+          <label class="wide">Chegada ao leito <small>como a linha encontra o solo</small><select name="arrival"><option value="angle">Com ângulo no TDP</option><option value="laid">Deitada no leito, com trecho apoiado</option></select></label>
+          <label class="wide">Ângulo no TDP <small>graus</small><input name="theta0Deg" inputmode="decimal" value="33"></label>
+          <label hidden>Trecho apoiado <small>m no leito</small><input name="seabedLength" inputmode="decimal" value="0"></label>
+          <label hidden>Atrito no leito μ <small>0,7 corrente · 0,2 cabo</small><input name="muSeabed" inputmode="decimal" value="0,7"></label>
+          <label class="wide">Grandeza conhecida <small>o que define a linha</small><select name="solveFor"><option value="tension">Tração no TDP</option><option value="radius">Raio até o topo</option><option value="length">Comprimento total da linha</option></select></label>
+          <label class="wide" hidden><span id="target-label">Raio até o topo <small>m · âncora → topo</small></span><input name="target" inputmode="decimal" value="2000"></label>
+          <label class="wide"><span id="tension0-label">Tração no TDP T<sub>0</sub> <small>kN</small></span><input name="tension0" inputmode="decimal" value="4.944,24"></label>
         </div></details>
         <details class="input-group"><summary><b>03</b><span>Trecho suspenso<small>Corrente e poliéster</small></span></summary><div class="fields">
           <label class="wide">Altura de chegada <small>m sobre o leito</small><input name="targetHeight" inputmode="decimal" value="1487"></label>
@@ -86,6 +92,7 @@
 
       <div class="result-error" id="result-error" role="alert" hidden></div>
       <div id="result-content">
+        <section class="cat-solucao" id="cat-solucao" aria-label="Solução da linha" hidden></section>
         <section class="kpis" aria-label="Resultados principais">
           <article class="kpi"><span>Ângulo enterrado</span><strong id="k-angle">—</strong><small>θ<sub>a</sub> / junto à âncora</small></article>
           <article class="kpi"><span>Tração enterrada</span><strong id="k-ta">—</strong><small>T<sub>a</sub> / na âncora</small></article>
@@ -108,7 +115,7 @@
 
         <section class="card data-card"><div class="card-head"><div><p class="eyebrow">05 / PONTOS DA CURVA</p><h2>Pontos da curva</h2><p>Profundidade negativa abaixo do leito; altura positiva acima dele.</p></div><button type="button" id="export-csv-bottom" class="text-button">Baixar tabela CSV ↗</button></div><div class="table-wrap"><table><thead><tr><th>Trecho</th><th>x [m]</th><th>z [m]</th><th>s [m]</th><th>T [kN]</th><th>θ [°]</th></tr></thead><tbody id="point-rows"></tbody></table></div></section>
 
-        <div id="warnings" hidden></div>
+        <div id="warnings" class="cat-avisos" role="note" hidden></div>
       </div>
       <noscript><p class="result-error">Ative JavaScript para calcular e desenhar os perfis.</p></noscript>
       <footer>Laboratório offshore · etapa 02 · catenária · <a href="../index.html">todos os laboratórios</a> · <a href="../sobre.html">sobre o autor</a></footer>
@@ -117,12 +124,12 @@
   <nav class="mobilebar" aria-label="Alternar dados e resultados"><button type="button" data-panel="dados" aria-pressed="false">✎ Dados</button><button type="button" data-panel="resultados" aria-pressed="true">◫ Resultados</button></nav>
   <script src="assets/js/migracao-projeto.js?v=20261026-1"></script>
   <script src="assets/js/config.js"></script>
-  <script src="assets/js/dados-comuns.js?v=20261026-1"></script>
+  <script src="assets/js/dados-comuns.js?v=20261026-2"></script>
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261026-menu"></script>
-  <script src="assets/js/paginas/catenaria.js?v=20261026-1"></script>
-  <script src="assets/js/catenaria-visual.js"></script>
-  <script src="assets/js/catenaria-relatorio.js"></script>
+  <script src="assets/js/paginas/catenaria.js?v=20261026-2"></script>
+  <script src="assets/js/catenaria-visual.js?v=20261026-2"></script>
+  <script src="assets/js/catenaria-relatorio.js?v=20261026-2"></script>
   <script src="assets/js/fluxo.js?v=20261026-1"></script>
   <script src="assets/js/tema-legado.js"></script>
 </body>

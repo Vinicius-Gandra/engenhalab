@@ -40,6 +40,7 @@
       k: num(p.suGradient, 1.15),
       gama: num(p.gammaSoil, 4),
       nc: num(p.nc, 9),
+      st: num(p.st, 1.2),
       lamina: num(p.water, 2000)
     };
   }
@@ -60,7 +61,7 @@
     };
     caso.headDepth = P.embed; caso.diameter = M.d; caso.fins = M.aletas;
     if (caso.fluidDensity === 1000 || caso.fluidDensity === 1025) caso.fluidDensity = 1036.9;
-    caso.su0 = P.su0; caso.suGradient = P.k; caso.gammaSoil = P.gama; caso.nc = P.nc;
+    caso.su0 = P.su0; caso.suGradient = P.k; caso.gammaSoil = P.gama; caso.nc = P.nc; caso.st = Math.max(1, P.st);
     if (!(caso.innerDiameter < M.d)) caso.innerDiameter = 0;
     var anterior = null; try { anterior = localStorage.getItem(MODELO_CAP); } catch (e) { /* sem armazenamento */ }
     var semTrechos = !Array.isArray(caso.segments) || !caso.segments.length;
@@ -81,7 +82,7 @@
     },
     'capacidade-axial': {
       antes: prepararCapacidade,
-      campos: [['headDepth', 'Início enterrado', 'm'], ['diameter', 'Diâmetro externo', 'm'], ['fins', 'Aletas', ''], ['su0', 'Su₀', 'kPa'], ['suGradient', 'Gradiente k', 'kPa/m'], ['gammaSoil', 'γ′', 'kN/m³'], ['nc', 'Nc', '']],
+      campos: [['headDepth', 'Início enterrado', 'm'], ['diameter', 'Diâmetro externo', 'm'], ['fins', 'Aletas', ''], ['su0', 'Su₀', 'kPa'], ['suGradient', 'Gradiente k', 'kPa/m'], ['gammaSoil', 'γ′', 'kN/m³'], ['nc', 'Nc', ''], ['st', 'Sensibilidade St', '']],
       nota: function (P) { return P.modelo === 120 || MODELOS[P.modelo].trechos ? '' : 'Trechos e volume gerados em escala a partir do T-120. Ajuste se tiver a geometria do ' + MODELOS[P.modelo].nome + '.'; }
     },
     'carga-lateral': {
