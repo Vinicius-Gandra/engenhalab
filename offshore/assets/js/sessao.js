@@ -192,7 +192,23 @@
     catch (e) { if (janela) janela.close(); estado(e.message, true); }
   }
 
-  function atualizar() { botaoConta(); montarBarra(); }
+  // aba do registro da garrafa: só aparece para quem entrou
+  function abaGarrafa() {
+    const nav = document.querySelector('.s-areas');
+    if (!nav) return;
+    let a = nav.querySelector('.s-area-garrafa');
+    if (!sessao()) { if (a) a.remove(); return; }
+    if (!a) {
+      a = document.createElement('a');
+      a.className = 's-area s-area-garrafa';
+      a.href = 'registro-garrafa.html';
+      a.setAttribute('data-flow-link', '');
+      a.innerHTML = '<span class="s-area-number">06</span> Registro da garrafa';
+      nav.append(a);
+    }
+    if (/registro-garrafa\.html$/.test(location.pathname)) a.setAttribute('aria-current', 'page');
+  }
+  function atualizar() { botaoConta(); montarBarra(); abaGarrafa(); }
   document.addEventListener('engenha-sessao', atualizar);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { atualizar(); conferirVersao(); }); else { atualizar(); conferirVersao(); }
   // confere a sessão em segundo plano (pode ter sido encerrada pelo administrador)
