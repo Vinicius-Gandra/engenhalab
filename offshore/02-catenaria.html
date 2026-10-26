@@ -63,8 +63,9 @@
           <label class="wide">Ângulo no TDP <small>graus</small><input name="theta0Deg" inputmode="decimal" value="33"></label>
           <label hidden>Trecho apoiado <small>m no leito</small><input name="seabedLength" inputmode="decimal" value="0"></label>
           <label hidden>Atrito no leito μ <small>0,7 corrente · 0,2 cabo</small><input name="muSeabed" inputmode="decimal" value="0,7"></label>
-          <label class="wide">Grandeza conhecida <small>o que define a linha</small><select name="solveFor"><option value="tension">Tração no TDP</option><option value="radius">Raio até o topo</option><option value="length">Comprimento total da linha</option></select></label>
+          <label class="wide">Grandeza conhecida <small>o que define a linha</small><select name="solveFor"><option value="tension">Tração no TDP</option><option value="radius">Raio até o topo</option><option value="length">Comprimento total da linha</option><option value="both">Raio e comprimento total</option></select></label>
           <label class="wide" hidden><span id="target-label">Raio até o topo <small>m · âncora → topo</small></span><input name="target" inputmode="decimal" value="2000"></label>
+          <label class="wide" hidden>Comprimento total <small>m · olhal → topo</small><input name="targetLength" inputmode="decimal" value="2100"></label>
           <label class="wide"><span id="tension0-label">Tração no TDP T<sub>0</sub> <small>kN</small></span><input name="tension0" inputmode="decimal" value="4.944,24"></label>
         </div></details>
         <details class="input-group"><summary><b>03</b><span>Trecho suspenso<small>Corrente e poliéster</small></span></summary><div class="fields">
@@ -127,7 +128,7 @@
   <script src="assets/js/dados-comuns.js?v=20261026-2"></script>
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261026-menu"></script>
-  <script src="assets/js/paginas/catenaria.js?v=20261026-2"></script>
+  <script src="assets/js/paginas/catenaria.js?v=20261026-3"></script>
   <script src="assets/js/catenaria-visual.js?v=20261026-2"></script>
   <script src="assets/js/catenaria-relatorio.js?v=20261026-2"></script>
   <script src="assets/js/fluxo.js?v=20261026-1"></script>
