@@ -1,6 +1,6 @@
 /* Casos salvos do lançamento: guarda o caso inteiro (modelo, lançamento, solo e parâmetros avançados).
    Um caso só muda quando a pessoa clica em Salvar alterações; testes no painel não alteram o que está salvo.
-   Os casos ficam no navegador e, com login e projeto aberto, vão junto com o projeto para o servidor. */
+   Só aparecem para quem entrou com login; com projeto aberto, vão junto com o projeto para o servidor. */
 (function () {
   'use strict';
   const CHAVE = 'offshore-casos-v1', MAX = 30;
@@ -19,6 +19,7 @@
   const gravar = d => { try { localStorage.setItem(CHAVE, JSON.stringify(d)); } catch (_) {} };
   const campos = () => [...form.querySelectorAll('input[name]:not([type=range])')].map(i => i.name);
   const modelo = () => Number((window.__lanc && window.__lanc.model) || (L.project && L.project.model)) || 120;
+  const logado = () => !!(window.Sessao && window.Sessao.sessao && window.Sessao.sessao());
   const nomeModelo = m => (L.MODELS[m] && L.MODELS[m].name) || 'T-' + m;
 
   function atual() {
@@ -43,6 +44,8 @@
 
   /* ------------------------------------------------ estado e lista */
   function mostrar() {
+    raiz.hidden = !logado();
+    if (raiz.hidden) { fechar(); fecharNome(); return; }
     const d = ler(), c = casoAtual(d), sujo = !!c && !igual(atual(), c);
     raiz.classList.toggle('sujo', sujo);
     nomeAtual.textContent = c ? c.nome : (d.lista.length ? 'Escolher ou cadastrar caso' : 'Cadastrar caso');
@@ -52,7 +55,7 @@
     else { st.textContent = 'Salvo ' + quando(c.salvo); st.className = 'lx-caso-st ok'; }
     bSalvar.hidden = !sujo; bDesc.hidden = !sujo; bExc.hidden = !c;
     const p = window.Sessao && window.Sessao.sessao && window.Sessao.sessao() && window.Sessao.projetoAtivo && window.Sessao.projetoAtivo();
-    onde.textContent = p ? 'Guardados no projeto ' + p.nome : 'Guardados neste navegador';
+    onde.textContent = p ? 'Guardados no projeto ' + p.nome : 'Só neste navegador. Abra um projeto para guardar no servidor.';
     if (!lista.hidden) montarLista();
   }
 
@@ -149,7 +152,7 @@
   addEventListener('storage', e => { if (e.key === CHAVE) mostrar(); });
 
   // ao abrir a página, o caso aberto volta inteiro (os campos de água só ficam guardados no caso)
-  const c0 = casoAtual(ler());
+  const c0 = logado() ? casoAtual(ler()) : null;
   if (c0) {
     const p = L.project || {};
     const base = ['release', 'water', 'su0', 'suGradient', 'nc', 'alphaT', 'st', 'rhoSoil', 'cdSoil', 'finT', 'ncFin', 'beta', 'rateRef'];
