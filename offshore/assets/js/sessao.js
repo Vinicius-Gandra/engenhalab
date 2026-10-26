@@ -192,21 +192,24 @@
     catch (e) { if (janela) janela.close(); estado(e.message, true); }
   }
 
-  // aba do registro da garrafa: só aparece para quem entrou
+  // aba do registro da garrafa: está em todas as páginas, oculta; aparece só para quem entrou
   function abaGarrafa() {
     const nav = document.querySelector('.s-areas');
     if (!nav) return;
     let a = nav.querySelector('.s-area-garrafa');
-    if (!sessao()) { if (a) a.remove(); return; }
     if (!a) {
       a = document.createElement('a');
       a.className = 's-area s-area-garrafa';
       a.href = 'registro-garrafa.html';
       a.setAttribute('data-flow-link', '');
       a.innerHTML = '<span class="s-area-number">06</span> Registro da garrafa';
+      if (/registro-garrafa\.html$/.test(location.pathname)) a.setAttribute('aria-current', 'page');
       nav.append(a);
     }
-    if (/registro-garrafa\.html$/.test(location.pathname)) a.setAttribute('aria-current', 'page');
+    a.hidden = !sessao();
+    // mantém a aba atual à vista quando a barra rola (celular)
+    const atual = nav.querySelector('[aria-current="page"]:not([hidden])');
+    if (atual && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, atual.offsetLeft - (nav.clientWidth - atual.offsetWidth) / 2);
   }
   function atualizar() { botaoConta(); montarBarra(); abaGarrafa(); }
   document.addEventListener('engenha-sessao', atualizar);

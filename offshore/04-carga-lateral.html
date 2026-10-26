@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
-  <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
+  <link rel="stylesheet" href="assets/css/conta.css?v=20261026-menu">
   <script defer src="/assets/js/analytics-config.js"></script>
   <script defer src="/assets/js/analytics.js"></script>
 </head>
@@ -28,7 +28,7 @@
       <button type="button" class="s-act s-act-icon" id="theme-toggle" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
     </div>
   </header>
-  <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html" aria-current="page"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html"><span class="s-area-number">05</span> Torpedo 3D</a></nav>
+  <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html" aria-current="page"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html"><span class="s-area-number">05</span> Torpedo 3D</a><a class="s-area s-area-garrafa" data-flow-link href="registro-garrafa.html" hidden><span class="s-area-number">06</span> Registro da garrafa</a></nav>
   <main class="container" id="main">
 <section class="page-head"><div><span class="eyebrow">04 / CARGA LATERAL</span><h1>Carga lateral na estaca</h1><p>Deslocamento, reação do solo e momento ao longo do trecho enterrado.</p><div class="head-links"><span>Argila · carga estática</span><a data-flow-link href="02-catenaria.html">Ver a catenária ↗</a></div></div><div class="head-aside" aria-hidden="true">⌇</div></section>
 <section class="grid cols-2"><div class="panel"><span class="eyebrow">ESTACA E SOLO</span><h2>Estaca e solo</h2><form id="lateral-form" class="form-grid"><label>Diâmetro externo D <small>m · torpedo selecionado</small><input name="D" inputmode="decimal"></label><label>Espessura da parede <small>m</small><input name="thickness" inputmode="decimal" value="0,045"></label><label>Comprimento enterrado <small>m</small><input name="length" inputmode="decimal"></label><label>Módulo E <small>GPa</small><input name="E" inputmode="decimal" value="200"></label><label>Força horizontal na cabeça <small>kN · entrada de projeto</small><input name="force" inputmode="decimal" value="500"></label><label>Momento na cabeça <small>kN·m</small><input name="moment" inputmode="decimal" value="0"></label><label>Su na superfície <small>kPa</small><input name="su0" inputmode="decimal"></label><label>Gradiente de Su <small>kPa/m</small><input name="suGradient" inputmode="decimal"></label><label>γ′ do solo <small>kN/m³</small><input name="gamma" inputmode="decimal"></label><label>ε₅₀ <small>deformação de referência</small><input name="epsilon50" inputmode="decimal" value="0,02"></label></form><div class="action-row"><button class="button primary" id="run-lateral">Calcular ↗</button><button class="button ghost" id="download-lateral">Baixar perfil CSV</button></div><div class="notice warn">Resultado preliminar. Aletas, plastificação do aço, efeito cíclico e esforço axial não estão incluídos.</div></div><div class="panel"><span class="eyebrow">SEÇÃO DE RESPOSTA</span><h2>Reação do solo na profundidade escolhida</h2><label class="field">Profundidade z <small>m abaixo do leito</small><input id="py-depth" inputmode="decimal" value="5"></label><div class="plot" id="py-plot" style="margin-top:12px"></div><div class="kv" id="py-values" style="margin-top:12px"></div></div></section>
@@ -42,7 +42,7 @@
   <script src="assets/js/config.js"></script>
   <script src="assets/js/dados-comuns.js?v=20261021-3"></script>
   <script src="assets/js/calc.js"></script>
-  <script src="assets/js/sessao.js?v=20261026-aba"></script>
+  <script src="assets/js/sessao.js?v=20261026-menu"></script>
   <script src="assets/js/torpedo.js"></script>
   <script src="assets/js/paginas/carga-lateral.js"></script>
   <script src="assets/js/tema.js"></script>
