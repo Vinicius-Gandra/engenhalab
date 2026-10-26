@@ -96,9 +96,16 @@
 
   function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
 
+  // na catenária o vínculo com o lançamento pode ser desligado (caixa "Usar os dados do lançamento")
+  function vinculado() { if (pagina !== 'catenaria') return true; try { return localStorage.getItem('catenaria-vinculo') !== 'off'; } catch (e) { return true; } }
+
   function montar() {
     var form = document.querySelector('form#case-form, form#lateral-form');
-    if (!form || form.querySelector('.dc-proj')) return;
+    if (!form) return;
+    var velha = form.querySelector('.dc-proj'); if (velha) velha.remove();
+    form.querySelectorAll('.dc-oculto').forEach(function (e) { e.classList.remove('dc-oculto'); });
+    cfg.campos.forEach(function (c) { var i = form.querySelector('[name="' + c[0] + '"]'); if (i) { i.readOnly = false; i.removeAttribute('tabindex'); } });
+    if (!vinculado()) return;
     var P = projeto();
     var caixa = el('div', 'dc-proj');
     var cab = el('div', 'dc-cab');
@@ -127,6 +134,8 @@
       if (!visiveis.length) g.classList.add('dc-oculto');
     });
   }
+  // ligar ou desligar o vínculo refaz o resumo (depois de os campos receberem os valores do projeto)
+  document.addEventListener('change', function (ev) { if (ev.target && ev.target.id === 'vinculo-lancamento') setTimeout(montar, 0); });
 
   // "Restaurar exemplo" volta ao T-120 da página; os dados do projeto são reaplicados
   document.addEventListener('click', function (ev) {

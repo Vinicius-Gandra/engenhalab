@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <link rel="stylesheet" href="assets/css/catenaria.css">
+  <link rel="stylesheet" href="assets/css/catenaria.css?v=20261026-1">
   <link rel="stylesheet" href="assets/css/catenaria-visual.css">
   <link rel="stylesheet" href="assets/css/catenaria-relatorio.css">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261026-menu">
@@ -43,15 +43,16 @@
         <div><p class="eyebrow">01 / PARÂMETROS</p><h2 id="inputs-title">Dados do caso</h2><p>Edite as propriedades e acompanhe a solução.</p></div>
         <span class="state" id="input-state">EXEMPLO</span>
       </div>
+      <label class="vinculo"><input type="checkbox" id="vinculo-lancamento" checked><span><b>Usar os dados do lançamento</b><small id="vinculo-nota">Solo, profundidade do olhal, tração e lâmina vêm do lançamento.</small></span></label>
       <div class="input-error" id="input-error" role="alert" hidden></div>
       <form id="case-form" novalidate>
         <details class="input-group" open><summary><b>01</b><span>Solo e interação<small>Resistência e aderência</small></span></summary><div class="fields">
           <label>Su<sub>0</sub> <small>kPa</small><input name="su0" inputmode="decimal" value="1,241"></label>
           <label>Gradiente k <small>kPa/m</small><input name="gradient" inputmode="decimal" value="1,9938"></label>
-          <label>Se <small>sensibilidade</small><input name="se" inputmode="decimal" value="2,95"></label>
-          <label>Et <small>fator tangencial</small><input name="et" inputmode="decimal" value="10"></label>
+          <label>Se <small>sensibilidade</small><input name="se" inputmode="decimal" value="2"></label>
+          <label>Et <small>fator tangencial</small><input name="et" inputmode="decimal" value="11,3"></label>
           <label>En <small>fator normal</small><input name="en" inputmode="decimal" value="2,5"></label>
-          <label>Nc <small>capacidade</small><input name="nc" inputmode="decimal" value="11"></label>
+          <label>Nc <small>capacidade</small><input name="nc" inputmode="decimal" value="11,42"></label>
         </div></details>
         <details class="input-group" open><summary><b>02</b><span>Linha e TDP<small>Geometria e tração</small></span></summary><div class="fields">
           <label>Diâmetro d <small>m</small><input name="diameter" inputmode="decimal" value="0,120"></label>
@@ -114,15 +115,15 @@
     </main>
   </div>
   <nav class="mobilebar" aria-label="Alternar dados e resultados"><button type="button" data-panel="dados" aria-pressed="false">✎ Dados</button><button type="button" data-panel="resultados" aria-pressed="true">◫ Resultados</button></nav>
-  <script src="assets/js/migracao-projeto.js"></script>
+  <script src="assets/js/migracao-projeto.js?v=20261026-1"></script>
   <script src="assets/js/config.js"></script>
-  <script src="assets/js/dados-comuns.js?v=20261021-3"></script>
+  <script src="assets/js/dados-comuns.js?v=20261026-1"></script>
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261026-menu"></script>
-  <script src="assets/js/paginas/catenaria.js"></script>
+  <script src="assets/js/paginas/catenaria.js?v=20261026-1"></script>
   <script src="assets/js/catenaria-visual.js"></script>
   <script src="assets/js/catenaria-relatorio.js"></script>
-  <script src="assets/js/fluxo.js"></script>
+  <script src="assets/js/fluxo.js?v=20261026-1"></script>
   <script src="assets/js/tema-legado.js"></script>
 </body>
 </html>
