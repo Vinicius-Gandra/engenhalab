@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
   <link rel="stylesheet" href="assets/css/lancamento.css?v=20261024-4">
+  <link rel="stylesheet" href="assets/css/garrafa.css?v=20261025-1">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261021-avatares">
@@ -162,6 +163,15 @@
       <div class="kv lx-geo" id="true-geo"></div>
     </section>
 
+    <section class="panel lx-garrafa" id="lx-garrafa" hidden>
+      <div class="panel-title"><div><span class="eyebrow">Garrafa instrumentada</span><h2>Registro do acelerômetro × cálculo</h2><p>Envie o TXT do lançamento para comparar a velocidade e a profundidade registradas com o cálculo desta página.</p></div>
+        <div class="action-row" style="margin:0"><label class="button ghost lg-enviar"><input type="file" id="lg-arquivo" accept=".txt,.csv,.dat,.log,text/plain" multiple hidden>Enviar TXT</label><a class="button ghost" data-flow-link href="registro-garrafa.html">Página do registro ↗</a></div></div>
+      <div class="g-ferramentas"><div class="modebar" role="group" aria-label="Grandeza"><button type="button" data-tipo="velocidade" aria-pressed="true">Velocidade</button><button type="button" data-tipo="profundidade" aria-pressed="false">Profundidade</button></div></div>
+      <p class="lg-resumo" id="lg-resumo" role="status"></p>
+      <div class="g-grafico" id="lg-grafico"></div>
+      <div class="g-rolagem" id="lg-tabela" hidden><table><thead><tr><th>Registro</th><th>v no contato</th><th>Queda na água</th><th>Ponta</th><th>Olhal</th><th>Contato ± 0,1 s</th><th></th></tr></thead><tbody id="lg-linhas"></tbody></table></div>
+    </section>
+
     <section class="soil-layout" id="secao-solo">
       <div class="panel soil-main">
         <div class="panel-title"><div><span class="eyebrow">Posição final em escala</span><h2>Torpedo, solo e linha</h2><p>Toque ou passe o mouse sobre o solo para ler profundidade e Su.</p></div><div class="modebar" role="group" aria-label="Enquadramento"><button type="button" data-frame="all" aria-pressed="true">Seção completa</button><button type="button" data-frame="pile" aria-pressed="false">Aproximar torpedo</button></div></div>
@@ -191,10 +201,11 @@
   <script src="assets/js/core.js?v=20261024-2"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/calc.js"></script>
-  <script src="assets/js/sessao.js?v=20261024-casos"></script>
+  <script src="assets/js/sessao.js?v=20261025-garrafa"></script>
   <script src="assets/js/torpedo.js"></script>
   <script src="assets/js/paginas/lancamento.js?v=20261025-7"></script>
   <script src="assets/js/casos-lancamento.js?v=20261025-7"></script>
+  <script src="assets/js/garrafa.js?v=20261025-1"></script>
   <script src="assets/js/movel.js?v=20261020-1"></script>
   <script src="assets/js/tema.js"></script>
 </body>
