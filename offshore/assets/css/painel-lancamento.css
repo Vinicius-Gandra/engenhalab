@@ -176,3 +176,23 @@
 .lx-adv-ajuda:hover{color:var(--text);border-color:var(--orange)}
 .lx-adv-ajuda span{color:var(--orange)}
 .lx-params[data-modo="avancado"] .lx-adv{margin-top:4px;padding-top:0;border-top:0}
+
+/* seções recolhíveis no mesmo padrão das outras etapas: número, título, subtítulo e +/− */
+.lx-params details.lx-sec{margin:0 0 9px;border:1px solid var(--line);border-radius:11px;background:var(--panel);overflow:visible}
+.lx-params details.lx-sec>summary{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:10px;min-height:55px;padding:10px;border-radius:11px;list-style:none;font-size:.80rem;font-weight:760;color:var(--text);cursor:pointer}
+.lx-params details.lx-sec>summary::-webkit-details-marker{display:none}
+.lx-params details.lx-sec>summary::before{content:none}
+.lx-params details.lx-sec>summary:hover{background:var(--panel2)}
+.lx-params details.lx-sec>summary:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+.lx-params details.lx-sec>summary::after{content:"+";width:auto;height:auto;margin:0 2px 0 auto;border:0;transform:none;color:var(--soft);font:700 1rem var(--mono)}
+.lx-params details.lx-sec[open]>summary::after{content:"−";margin:0 2px 0 auto;color:var(--orange)}
+.lx-params details.lx-sec>summary>b{display:grid;place-items:center;flex:none;width:29px;height:29px;border:1px solid var(--line2);border-radius:7px;color:var(--orange);font:700 .70rem var(--mono)}
+.lx-params details.lx-sec .lx-adv-gt{display:block;min-width:0;font-size:.80rem;font-weight:760;color:var(--text)}
+.lx-params details.lx-sec .lx-adv-gt small{display:block;margin-top:2px;overflow:hidden;color:var(--soft);font-size:.70rem;font-weight:500;white-space:nowrap;text-overflow:ellipsis}
+.lx-params details.lx-sec .lx-adv-gn{margin-left:auto}
+.lx-params details.lx-sec .lx-adv-gn+*{margin-left:0}
+.lx-params details.lx-sec:has(.lx-adv-gn:not([hidden]))>summary::after{margin-left:8px}
+.lx-params .lx-sec-c{padding:0 12px 6px}
+.lx-params details.lx-grupo .lx-field:first-child{padding-top:4px}
+.lx-params details.lx-grupo .lx-su{margin-bottom:8px}
+@media(max-width:640px){.lx-params details.lx-sec>summary{min-height:56px}}
