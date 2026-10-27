@@ -31,7 +31,7 @@
     if (!a || !b || Number(a.model) !== Number(b.model)) return false;
     for (const k of campos()) {
       const x = a[k], y = b[k];
-      if (x == null && y == null) continue;
+      if (y == null) continue; // campo que não existia quando o caso foi salvo
       if (x == null || y == null || Math.abs(x - y) > 1e-9 * Math.max(1, Math.abs(x), Math.abs(y))) return false;
     }
     return true;
