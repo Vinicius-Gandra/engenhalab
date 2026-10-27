@@ -17,7 +17,7 @@
   <link rel="stylesheet" href="assets/css/garrafa.css?v=20261025-1">
   <link rel="stylesheet" href="assets/css/movel.css?v=20261020-1">
   <link rel="stylesheet" href="assets/css/lancamento-movel.css?v=20261020-3">
-  <link rel="stylesheet" href="assets/css/painel-lancamento.css?v=20261027-2">
+  <link rel="stylesheet" href="assets/css/painel-lancamento.css?v=20261027-3">
   <link rel="stylesheet" href="assets/css/dicas.css?v=20261027-1">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261026-menu">
   <script defer src="/assets/js/analytics-config.js"></script>
@@ -58,12 +58,14 @@
       <div class="lx-model-specs" id="lx-model-specs"></div>
     </div>
 
-    <div class="lx-vivo" id="lx-vivo" aria-live="polite">
-      <div class="lx-vivo-main"><span>Olhal abaixo do leito</span><b id="vv-olhal">—</b></div>
-      <div class="lx-vivo-kv"><div><span>Impacto</span><b id="vv-v">—</b></div><div><span>Ponta</span><b id="vv-pen">—</b></div></div>
-      <span class="lx-vivo-st" id="vv-st" data-st="calc">Calculando</span>
-      <a class="lx-vivo-ir" href="#lx-sim">Ver simulação</a>
-    </div>
+    <section class="lx-card lx-casos" id="lx-casos" aria-label="Casos salvos" hidden>
+        <div class="lx-card-h"><span class="eyebrow">Casos salvos</span><span class="lx-caso-st" id="lx-caso-st" role="status"></span></div>
+        <button type="button" class="lx-caso-trig" id="lx-caso-trig" aria-haspopup="listbox" aria-expanded="false" aria-controls="lx-caso-lista"><span class="lx-caso-trig-t"><b id="lx-caso-nome-atual">Escolher ou cadastrar caso</b><small id="lx-caso-resumo"></small></span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+        <ul class="lx-caso-lista" id="lx-caso-lista" role="listbox" aria-label="Casos salvos" hidden></ul>
+        <div class="lx-caso-nome" id="lx-caso-nome" hidden><input type="text" maxlength="60" aria-label="Nome do novo caso" placeholder="Nome do novo caso"><button type="button" class="lx-caso-b prim" data-a="ok">Cadastrar</button><button type="button" class="lx-caso-b" data-a="cancelar">Cancelar</button></div>
+        <div class="lx-caso-acoes"><button type="button" class="lx-caso-b prim" data-a="salvar">Salvar alterações</button><button type="button" class="lx-caso-b" data-a="descartar">Descartar alterações</button><button type="button" class="lx-caso-b" data-a="excluir">Excluir caso</button></div>
+        <div class="lx-caso-pe"><small class="lx-caso-onde" id="lx-caso-onde"></small><span class="lx-caso-olhal" id="lx-vivo" data-st="calc" title="Olhal abaixo do leito no cálculo atual"><small>Olhal abaixo do leito</small><b id="vv-olhal">—</b></span></div>
+      </section>
 
     <form class="lx-card lx-params" id="lx-form" novalidate autocomplete="off">
       <div class="lx-params-h">
@@ -84,14 +86,7 @@
       <div class="lx-su" id="lx-su" aria-hidden="true"></div>
       </fieldset>
 
-      <section class="lx-casos" id="lx-casos" aria-label="Casos salvos" hidden>
-        <div class="lx-card-h"><span class="eyebrow">Casos salvos</span><span class="lx-caso-st" id="lx-caso-st" role="status"></span></div>
-        <button type="button" class="lx-caso-trig" id="lx-caso-trig" aria-haspopup="listbox" aria-expanded="false" aria-controls="lx-caso-lista"><span class="lx-caso-trig-t"><b id="lx-caso-nome-atual">Escolher ou cadastrar caso</b><small id="lx-caso-resumo"></small></span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
-        <ul class="lx-caso-lista" id="lx-caso-lista" role="listbox" aria-label="Casos salvos" hidden></ul>
-        <div class="lx-caso-nome" id="lx-caso-nome" hidden><input type="text" maxlength="60" aria-label="Nome do novo caso" placeholder="Nome do novo caso"><button type="button" class="lx-caso-b prim" data-a="ok">Cadastrar</button><button type="button" class="lx-caso-b" data-a="cancelar">Cancelar</button></div>
-        <div class="lx-caso-acoes"><button type="button" class="lx-caso-b prim" data-a="salvar">Salvar alterações</button><button type="button" class="lx-caso-b" data-a="descartar">Descartar alterações</button><button type="button" class="lx-caso-b" data-a="excluir">Excluir caso</button></div>
-        <small class="lx-caso-onde" id="lx-caso-onde"></small>
-      </section>
+      
 
       <div class="lx-adv" id="lx-adv" hidden>
         <div class="lx-adv-top">
@@ -212,7 +207,7 @@
   <script src="assets/js/sessao.js?v=20261026-menu"></script>
   <script src="assets/js/relatorio-acesso.js?v=20261026-2"></script>
   <script src="assets/js/torpedo.js"></script>
-  <script src="assets/js/painel-lancamento.js?v=20261027-3"></script>
+  <script src="assets/js/painel-lancamento.js?v=20261027-4"></script>
   <script src="assets/js/paginas/lancamento.js?v=20261026-1"></script>
   <script src="assets/js/casos-lancamento.js?v=20261027-1"></script>
   <script src="assets/js/ajuda-dados.js?v=20261027-1"></script>
