@@ -122,6 +122,19 @@
     });
   }
 
+  // sair: escolha clara sobre os parâmetros do estudo que ficaram neste navegador
+  function escolherSaida() {
+    return new Promise(resolve => {
+      const d = document.createElement('dialog'); d.className = 'c-dialogo';
+      d.innerHTML = `<form method="dialog"><span class="eyebrow">Sair da conta</span><h2>Apagar os dados do estudo deste navegador?</h2>
+        <p>Os parâmetros que você usou nas páginas do laboratório ficam guardados neste navegador e apareceriam para quem abrir o site depois, neste mesmo perfil. Os projetos e memoriais salvos no servidor não são afetados.</p>
+        <div class="c-dial-botoes c-dial-sair"><button class="button ghost" value="cancelar" type="submit">Cancelar</button><button class="button ghost" value="manter" type="submit">Sair e manter</button><button class="button primary" value="apagar" type="submit" autofocus>Sair e apagar</button></div></form>`;
+      document.body.appendChild(d);
+      d.addEventListener('close', () => { const v = d.returnValue; d.remove(); resolve(v === 'apagar' || v === 'manter' ? v : null); });
+      d.showModal();
+    });
+  }
+
   /* ------------------------------------------------------------- foto: recorte quadrado de 160 px */
   async function reduzirImagem(arquivo) {
     if (!/^image\//.test(arquivo.type)) throw new Error('Escolha um arquivo de imagem.');
@@ -151,6 +164,9 @@
   const qtd = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
   const dataCurta = t => t ? new Date(t * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '') : '—';
   const hora = t => t ? new Date(t * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+
+  // estado do segundo fator como o servidor informa; sem resposta, não afirma nada
+  const estadoFator = (u, sim, nao) => u.segundo_fator === true ? `<strong class="c-ok">${sim}</strong>` : u.segundo_fator === false ? `<strong class="c-ruim">${nao}</strong>` : '<strong class="c-indef">Não confirmado</strong>';
 
   async function minhaConta(primeiraVez) {
     const s = S.sessao(); if (!s) return telaEntrar();
@@ -184,7 +200,7 @@
           <div class="stat"><span>Projetos</span><strong data-n="projetos">—</strong><small>salvos no servidor</small></div>
           <div class="stat"><span>Memoriais</span><strong data-n="documentos">—</strong><small>emitidos com número</small></div>
           <div class="stat"><span>Sessões</span><strong data-n="sessoes">—</strong><small>abertas agora</small></div>
-          <div class="stat"><span>Segundo fator</span><strong class="c-ok">Ativo</strong><small>aplicativo autenticador</small></div>
+          <div class="stat"><span>Segundo fator</span>${estadoFator(u, 'Ativo', 'Inativo')}<small>aplicativo autenticador</small></div>
         </div>
         <div class="c-corpo">
           <nav class="c-nav" aria-label="Seções da conta">${SECOES.map(([id, rot, sub], i) => `<a href="#${id}" data-sec="${id}"><b>0${i + 1}</b><span>${rot}<small>${sub}</small></span></a>`).join('')}</nav>
@@ -201,7 +217,13 @@
     document.addEventListener('click', ev => { if (!menu.hidden && !menu.contains(ev.target)) fecharMenu(); });
     document.addEventListener('keydown', ev => { if (ev.key === 'Escape') fecharMenu(); });
     menu.querySelector('[data-fechar]').addEventListener('click', fecharMenu);
-    menu.querySelector('[data-sair]').addEventListener('click', () => { S.sair(); history.replaceState(null, '', location.pathname); telaEntrar('Você saiu da sua conta.'); });
+    menu.querySelector('[data-sair]').addEventListener('click', async () => {
+      fecharMenu();
+      let manter = false;
+      if (S.temEstudo()) { const r = await escolherSaida(); if (!r) return; manter = r === 'manter'; }
+      S.sair(false, { manter }); history.replaceState(null, '', location.pathname);
+      telaEntrar(manter ? 'Você saiu da sua conta. Os parâmetros do estudo continuam neste navegador.' : 'Você saiu da sua conta. Os parâmetros do estudo foram apagados deste navegador.');
+    });
     app.querySelector('[data-ir]').addEventListener('click', () => { if (secaoAtual() === 'perfil') { const b = app.querySelector('[data-arquivo]'); if (b) b.click(); } else location.hash = 'perfil'; });
 
     const titulo = (n, eyebrow, h2, p, extra) => `<div class="panel-title"><div><span class="eyebrow">${n} / ${eyebrow}</span><h2>${h2}</h2>${p ? `<p>${p}</p>` : ''}</div>${extra || ''}</div>`;
@@ -278,7 +300,7 @@
       const lista = cache.sessoes;
       return `<div class="c-grade">
         <section class="panel">${titulo('04', 'Acesso', 'Como você entra')}
-          <div class="kv"><div><span>E-mail</span><strong>${esc(u.email)}</strong></div><div><span>Senha</span><strong>Definida</strong></div><div><span>Verificação em duas etapas</span><strong class="c-ok">Ativa</strong></div><div><span>Papel</span><strong>${admin ? 'Administrador' : 'Profissional'}</strong></div></div>
+          <div class="kv"><div><span>E-mail</span><strong>${esc(u.email)}</strong></div><div><span>Senha</span>${u.senha_definida === true ? '<strong>Definida</strong>' : u.senha_definida === false ? '<strong class="c-ruim">Não definida</strong>' : '<strong class="c-indef">Não confirmado</strong>'}</div><div><span>Verificação em duas etapas</span>${estadoFator(u, 'Ativa', 'Inativa')}</div><div><span>Papel</span><strong>${admin ? 'Administrador' : 'Profissional'}</strong></div></div>
           <p class="c-nota">Para trocar a senha ou o aplicativo autenticador, peça ao administrador um novo link de acesso.</p></section>
         <section class="panel">${titulo('04', 'Dispositivos', 'Onde sua conta está aberta', '', lista && lista.length > 1 ? '<button type="button" class="button" data-outras>Sair dos outros</button>' : '')}${falha('sessoes')}
           ${lista ? `<div class="c-disp">${lista.map(x => { const a = aparelho(x.agente); return `<div><span class="c-disp-ic">${a.movel ? IC.celular : IC.tela}</span><span><b>${esc(a.nome)}</b>${x.atual ? '<span class="c-selo">este dispositivo</span>' : ''}<small>Entrou em ${dataCurta(x.criada_em)} · ativo às ${hora(x.ultima_atividade)}</small></span></div>`; }).join('')}</div>` : '<p class="c-vazio">Carregando…</p>'}</section></div>`;
