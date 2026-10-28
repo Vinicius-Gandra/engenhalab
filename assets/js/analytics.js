@@ -4,7 +4,9 @@
   var config = window.ENGENHALAB_ANALYTICS || {};
   var id = config.measurementId || '';
   var pages = config.pages || {};
+  var actions = config.actions || {};
   var path = location.pathname;
+  var canonicalPath = path === '/index.html' ? '/' : path;
   if (!Object.hasOwn(pages, path) || window.top !== window.self) return;
   var storageKey = 'engenhalab.analytics-choice.v1';
   var maxAge = 180 * 86400000;
@@ -20,6 +22,33 @@
     } catch (_) { return null; }
   }
   function tag() { window.dataLayer.push(arguments); }
+  // Eventos predefinidos, sem valores de engenharia nem dados pessoais.
+  var permittedActions = [
+    'calculate_requested', 'report_requested', 'export_csv', 'export_json',
+    'export_svg', 'export_png', 'import_json_requested', 'tour_toggled',
+    'simulation_toggled', 'calculation_completed'
+  ];
+  function laboratoryName() {
+    if (path.indexOf('/offshore/') === 0) return 'offshore';
+    if (path.indexOf('/maquinas-eletricas/') === 0) return 'maquinas_eletricas';
+    if (path.indexOf('/metalurgia') === 0) return 'metalurgia';
+    return 'portal';
+  }
+  function trackAction(action) {
+    if (!started || choice() !== 'granted' || !permittedActions.includes(action)) return false;
+    tag('event', 'lab_action', { laboratory: laboratoryName(), action: action });
+    return true;
+  }
+  function bindActionTracking() {
+    var allowed = actions[path] || {};
+    if (!Object.keys(allowed).length) return;
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      var element = target && typeof target.closest === 'function' ?
+        target.closest('button[id], a[id]') : null;
+      if (element && Object.hasOwn(allowed, element.id)) trackAction(allowed[element.id]);
+    }, true);
+  }
   function referrer() {
     try {
       var url = new URL(document.referrer);
@@ -38,13 +67,13 @@
       ad_user_data: 'denied', ad_personalization: 'denied'
     });
     tag('js', new Date());
-    tag('set', { page_location: location.origin + path, page_referrer: referrer(), page_title: pages[path] });
+    tag('set', { page_location: location.origin + canonicalPath, page_referrer: referrer(), page_title: pages[path] });
     tag('config', id, {
       send_page_view: false, allow_google_signals: false,
       allow_ad_personalization_signals: false,
       cookie_expires: maxAge / 1000, cookie_flags: 'SameSite=Lax;Secure'
     });
-    tag('event', 'page_view', { page_location: location.origin + path, page_referrer: referrer(), page_title: pages[path] });
+    tag('event', 'page_view', { page_location: location.origin + canonicalPath, page_referrer: referrer(), page_title: pages[path] });
     var script = document.createElement('script');
     script.async = true;
     script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
@@ -108,7 +137,8 @@
     var footer = document.querySelector('footer');
     (footer || document.body).appendChild(settings);
     if (!footer) settings.classList.add('el-privacy-floating');
-    window.EngenhaAnalytics = Object.freeze({ openPreferences: openPreferences });
+    window.EngenhaAnalytics = Object.freeze({ openPreferences: openPreferences, trackAction: trackAction });
+    bindActionTracking();
     start();
   }
   window.addEventListener('storage', function (event) {
