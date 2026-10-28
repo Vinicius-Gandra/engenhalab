@@ -634,3 +634,8 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
   .sheet-paper { min-width: 0; box-shadow: none; }
   .sec-sheet { break-before: page; }
 }
+/* verificação da superfície instalada */
+.hero-verif { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 12px; padding: 10px 12px; border: 1px solid var(--ok-line); border-radius: 10px; background: var(--ok-bg); color: var(--text-2); font-size: .82rem; line-height: 1.5; font-variant-numeric: tabular-nums; }
+.hero-verif.is-bad { border-color: var(--fail-line); background: var(--fail-bg); }
+.hero-verif b { color: var(--text); font-weight: 650; }
+.f-calc.is-bad { border-color: var(--fail-line); background: var(--fail-bg); }
