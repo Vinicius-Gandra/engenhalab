@@ -10,22 +10,49 @@
   const local = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   // em teste local, o mesmo nome de máquina da página: o cookie da sessão é do mesmo site
   const BASE = (local ? 'http://' + location.hostname + ':8787' : (window.ENGENHA_API || '')).replace(/\/$/, '');
-  const K_SESSAO = 'engenha-offshore-sessao', K_PROJ = 'engenha-offshore-projeto';
+  const K_SESSAO = 'engenha-offshore-sessao', K_PROJ = 'engenha-offshore-projeto', K_DONO = 'engenha-offshore-dono';
   const CHAVES = ['offshore-project-v8', 'catenaria-lab-case-v1', 'capacidade-axial-caso-v1', 'offshore-casos-v1'];
   const ler = (k, padrao) => { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? padrao : v; } catch (_) { return padrao; } };
   const gravar = (k, v) => { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* sem armazenamento */ } };
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  /* ------------------------------------------- dados do estudo guardados neste navegador */
+  // parâmetros e casos das páginas do laboratório; tema e escolha de estatísticas ficam
+  const ESTUDO = /^(offshore-|catenaria-|capacidade-|lancamento-|carga-lateral|garrafa|engenha-offshore-projeto$)/;
+  function apagarEstudo() {
+    try {
+      for (const k of Object.keys(localStorage)) if (ESTUDO.test(k)) localStorage.removeItem(k);
+      localStorage.removeItem(K_DONO);
+      for (const k of Object.keys(sessionStorage)) if (/^engenha-/.test(k)) sessionStorage.removeItem(k);
+    } catch (_) { /* sem armazenamento */ }
+  }
+  const temEstudo = () => { try { return Object.keys(localStorage).some(k => ESTUDO.test(k)); } catch (_) { return false; } };
+  // os dados ficam marcados com a conta que os usou; outra conta não herda o que sobrou
+  function adotar(u) {
+    if (!u || !u.id) return;
+    const dono = ler(K_DONO, null);
+    if (dono && dono !== u.id) apagarEstudo();
+    gravar(K_DONO, u.id);
+  }
+
   /* ------------------------------------------------------------ sessão */
   const sessao = () => { const s = ler(K_SESSAO, null); return s && s.usuario && s.expira * 1000 > Date.now() ? s : null; };
   // modo anterior (endereço workers.dev): o servidor ainda devolve o token e ele vai no cabeçalho
   const cabecalho = (s, h) => { if (s && s.sessao) h.Authorization = 'Bearer ' + s.sessao; return h; };
-  function sair(local) {
+  // ao sair: apaga os dados do estudo deste navegador, a menos que a pessoa escolha mantê-los.
+  // sessão encerrada pelo servidor ou vencida: apaga sempre (quem está na frente da tela pode ser outra pessoa)
+  function sair(local, { manter = false } = {}) {
     const s = sessao();
     gravar(K_SESSAO, null); gravar(K_PROJ, null);
+    const tinha = temEstudo();
+    if (!manter) apagarEstudo();
     if (s && !local) fetch(BASE + '/v1/conta/sair', { method: 'POST', credentials: 'include', headers: cabecalho(s, { 'Content-Type': 'application/json' }), body: '{}' }).catch(() => {});
     document.dispatchEvent(new CustomEvent('engenha-sessao'));
+    // a página guarda o estudo em memória e voltaria a gravá-lo: recarrega limpa
+    if (!manter && tinha && local && document.body && document.body.dataset.page !== 'acesso') location.reload();
   }
+  // sessão que venceu com a página fechada: o estudo da conta não fica para o próximo
+  (function () { const bruta = ler(K_SESSAO, null); if (bruta && !sessao()) { gravar(K_SESSAO, null); gravar(K_PROJ, null); if (ler(K_DONO, null)) apagarEstudo(); } })();
   // pedido ao servidor; a sessão vai no cookie (ou no cabeçalho, no modo anterior). 401 com sessão = sessão encerrada
   async function pedir(rota, corpo, { auth = true } = {}) {
     const s = auth ? sessao() : null, h = { 'Content-Type': s ? 'application/json' : 'text/plain;charset=UTF-8' };
@@ -113,7 +140,7 @@
     else { const m = document.querySelector('main'); if (m) { const d = document.createElement('div'); d.className = 'rp-resp rp-resp-pagina'; d.innerHTML = html; m.prepend(d); } }
   }
   window.addEventListener('beforeprint', blocoResponsavel);
-  window.Sessao = { pedir, sessao, sair, BASE, guardar: s => { gravar(K_SESSAO, s); document.dispatchEvent(new CustomEvent('engenha-sessao')); }, projetoAtivo: () => ler(K_PROJ, null), definirProjeto: p => gravar(K_PROJ, p), dadosLocais, aplicarDados, CHAVES, avatar, ICONES, iconeSvg, iniciais };
+  window.Sessao = { pedir, sessao, sair, BASE, guardar: s => { if (s && s.usuario) adotar(s.usuario); gravar(K_SESSAO, s); document.dispatchEvent(new CustomEvent('engenha-sessao')); }, projetoAtivo: () => ler(K_PROJ, null), definirProjeto: p => gravar(K_PROJ, p), dadosLocais, aplicarDados, apagarEstudo, temEstudo, CHAVES, avatar, ICONES, iconeSvg, iniciais };
 
   /* ------------------------------------------------- projeto no servidor */
   function dadosLocais() { const o = {}; for (const k of CHAVES) { const v = ler(k, null); if (v && typeof v === 'object') o[k] = v; } return o; }

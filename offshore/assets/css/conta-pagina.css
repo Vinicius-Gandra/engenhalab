@@ -260,6 +260,8 @@ html[data-theme="light"] .v-pagina {
 .c-stats { margin: 0 0 18px; }
 .c-stats .stat { min-height: 92px; }
 .c-ok { color: var(--green) !important; }
+.c-ruim { color: var(--red) !important; }
+.c-indef { color: var(--soft) !important; }
 
 /* corpo: navegação lateral + conteúdo */
 .c-corpo { display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: 18px; align-items: start; }
@@ -344,6 +346,7 @@ html[data-theme="light"] .v-pagina {
 .c-dial-campo input { min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font: .78rem var(--mono); outline: none; }
 .c-dial-campo input:focus { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-dim); }
 .c-dial-botoes { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.c-dial-sair { flex-wrap: wrap; }
 .button.c-perigo { border-color: var(--red); background: var(--red); color: #fff; }
 
 /* telas menores */
