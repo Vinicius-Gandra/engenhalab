@@ -172,9 +172,6 @@
   .lx-params .lx-adv-g summary{min-height:48px}
 }
 @media (prefers-reduced-motion:reduce){.lx-modo button,.lx-val,.lx-p input{transition:none}}
-.lx-adv-ajuda{display:flex;justify-content:center;gap:6px;margin-top:4px;padding:9px;border:1px dashed var(--line2);border-radius:10px;color:var(--muted);font-size:.74rem;font-weight:650;text-decoration:none}
-.lx-adv-ajuda:hover{color:var(--text);border-color:var(--orange)}
-.lx-adv-ajuda span{color:var(--orange)}
 .lx-params[data-modo="avancado"] .lx-adv{margin-top:4px;padding-top:0;border-top:0}
 
 /* seções recolhíveis no mesmo padrão das outras etapas: número, título, subtítulo e +/− */
