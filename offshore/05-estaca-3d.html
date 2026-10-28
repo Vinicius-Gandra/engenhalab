@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/offshore.css">
   <link rel="stylesheet" href="assets/css/conta.css?v=20261026-menu">
+<link rel="stylesheet" href="assets/css/estaca-3d.css?v=20261027-1">
   <script defer src="/assets/js/analytics-config.js"></script>
   <script defer src="/assets/js/analytics.js"></script>
 </head>
@@ -30,11 +31,26 @@
   </header>
   <nav class="s-areas" aria-label="Etapas do laboratório offshore"><a class="s-area" data-flow-link href="index.html"><span class="s-area-number">00</span> Visão geral</a><a class="s-area" data-flow-link href="01-lancamento.html"><span class="s-area-number">01</span> Lançamento e cravação</a><a class="s-area" data-flow-link href="02-catenaria.html"><span class="s-area-number">02</span> Catenária</a><a class="s-area" data-flow-link href="03-capacidade-axial.html"><span class="s-area-number">03</span> Capacidade axial</a><a class="s-area" data-flow-link href="04-carga-lateral.html"><span class="s-area-number">04</span> Carga lateral</a><a class="s-area" data-flow-link href="05-estaca-3d.html" aria-current="page"><span class="s-area-number">05</span> Torpedo 3D</a><a class="s-area s-area-garrafa" data-flow-link href="registro-garrafa.html" hidden><span class="s-area-number">06</span> Registro da garrafa</a></nav>
   <main class="container" id="main">
-<section class="page-head"><div><span class="eyebrow">05 / MODELO 3D</span><h1>Geometria do torpedo</h1><p>Corpo, ponta, aletas e olhal dos quatro modelos de torpedo, e o modelo em CAD do T-120.</p><div class="head-links"><a data-flow-link href="01-lancamento.html">Configurar lançamento ↗</a><a data-flow-link href="03-capacidade-axial.html">Capacidade axial ↗</a></div></div><div class="head-aside" aria-hidden="true">◈</div></section>
-<section class="panel"><span class="eyebrow">MODELOS</span><h2>Modelo</h2><div class="model-picker" id="pile-picker"></div><div id="pile-warning" class="notice warn" hidden></div></section>
-<section class="grid cols-2" style="margin-top:15px"><div class="panel"><span class="eyebrow">VISUALIZAÇÃO ORBITAL</span><h2>Arraste para girar</h2><div class="modebar"><button type="button" id="toggle-fins" aria-pressed="true">Aletas visíveis</button><button type="button" id="toggle-soil" aria-pressed="false">Mostrar leito</button><button type="button" id="rotate-pile-left">Girar ←</button><button type="button" id="rotate-pile-right">Girar →</button><button type="button" id="reset-pile">Centralizar</button><button type="button" id="save-pile">Baixar PNG</button></div><div class="plot" style="margin-top:12px"><canvas id="pile-canvas" aria-label="Modelo tridimensional interativo do torpedo selecionado"></canvas></div></div><div class="panel"><span class="eyebrow">GEOMETRIA</span><h2>Elementos do torpedo</h2><form id="pile-form" class="form-grid"><label>Diâmetro externo <small>m</small><input name="diameter" inputmode="decimal"></label><label>Comprimento <small>m</small><input name="length" inputmode="decimal"></label><label>Número de aletas <small>inteiro</small><input name="fins" inputmode="numeric" value="4"></label><label>Largura de aleta <small>m · visual</small><input name="finWidth" inputmode="decimal"></label><label>Profundidade enterrada <small>m · do projeto</small><input name="embed" inputmode="decimal"></label></form><div class="action-row"><button class="button primary" id="run-pile">Atualizar modelo ↗</button></div><div class="kv" id="pile-values"></div><div class="callout" style="margin-top:15px"><strong>O que aparece:</strong> corpo tubular ou maciço esquemático, ponta cônica, aletas longitudinais, leito e eixo central. Detalhes de cabeça, soldas e furos não estão representados.</div></div></section><section class="panel stl-panel" id="stl-panel" style="margin-top:15px"><div class="panel-title"><div><span class="eyebrow">MODELO REAL · ARQUIVO STL</span><h2 id="stl-title">T-120 em escala real</h2><p id="stl-desc">Modelo em CAD do torpedo de 120 t. Arraste para girar e use a roda do mouse para aproximar.</p></div><div class="modebar" role="group" aria-label="Modelo"><button type="button" data-stl="24" aria-pressed="false">T-24</button><button type="button" data-stl="35" aria-pressed="false">T-35</button><button type="button" data-stl="120" aria-pressed="true">T-120</button></div><div class="modebar"><button type="button" id="stl-spin" aria-pressed="true">Girando</button><button type="button" id="stl-wire" aria-pressed="false">Ver malha</button><button type="button" id="stl-reset">Centralizar</button></div></div><div class="plot stl-view" id="stl-view"><p class="stl-status" id="stl-status">Carregando modelo…</p></div><div class="kv" id="stl-values" style="margin-top:12px"></div></section>
+<header class="e3-head"><div><span class="eyebrow">05 / MODELO 3D</span><h1>Geometria do torpedo</h1></div><nav class="e3-head-links" aria-label="Etapas relacionadas"><a data-flow-link href="01-lancamento.html">Configurar lançamento ↗</a><a data-flow-link href="03-capacidade-axial.html">Capacidade axial ↗</a></nav></header>
+<section class="e3-app" aria-label="Visualizador do torpedo">
+<aside class="e3-lado e3-sel"><p class="e3-rot">Modelos</p><div class="e3-modelos" id="e3-modelos" role="group" aria-label="Modelo do torpedo"></div></aside>
+<div class="e3-visor">
+<div class="e3-palco" id="e3-palco" data-modo="material"><p class="e3-status" id="e3-status">Carregando modelo…</p></div>
+<div class="e3-topo"><div class="e3-seg" role="group" aria-label="Modo de exibição"><button type="button" data-modo="material" aria-pressed="true">Material</button><button type="button" data-modo="tecnico" aria-pressed="false">Técnico</button></div><div class="e3-leg" id="e3-leg" aria-live="polite"></div></div>
+<div class="e3-barra" role="toolbar" aria-label="Câmera">
+<div class="e3-seg" role="group" aria-label="Vista"><button type="button" data-vista="perspectiva" aria-pressed="true">Perspectiva</button><button type="button" data-vista="lateral" aria-pressed="false">Lateral</button><button type="button" data-vista="superior" aria-pressed="false">Superior</button><button type="button" data-vista="ponta" aria-pressed="false">Ponta</button></div>
+<span class="e3-sep" aria-hidden="true"></span>
+<button type="button" class="e3-ic" id="e3-menos" title="Afastar" aria-label="Afastar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button><button type="button" class="e3-ic" id="e3-mais" title="Aproximar" aria-label="Aproximar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10M10 5v10"/></svg></button><button type="button" class="e3-ic" id="e3-girar" title="Girar" aria-label="Girar" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 7.5A6 6 0 1 0 16 12"/><path d="M16 3.5v4h-4"/></svg></button>
+<span class="e3-sep" aria-hidden="true"></span>
+<button type="button" class="e3-ic" id="e3-png" title="Baixar imagem" aria-label="Baixar imagem"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.5v9M6 9l4 4 4-4M4 16.5h12"/></svg></button><button type="button" class="e3-ic" id="e3-tela" title="Tela cheia" aria-label="Tela cheia" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 7.5v-4h4M12.5 3.5h4v4M16.5 12.5v4h-4M7.5 16.5h-4v-4"/></svg></button>
+</div>
+<p class="e3-dica" aria-hidden="true">Arraste para girar · role para aproximar · botão direito para mover</p>
+</div>
+<details class="e3-lado e3-props" id="e3-props" open><summary><span class="e3-rot">Propriedades</span><span class="e3-props-n"><b id="e3-nome"></b><small id="e3-sub"></small></span></summary>
+<dl class="e3-kv" id="e3-kv"></dl><p class="e3-origem"><span id="e3-origem"></span> <span id="e3-tri"></span></p></details>
+</section>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="assets/js/stl-visualizador.js?v=20261026-2"></script>
+<script type="module" src="assets/js/stl-visualizador.js?v=20261027-1"></script>
 
 
     <div id="message" hidden></div>
@@ -46,7 +62,6 @@
   <script src="assets/js/calc.js"></script>
   <script src="assets/js/sessao.js?v=20261026-menu"></script>
   <script src="assets/js/torpedo.js"></script>
-  <script src="assets/js/paginas/estaca-3d.js?v=20261021-3"></script>
   <script src="assets/js/tema.js"></script>
 </body>
 </html>
