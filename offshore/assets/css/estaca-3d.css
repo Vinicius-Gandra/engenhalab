@@ -107,3 +107,4 @@
   .e3-ic{width:30px;height:30px}
 }
 @media(prefers-reduced-motion:reduce){.e3-mod,.e3-palco{transition:none}}
+.e3-seg[hidden]{display:none}
