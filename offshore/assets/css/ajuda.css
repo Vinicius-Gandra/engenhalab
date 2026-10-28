@@ -110,3 +110,8 @@
 @media(max-width:1000px){.aj-layout{grid-template-columns:minmax(0,1fr);gap:0}.aj-toc{position:static;padding:0 0 18px}.aj-toc ol{display:flex;flex-wrap:wrap;gap:6px;border:0}.aj-toc li a{margin:0;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:.78rem}.aj-toc li a[aria-current="true"]{border-color:var(--orange)}.aj-2c{grid-template-columns:1fr}.aj-2c .aj-fig{max-width:360px}}
 @media(max-width:640px){.aj-seq-svg{min-width:640px}.aj-fig-larga{overflow-x:auto}.aj-etapas li{grid-template-columns:40px minmax(0,1fr);gap:10px}.aj-et-n{width:36px;height:36px;font-size:.8rem}.aj-busca input{font-size:16px}.aj-gl-i{padding:12px}}
 html[data-theme="light"] .aj-p-mar{fill:#1d4a66}
+.aj-portao{max-width:520px;margin:48px auto;padding:28px;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--muted);text-align:center}
+.aj-portao h1{margin:0 0 8px;color:var(--text);font-size:1.4rem}
+.aj-portao p{margin:0 0 16px}
+.aj-portao-b{color:var(--orange);font-weight:650;text-decoration:none}
+p.aj-portao{border:0;background:none}
