@@ -108,3 +108,6 @@
 }
 @media(prefers-reduced-motion:reduce){.e3-mod,.e3-palco{transition:none}}
 .e3-seg[hidden]{display:none}
+.e3-palco[data-vazio] .e3-status{color:#9fb3bd;font:600 .9rem var(--sans,Inter,sans-serif);letter-spacing:.01em}
+.e3-palco[data-vazio]~.e3-barra,.e3-palco[data-vazio]~.e3-dica{display:none}
+.e3-leg{margin-left:auto}
