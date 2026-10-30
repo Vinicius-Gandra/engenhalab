@@ -641,3 +641,12 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 .f-calc.is-bad { border-color: var(--fail-line); background: var(--fail-bg); }
 .f.is-hidden { display: none; }
 .f-calc[data-key="rdSurf"] .f-calc-value { font-size: .84rem; line-height: 1.45; font-weight: 700; }
+/* explicação ao parar o mouse */
+.dica-me { position: fixed; z-index: 90; max-width: 300px; padding: 11px 13px 12px; border: 1px solid var(--line-strong, var(--line)); border-radius: 12px; background: var(--surface); box-shadow: 0 14px 34px rgb(0 0 0 / .22); color: var(--text-2); font-size: .76rem; line-height: 1.5; opacity: 0; transform: translateY(3px); transition: opacity .14s, transform .14s; pointer-events: none; }
+.dica-me.on { opacity: 1; transform: none; }
+.dica-me b { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; color: var(--text); font-size: .8rem; font-weight: 700; }
+.dica-me b small { color: var(--text-3); font: 600 .66rem var(--font-mono, monospace); }
+.dica-me p { margin: 0; }
+.dica-me .dica-ctx { margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--line); color: var(--text-3); font-size: .7rem; }
+.tem-dica :is(.f-label, .f-calc-label) { cursor: help; }
+@media (prefers-reduced-motion: reduce) { .dica-me { transition: none; } }
