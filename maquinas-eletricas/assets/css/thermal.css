@@ -650,3 +650,15 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 .dica-me .dica-ctx { margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--line); color: var(--text-3); font-size: .7rem; }
 .tem-dica :is(.f-label, .f-calc-label) { cursor: help; }
 @media (prefers-reduced-motion: reduce) { .dica-me { transition: none; } }
+/* desenho ligado aos campos: modo mostrado, o que mudou e peças que acendem */
+.hx-modo { display: inline-block; margin: 2px 0 6px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--text-3); font: 700 .6rem/1.6 var(--font-mono, monospace); letter-spacing: .08em; text-transform: uppercase; }
+.hx-modo.is-inst { border-color: var(--accent-line); background: var(--accent-wash); color: var(--accent); }
+.hx-mudou { margin: 8px 0 0; padding: 6px 10px; border-left: 2px solid var(--accent); background: var(--accent-wash); color: var(--text-2); font-size: .74rem; line-height: 1.5; animation: hx-mudou-in .4s ease-out; }
+.hx-mudou b { color: var(--accent); }
+.hxv .is-pulse { animation: hx-pulso 1.6s ease-out; }
+.hxv .is-pulse :is(rect, path, circle, line) { stroke: var(--accent); }
+.hx-parts li.is-pulse .hx-item { animation: hx-pulso-li 1.6s ease-out; }
+@keyframes hx-pulso { 0% { filter: drop-shadow(0 0 0 var(--accent)); } 25% { filter: drop-shadow(0 0 7px var(--accent)); } 100% { filter: none; } }
+@keyframes hx-pulso-li { 0%, 30% { border-color: var(--accent); background: var(--accent-wash); } 100% { } }
+@keyframes hx-mudou-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .hxv .is-pulse, .hx-parts li.is-pulse .hx-item, .hx-mudou { animation: none; } }
