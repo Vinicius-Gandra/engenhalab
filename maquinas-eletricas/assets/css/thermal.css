@@ -859,3 +859,29 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 .hz-fit { font-size: .9rem; }
 @media print { .t-pe, .t-entrar, .hx-movel, .hero-editar, .seq-dobra { display: none !important; } }
 .abar-top b { white-space: nowrap; }
+
+/* computador: caminho de impacto como aviso translúcido que some sozinho */
+.imp-aviso { position: fixed; z-index: 60; bottom: 78px; width: max-content; max-width: min(780px, calc(100vw - 40px)); margin: 0; padding: 10px 42px 11px 14px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 14px; background: color-mix(in srgb, var(--surface) 70%, transparent); box-shadow: 0 14px 40px rgb(0 0 0 / .28); transform: translateX(-50%); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); animation: aviso-in .28s ease-out; transition: opacity .25s, transform .25s; }
+.t-editando .imp-aviso { bottom: 22px; }
+.imp-aviso[hidden] { display: none; }
+.imp-aviso.is-saindo { opacity: 0; transform: translate(-50%, 8px); }
+.imp-aviso .imp-no { padding: 0; border: 0; background: none; font-size: .76rem; }
+.imp-aviso .imp-no.is-campo { color: var(--accent); }
+.imp-aviso .imp-frase { margin-top: 3px; color: var(--text-2); font-size: .78rem; }
+.imp-x { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; border: 0; border-radius: 8px; background: transparent; color: var(--text-3); font-size: 1.1rem; line-height: 1; cursor: pointer; }
+.imp-x:hover { background: var(--surface-2); color: var(--text); }
+@keyframes aviso-in { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) { .imp-aviso { animation: none; transition: none; } }
+@media print { .imp-aviso { display: none !important; } }
+/* computador, preenchendo: o trocador ocupa toda a área à direita, com os valores da vista ao lado */
+@media (min-width: 1051px) {
+  .t-editando #trocador { top: calc(var(--hh, 56px) + var(--ah, 40px) + 6px); bottom: 8px; display: grid; grid-template-columns: minmax(0, 1fr) 210px; grid-template-rows: auto minmax(0, 1fr); border-radius: 14px; }
+  .t-editando #trocador .hxbox-head { grid-column: 1 / -1; padding: 10px 14px; }
+  .t-editando #trocador .hx-stage { grid-column: 1; grid-row: 2; padding: 6px 8px; }
+  .t-editando #trocador .hx-movel { display: flex; flex-direction: column; gap: 8px; grid-column: 2; grid-row: 2; min-height: 0; padding: 12px; overflow: auto; border-left: 1px solid var(--line); background: var(--surface); }
+  .t-editando #trocador .hx-ampliar { display: none; }
+  .t-editando #trocador .hx-valores { display: grid; gap: 8px; margin: 0; }
+  .t-editando #trocador .hx-valores > div { padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+  .t-editando #trocador .hx-valores dt { color: var(--text-3); font-size: .68rem; font-weight: 650; }
+  .t-editando #trocador .hx-valores dd { margin: 2px 0 0; font-size: .95rem; font-weight: 720; font-variant-numeric: tabular-nums; }
+}
