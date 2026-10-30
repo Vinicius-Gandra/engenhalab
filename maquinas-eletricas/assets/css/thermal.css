@@ -728,3 +728,11 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 .hxv .hx-foul { fill: #8a6a3a; fill-opacity: .55; }
 .hxv .hx-foul-ring { fill: none; stroke: #8a6a3a; stroke-opacity: .7; }
 .hxv .hx-foul-t { fill: #8a6a3a; font-weight: 650; }
+/* materiais escolhidos na superfície de referência */
+.hxv .mat-tubo-latao { --hx-copper: #c7a03c; --hx-copper-line: #8a6b18; }
+.hxv .mat-tubo-cuni { --hx-copper: #b9a49a; --hx-copper-line: #7d6a62; }
+.hxv .mat-tubo-aco { --hx-copper: #8d969c; --hx-copper-line: #59636a; }
+.hxv .mat-tubo-inox { --hx-copper: #b9c2c8; --hx-copper-line: #7c878e; }
+.hxv :is(.mat-tubo-latao, .mat-tubo-cuni, .mat-tubo-aco, .mat-tubo-inox) .hx-cu-sec { fill: color-mix(in srgb, var(--hx-copper) 32%, var(--c-surface)); stroke: var(--hx-copper-line); }
+.hxv .mat-aleta-cu { --hx-alu: color-mix(in srgb, var(--accent) 38%, var(--c-surface)); --hx-alu-line: color-mix(in srgb, var(--accent) 78%, var(--c-surface)); }
+.hxv .hx-ranhura { fill: var(--c-surface); stroke: var(--hx-copper-line); stroke-width: .6; }
