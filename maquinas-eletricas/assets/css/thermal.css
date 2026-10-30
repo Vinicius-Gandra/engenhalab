@@ -736,3 +736,16 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 .hxv :is(.mat-tubo-latao, .mat-tubo-cuni, .mat-tubo-aco, .mat-tubo-inox) .hx-cu-sec { fill: color-mix(in srgb, var(--hx-copper) 32%, var(--c-surface)); stroke: var(--hx-copper-line); }
 .hxv .mat-aleta-cu { --hx-alu: color-mix(in srgb, var(--accent) 38%, var(--c-surface)); --hx-alu-line: color-mix(in srgb, var(--accent) 78%, var(--c-surface)); }
 .hxv .hx-ranhura { fill: var(--c-surface); stroke: var(--hx-copper-line); stroke-width: .6; }
+
+/* cabeçalho do trocador: área e caminho de impacto num bloco só */
+#trocador .hxbox-head > div:first-child { flex: 1 1 100%; min-width: 0; }
+.hx-resumo { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.hx-resumo .abar { margin: 0; border: 0; border-radius: 0; background: none; }
+.hx-resumo .abar-leg small { flex-basis: auto; margin-left: auto; }
+.hx-resumo .imp { margin: 0; padding: 8px 12px 10px; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
+.hx-resumo .imp-cadeia { gap: 2px 6px; }
+.hx-resumo .imp-no { padding: 0; border: 0; background: none; color: var(--text-2); font-size: .72rem; }
+.hx-resumo .imp-no.is-campo { color: var(--accent); }
+.hx-resumo .imp-seta { font-size: .66rem; }
+.hx-resumo .imp-frase { max-width: none; margin-top: 3px; color: var(--text-3); font-size: .72rem; }
+.hx-resumo .abar-top b { white-space: nowrap; }
