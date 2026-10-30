@@ -677,11 +677,18 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 @keyframes imp-row { 0% { background: transparent; } 18% { background: var(--accent-wash); box-shadow: inset 3px 0 0 var(--accent); } 100% { background: transparent; box-shadow: none; } }
 /* desenho fixo à direita dos campos enquanto se edita (computador) */
 @media (min-width: 1051px) {
-  .t-editando #trocador { position: sticky; top: calc(var(--hh, 56px) + var(--ah, 40px) + 8px); z-index: 6; box-shadow: 0 18px 44px rgb(0 0 0 / .2); }
+  .t-editando #trocador { position: fixed; z-index: 40; top: calc(var(--hh, 56px) + var(--ah, 40px) + 10px); bottom: 12px; left: var(--dock-l, 360px); width: var(--dock-w, 60vw); margin: 0; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgb(0 0 0 / .28); animation: hx-dock .2s ease-out; }
+  .t-editando #trocador .hxbox-head { flex: none; }
+  .t-editando #trocador .hx-stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; padding: 10px 14px; }
+  .t-editando #trocador .hx-pane:not([hidden]) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  .t-editando #trocador .hx-scroll { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+  .t-editando #trocador .hx-scroll svg { width: 100%; height: 100%; max-height: none; }
   .t-editando #trocador :is(.hx-parts, .hx-legend, .hx-caption) { display: none; }
-  .t-editando #trocador .hx-scroll svg { max-height: 44vh; }
-  .t-editando #trocador .hxbox-head p:not(.hx-mudou):not(.imp-frase) { display: none; }
+  .t-editando #trocador .hxbox-head p:not(.imp-frase) { display: none; }
+  .t-editando .vg-entrar { opacity: 0; pointer-events: none; }
 }
+@keyframes hx-dock { from { opacity: .4; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .t-editando #trocador { animation: none; } }
 /* celular: resumo visual que acompanha o campo selecionado */
 .t-mini { position: fixed; left: 8px; right: 8px; top: calc(var(--hh, 56px) + 6px); z-index: 70; padding: 8px 10px 9px; border: 1px solid var(--line-strong, var(--line)); border-radius: 12px; background: var(--surface); box-shadow: 0 12px 30px rgb(0 0 0 / .25); }
 .t-mini[hidden] { display: none; }
