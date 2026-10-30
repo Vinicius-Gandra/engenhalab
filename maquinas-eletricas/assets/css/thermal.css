@@ -917,3 +917,5 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 .hxv .hx-lam { stroke: color-mix(in srgb, var(--text-3) 30%, transparent); stroke-width: .5; }
 .hxv .hx-hb-t2 { fill: var(--text); font-weight: 650; }
 .hxv .hx-hb-rib-c { fill: var(--fail); fill-opacity: .16; }
+.hxv .hx-defl { fill: none; stroke: var(--text-2); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.hxv .hx-ox-cold { stroke: var(--air-cold); }
