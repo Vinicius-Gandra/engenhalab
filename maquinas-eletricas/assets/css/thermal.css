@@ -662,3 +662,34 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 @keyframes hx-pulso-li { 0%, 30% { border-color: var(--accent); background: var(--accent-wash); } 100% { } }
 @keyframes hx-mudou-in { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .hxv .is-pulse, .hx-parts li.is-pulse .hx-item, .hx-mudou { animation: none; } }
+/* caminho de impacto da última alteração */
+.imp { margin-top: 10px; padding: 9px 11px; border: 1px dashed var(--accent-line); border-radius: 11px; background: var(--accent-wash); }
+.imp-cadeia { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 6px; }
+.imp-no { padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text-2); font-size: .7rem; font-weight: 600; white-space: nowrap; }
+.imp-no.is-campo { border-color: var(--accent-line); color: var(--text); }
+.imp-no b { color: var(--accent); }
+.imp-seta { color: var(--text-3); font-size: .72rem; }
+.imp-frase { margin: 6px 0 0; color: var(--text); font-size: .78rem; line-height: 1.45; }
+.imp.anima :is(.imp-no, .imp-seta) { animation: imp-in .32s both; animation-delay: calc(var(--i, 0) * 260ms); }
+.imp.anima .imp-frase { animation: imp-in .4s both; animation-delay: calc(var(--n, 6) * 260ms); }
+.seq-row.is-impacto { animation: imp-row 2.2s both; animation-delay: calc(var(--i, 0) * 260ms); border-radius: 6px; }
+@keyframes imp-in { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: none; } }
+@keyframes imp-row { 0% { background: transparent; } 18% { background: var(--accent-wash); box-shadow: inset 3px 0 0 var(--accent); } 100% { background: transparent; box-shadow: none; } }
+/* desenho fixo à direita dos campos enquanto se edita (computador) */
+@media (min-width: 1051px) {
+  .t-editando #trocador { position: sticky; top: calc(var(--hh, 56px) + var(--ah, 40px) + 8px); z-index: 6; box-shadow: 0 18px 44px rgb(0 0 0 / .2); }
+  .t-editando #trocador :is(.hx-parts, .hx-legend, .hx-caption) { display: none; }
+  .t-editando #trocador .hx-scroll svg { max-height: 44vh; }
+  .t-editando #trocador .hxbox-head p:not(.hx-mudou):not(.imp-frase) { display: none; }
+}
+/* celular: resumo visual que acompanha o campo selecionado */
+.t-mini { position: fixed; left: 8px; right: 8px; top: calc(var(--hh, 56px) + 6px); z-index: 70; padding: 8px 10px 9px; border: 1px solid var(--line-strong, var(--line)); border-radius: 12px; background: var(--surface); box-shadow: 0 12px 30px rgb(0 0 0 / .25); }
+.t-mini[hidden] { display: none; }
+.t-mini svg { display: block; width: 100%; height: auto; max-height: 24vh; margin: 4px 0; }
+.mini-t { margin: 0; color: var(--text); font-size: .74rem; font-weight: 700; }
+.mini-t span { color: var(--text-3); font-weight: 500; }
+.mini-v { margin: 0; color: var(--text-2); font: 600 .66rem var(--font-mono, monospace); }
+.mini-f { margin: 3px 0 0; color: var(--accent); font-size: .7rem; line-height: 1.4; }
+@media (min-width: 1051px) { .t-mini { display: none !important; } }
+@media (prefers-reduced-motion: reduce) { .imp.anima :is(.imp-no, .imp-seta, .imp-frase), .seq-row.is-impacto { animation: none; } }
+@media print { .imp { display: none; } }
