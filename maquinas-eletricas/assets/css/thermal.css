@@ -639,3 +639,5 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 .hero-verif.is-bad { border-color: var(--fail-line); background: var(--fail-bg); }
 .hero-verif b { color: var(--text); font-weight: 650; }
 .f-calc.is-bad { border-color: var(--fail-line); background: var(--fail-bg); }
+.f.is-hidden { display: none; }
+.f-calc[data-key="rdSurf"] .f-calc-value { font-size: .84rem; line-height: 1.45; font-weight: 700; }
