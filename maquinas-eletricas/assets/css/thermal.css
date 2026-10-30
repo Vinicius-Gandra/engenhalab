@@ -693,3 +693,38 @@ html[data-theme="light"] .t-theme-moon { display: inline; }
 @media (min-width: 1051px) { .t-mini { display: none !important; } }
 @media (prefers-reduced-motion: reduce) { .imp.anima :is(.imp-no, .imp-seta, .imp-frase), .seq-row.is-impacto { animation: none; } }
 @media print { .imp { display: none; } }
+/* área necessária × instalada */
+.abar { margin-top: 12px; padding: 10px 12px 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.abar-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; color: var(--text-3); font: 700 .62rem var(--font-mono, monospace); letter-spacing: .08em; text-transform: uppercase; }
+.abar-top b { color: var(--ok); font-size: .76rem; letter-spacing: 0; text-transform: none; }
+.abar.is-falta .abar-top b { color: var(--fail); }
+.abar-trilho { position: relative; height: 16px; margin: 9px 0 6px; border-radius: 5px; background: var(--surface-3, var(--surface-2)); }
+.abar-inst { position: absolute; inset: 0 auto 0 0; border-radius: 5px; background: linear-gradient(90deg, color-mix(in srgb, var(--ok) 40%, transparent), color-mix(in srgb, var(--ok) 70%, transparent)); }
+.abar.is-falta .abar-inst { background: color-mix(in srgb, var(--text-3) 45%, transparent); }
+.abar-gap { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--fail) 45%, transparent) 0 4px, transparent 4px 8px); border-radius: 0 5px 5px 0; }
+.abar-nec { position: absolute; top: -5px; bottom: -5px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--text); box-shadow: 0 0 0 2px var(--surface); transition: left .7s cubic-bezier(.2, .8, .2, 1); }
+.abar-nec::before { content: ""; position: absolute; top: -5px; left: 50%; border: 5px solid transparent; border-top-color: var(--text); transform: translateX(-50%); }
+.abar-leg { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; font-size: .74rem; color: var(--text-2); }
+.abar-l-inst::before, .abar-l-nec::before { content: ""; display: inline-block; width: 10px; height: 8px; margin-right: 6px; border-radius: 2px; vertical-align: 0; }
+.abar-l-inst::before { background: color-mix(in srgb, var(--ok) 60%, transparent); }
+.abar-l-nec::before { width: 3px; height: 11px; background: var(--text); vertical-align: -1px; }
+.abar-leg small { flex-basis: 100%; color: var(--text-3); font: .64rem var(--font-mono, monospace); }
+.abar-hx { margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { .abar-nec { transition: none; } }
+/* uma unidade fora e escala de temperatura */
+.hx-n1 { margin-top: 8px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--text-2); font: 650 .72rem var(--font-sans, inherit); cursor: pointer; }
+.hx-n1[aria-pressed="true"] { border-color: var(--fail-line); background: var(--fail-bg); color: var(--fail); }
+.hx-n1-info { margin: 8px 0 0; padding: 6px 10px; border-left: 2px solid var(--fail); background: var(--fail-bg); color: var(--text-2); font-size: .74rem; }
+.hx-n1-info b { color: var(--fail); }
+.hx-escala { display: inline-flex; align-items: center; gap: 8px; color: var(--text-3); font: 600 .64rem var(--font-mono, monospace); }
+.hx-escala-b { position: relative; display: inline-block; width: 140px; height: 8px; border-radius: 4px; }
+.hx-escala-b b { position: absolute; top: -3px; width: 2px; height: 14px; margin-left: -1px; background: var(--text); border-radius: 1px; }
+/* respostas do desenho */
+.hxv .hx-vazao { fill: var(--text-2); font-weight: 650; }
+.hxv .hx-fora { fill: var(--fail-bg, rgb(200 60 40 / .12)); stroke: var(--fail); stroke-width: 1.2; }
+.hxv .hx-fora-h { stroke: var(--fail); stroke-width: .8; opacity: .6; }
+.hxv .hx-fora-t { fill: var(--fail); font-weight: 700; }
+.hxv .hx-alerta { fill: var(--fail); }
+.hxv .hx-foul { fill: #8a6a3a; fill-opacity: .55; }
+.hxv .hx-foul-ring { fill: none; stroke: #8a6a3a; stroke-opacity: .7; }
+.hxv .hx-foul-t { fill: #8a6a3a; font-weight: 650; }
