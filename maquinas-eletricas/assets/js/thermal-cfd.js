@@ -325,7 +325,7 @@
     inferno: { nome: 'Inferno', s: [[0.0,[0,0,4]],[0.125,[33,12,74]],[0.25,[87,16,110]],[0.375,[138,34,106]],[0.5,[188,55,84]],[0.625,[228,90,49]],[0.75,[249,142,9]],[0.875,[249,203,53]],[1.0,[252,255,164]]] },
     cividis: { nome: 'Cividis', s: [[0.0,[0,34,78]],[0.125,[26,56,111]],[0.25,[67,78,108]],[0.375,[97,101,111]],[0.5,[125,124,120]],[0.625,[155,148,118]],[0.75,[188,174,108]],[0.875,[222,201,88]],[1.0,[254,232,56]]] }
   };
-  const PAL_PADRAO = { T: 'turbo', V: 'inferno' };
+  const PAL_PADRAO = { T: 'turbo', V: 'viridis' };
   let pal = { ...PAL_PADRAO };
   try { const g = JSON.parse(localStorage.getItem('engenhalab.termica.paletas') || '{}'); for (const m of ['T', 'V']) if (PALETAS[g[m]]) pal[m] = g[m]; } catch (_) { /* sem armazenamento */ }
   let STOPS = PALETAS[pal.T].s;
