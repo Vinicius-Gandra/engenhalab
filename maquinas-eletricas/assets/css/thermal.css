@@ -976,3 +976,20 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 .hxv .hx-cunha { fill: var(--hx-wedge); }
 .hxv .hx-simb-bb { fill: none; stroke: color-mix(in srgb, var(--hx-copper-line) 70%, var(--text)); stroke-width: .7; }
 .hxv .hx-viga-aba { fill: color-mix(in srgb, var(--text-3) 45%, var(--c-surface)); }
+/* Campos no estilo CFD: legenda em faixas e escolha entre temperatura e velocidade */
+.hxv .hx-leg-borda { fill: none; stroke: var(--line-strong); stroke-width: .8; }
+.hxv .hx-leg-tick { stroke: var(--text-3); stroke-width: .8; }
+.hxv .hx-leg-v, .hx-modo-v .hxv .hx-leg-t { display: none; }
+.hx-modo-v .hxv .hx-leg-v { display: inline; }
+.hxv .hx-modo-b { cursor: pointer; }
+.hxv .hx-modo-r { fill: var(--c-surface); stroke: var(--line-strong); stroke-width: 1; }
+.hxv .hx-modo-t { font-size: 8.5px; font-weight: 650; fill: var(--text-2); }
+.hxv .hx-modo-T .hx-modo-r, .hx-modo-v .hxv .hx-modo-V .hx-modo-r { fill: var(--accent); stroke: var(--accent); }
+.hxv .hx-modo-T .hx-modo-t, .hx-modo-v .hxv .hx-modo-V .hx-modo-t { fill: var(--accent-ink); }
+.hx-modo-v .hxv .hx-modo-T .hx-modo-r { fill: var(--c-surface); stroke: var(--line-strong); }
+.hx-modo-v .hxv .hx-modo-T .hx-modo-t { fill: var(--text-2); }
+.hxv .hx-campo-V, .hx-modo-v .hxv .hx-campo-T { display: none; }
+.hx-modo-v .hxv .hx-campo-V { display: inline; }
+.hxv .hx-placa-duto { fill-opacity: .22; }
+.hxv .hx-ar-bb { stroke: rgba(8, 12, 20, .78); }
+.hxv .hx-ah-bb { fill: rgba(8, 12, 20, .85); }
