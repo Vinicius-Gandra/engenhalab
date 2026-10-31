@@ -255,6 +255,9 @@
   let eng = null, fansAtual = 0, temCampo = false, novo = false, esperando = false, nPassos = 4, sref = 0.05;
   let cv = null, ctx = null, svg = null, alvo = null, raf = 0, vis = false, io = null, ro = null;
   let W = 0, Hh = 0, dpr = 1, M = null, lut = null, lutTema = null, ultimo = 0;
+  // telas: a da página e, quando aberta, a do desenho ampliado (só uma é pintada por vez)
+  const principal = { cv: null, ctx: null, svg: null, zoom: false, W: 0, Hh: 0, dpr: 1, M: null };
+  let extra = null;
 
   function prepararGeometria(fans) {
     for (const L of camadas) {
@@ -298,14 +301,25 @@
     for (let n = 0; n < 256; n++) { const c = corT(n / 255); for (let m = 0; m < 3; m++) lut[n * 3 + m] = Math.round(bg[m] + (c[m] - bg[m]) * a); }
     lutTema = chave;
   }
-  function medir() {
-    if (!cv || !svg || !svg.isConnected) return;
-    const box = svg.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1);
-    cv.style.left = svg.offsetLeft + 'px'; cv.style.top = svg.offsetTop + 'px'; cv.style.width = box.width + 'px'; cv.style.height = box.height + 'px';
-    W = Math.max(1, Math.round(box.width * dpr)); Hh = Math.max(1, Math.round(box.height * dpr));
-    if (cv.width !== W || cv.height !== Hh) { cv.width = W; cv.height = Hh; }
-    const m = svg.getScreenCTM(); if (!m) return;
-    M = { a: m.a * dpr, d: m.d * dpr, e: (m.e - box.left) * dpr, f: (m.f - box.top) * dpr };
+  function medir(t = principal) {
+    const c = t.cv, s = t.svg; if (!c || !s || !s.isConnected) return;
+    const dp = Math.min(2, devicePixelRatio || 1);
+    let box, m;
+    if (t.zoom) {
+      // ampliado: a tela cobre a área toda; o desenho anda e escala por cima dela
+      box = t.caixa.getBoundingClientRect();
+      const r = s.getBoundingClientRect(), vb = s.viewBox.baseVal;
+      if (!vb || !vb.width) return;
+      m = { a: r.width / vb.width, d: r.height / vb.height, e: r.left - vb.x * r.width / vb.width, f: r.top - vb.y * r.height / vb.height };
+    } else {
+      box = s.getBoundingClientRect();
+      c.style.left = s.offsetLeft + 'px'; c.style.top = s.offsetTop + 'px';
+      m = s.getScreenCTM(); if (!m) return;
+    }
+    c.style.width = box.width + 'px'; c.style.height = box.height + 'px';
+    t.dpr = dp; t.W = Math.max(1, Math.round(box.width * dp)); t.Hh = Math.max(1, Math.round(box.height * dp));
+    if (c.width !== t.W || c.height !== t.Hh) { c.width = t.W; c.height = t.Hh; }
+    t.M = { a: m.a * dp, d: m.d * dp, e: (m.e - box.left) * dp, f: (m.f - box.top) * dp };
   }
   // coordenadas do desenho → tela (a metade de baixo é calculada "de cabeça para cima" e virada no eixo)
   const tx = x => M.a * x + M.e, ty = y => M.d * y + M.f;
@@ -372,7 +386,10 @@
     ctx.restore();
   }
   function pintar(dtq) {
-    if (!M || !temCampo) return;
+    const t = extra || principal;
+    if (extra) medir(extra);
+    if (!t.M || !temCampo) return;
+    ctx = t.ctx; M = t.M; dpr = t.dpr; W = t.W; Hh = t.Hh;
     prepararCores();
     if (novo || lutTema !== (temaClaro() ? 'l' : 'd')) { for (const L of camadas) imagem(L); novo = false; }
     const claro = temaClaro(), tinta = claro ? '18,30,42' : '238,244,248';
@@ -399,7 +416,7 @@
     cancelAnimationFrame(raf); raf = 0; ultimo = 0;
     if (!cv || !temCampo) return;
     medir();
-    if (vis && !reduce.matches && !document.hidden) { esperando = false; raf = requestAnimationFrame(quadro); } else pintar(0);
+    if ((vis || extra) && !reduce.matches && !document.hidden) { esperando = false; raf = requestAnimationFrame(quadro); } else pintar(0);
   }
   /** coloca a simulação sob o desenho da vista "Na máquina" */
   function anexar(sc, s, opt = {}) {
@@ -407,6 +424,7 @@
     const fans = opt.fans >= 2 ? 2 : 1;
     if (!cv) {
       cv = document.createElement('canvas'); cv.className = 'hx-cfd'; cv.setAttribute('aria-hidden', 'true'); ctx = cv.getContext('2d');
+      principal.cv = cv; principal.ctx = ctx;
       for (const L of camadas) { L.off = document.createElement('canvas'); L.off.width = L.G.NX; L.off.height = L.G.NY; L.octx = L.off.getContext('2d'); L.img = L.octx.createImageData(L.G.NX, L.G.NY); }
       io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { vis = es[0].isIntersecting; seguir(); }) : null;
       document.addEventListener('visibilitychange', seguir);
@@ -416,12 +434,24 @@
     }
     if (!eng) eng = motor(aoCampo);
     if (fans !== fansAtual) { fansAtual = fans; temCampo = false; esperando = false; prepararGeometria(fans); eng.iniciar(fans); }
-    alvo = sc; svg = s;
+    alvo = sc; svg = s; principal.svg = s;
     alvo.prepend(cv);
     if (temCampo) alvo.classList.add('hx-cfd-on');
     if ('ResizeObserver' in window) { ro && ro.disconnect(); ro = new ResizeObserver(() => { medir(); if (!raf) pintar(0); }); ro.observe(s); }
     if (io) { io.disconnect(); io.observe(alvo); } else vis = true;
     requestAnimationFrame(() => { medir(); seguir(); });
   }
-  window.VGThermalCFD = { anexar, _nucleo: nucleo, _dupla: dupla };
+  /** desenho ampliado: o mesmo escoamento numa tela sob o desenho clonado; devolve a função que solta */
+  function ampliar(area, s) {
+    if (!cv || !area || !s) return () => {};
+    const c = document.createElement('canvas'); c.className = 'hx-cfd hz-cfd'; c.setAttribute('aria-hidden', 'true');
+    area.prepend(c); area.classList.add('hx-cfd-on');
+    extra = { cv: c, ctx: c.getContext('2d'), svg: s, caixa: area, zoom: true, W: 0, Hh: 0, dpr: 1, M: null };
+    // com movimento reduzido não há laço: redesenha ao arrastar ou ampliar
+    const redesenhar = () => { if (!raf) requestAnimationFrame(() => pintar(0)); };
+    for (const ev of ['pointermove', 'wheel', 'click']) area.addEventListener(ev, redesenhar, { passive: true });
+    requestAnimationFrame(seguir);
+    return () => { if (extra && extra.cv === c) { extra = null; c.remove(); seguir(); } };
+  }
+  window.VGThermalCFD = { anexar, ampliar, _nucleo: nucleo, _dupla: dupla };
 })();
