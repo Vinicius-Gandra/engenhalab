@@ -963,3 +963,16 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 .hxv .hx-furo-bb { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: .8; }
 .hxv .hx-shaft-bb { fill: var(--c-deemph); stroke: var(--line-strong); stroke-width: 1; }
 .hxv .hx-ar-bb { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+/* Corte B–B: chapas como na página de máquinas síncronas (rotor laminado integral, estator hachurado) */
+.hxv { --hx-iron: #8ec1bb; --hx-iron2: #568d8b; --hx-ins: #8e7c5b; --hx-wedge: #c8bc98; }
+html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins: #b59d6c; --hx-wedge: #ab9a6c; }
+.hxv .hx-pfe-r { fill: var(--hx-iron); }
+.hxv .hx-phr-r { stroke: var(--hx-iron2); stroke-width: .5; opacity: .55; }
+.hxv .hx-pfe-s { fill: var(--hx-steel-2); }
+.hxv .hx-phr-s { stroke: var(--line-strong); stroke-width: .5; opacity: .5; }
+.hxv .hx-fe-bb { stroke: var(--hx-iron2); stroke-width: .9; }
+.hxv .hx-st-bb { stroke: var(--hx-edge, var(--line-strong)); stroke-width: .9; }
+.hxv .hx-iso-bb { fill: var(--hx-ins); }
+.hxv .hx-cunha { fill: var(--hx-wedge); }
+.hxv .hx-simb-bb { fill: none; stroke: color-mix(in srgb, var(--hx-copper-line) 70%, var(--text)); stroke-width: .7; }
+.hxv .hx-viga-aba { fill: color-mix(in srgb, var(--text-3) 45%, var(--c-surface)); }
