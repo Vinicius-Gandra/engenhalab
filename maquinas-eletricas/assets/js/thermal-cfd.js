@@ -16,11 +16,12 @@
     const segDist = (px, py, ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, t = clamp(((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1), 0, 1); return Math.hypot(px - ax - t * dx, py - ay - t * dy); };
     const lpk = (264 - 36) / 7, DUCTS = []; for (let k = 1; k < 7; k++) DUCTS.push(268 + k * lpk + (k - 1) * 6 + 3);
     const noDuto = x => DUCTS.some(d => Math.abs(x - d) < 3.8);
+    const APOIOS = [268 + lpk / 2 + (lpk + 6), 268 + lpk / 2 + 5 * (lpk + 6)];
     const F32 = () => new Float32Array(N);
     const bar = new Uint8Array(N), borda = new Uint8Array(N), poroso = new Uint8Array(N), frio = new Uint8Array(N), pres = new Uint8Array(N);
     const drag = F32(), fx = F32(), fy = F32(), q = F32(), alvoX = F32(), alvoY = F32(), puxa = F32();
     let viz = null, entrada = null;
-    const K = { vent: 0.075, bomba: 0.08, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.4, dCoroa: 0.08, dCabE: 1, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
+    const K = { vent: 0.075, bomba: 0.08, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.4, dCoroa: 0.08, dCabE: 1, distrib: 1, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
 
     /* ---------- geometria em células: sólido, meio poroso, forças, fontes de calor */
     function geometria(fans) {
@@ -37,7 +38,8 @@
         if (xl >= 169.5 && xl <= 175.5 && y >= 154 && y <= 200) s = 1;                // divisórias
         if (y > 200) {
           if (r < 13) s = 1;                                                           // eixo
-          if (segDist(xl, r, 214, 61, 214, 114) < 2.3 || segDist(xl, r, 214, 114, 238, 129.5) < 2.3) s = 1;   // defletor
+          // defletor: anel guia em volta das pontas das pás (com bocal de entrada) e chapa até a carcaça
+          if (segDist(xl, r, 214, 61, 214, 130) < 2.3 || segDist(xl, r, 201, 61, 214, 61) < 1.7 || segDist(xl, r, 196, 67, 201, 61) < 1.7) s = 1;
           if (xl >= 266 && r >= 77 && r <= 112 && !noDuto(x)) s = 1;                 // pacotes do núcleo
           if (xl >= 292 && r >= 13 && r <= 38 && !(r > 20.5 && r < 29.5)
             && !(r >= 29.5 && (Math.abs(xl - 325) < 4 || Math.abs(xl - 343) < 4))) s = 1;   // coroa: duto axial e furos radiais
@@ -46,16 +48,24 @@
           if (!s && z >= 0 && z <= 50 && r >= 76 + lift && r <= 95 + lift) { drag[k] = K.dCab; poroso[k] = 1; cat[1][k] = 1; }   // cabeças: o ar passa entre as bobinas
           if (!s && xl >= 276 && r > 38 && r <= 75) { drag[k] = K.dPolo; poroso[k] = 1; cat[2][k] = 1; alvoY[k] = K.bomba; puxa[k] = 0.14; }   // entre os polos: o rotor bombeia para fora
           if (!s && xl >= 266 && r >= 77 && r <= 112) cat[0][k] = 1;
+          // anéis de apoio do núcleo na carcaça (chapas radiais furadas): só freiam o ar no sentido do eixo
+          if (!s && r > 113 && r < 129.5 && APOIOS.some(xp => Math.abs(x - xp) < 1.8)) { drag[k] = 0.35; poroso[k] = 1; }
           if (!s && !poroso[k] && xl >= 242 && xl < 266 && r >= 100) { drag[k] = K.dDesvio; poroso[k] = 2; }   // por cima das cabeças: escoras e dedos de pressão                  // dutos do núcleo
-          if (!s && temVent && xl >= 201 && xl <= 212 && r >= 13 && r <= 62) { alvoX[k] = K.vent * dir; alvoY[k] = 0; puxa[k] = 0.5; cat[3][k] = 1; }   // ventiladores: impõem a vazão, sem refluxo
+          if (!s && temVent && xl >= 201 && xl <= 212 && r >= 13 && r <= 59) { alvoX[k] = K.vent * dir; alvoY[k] = 0; puxa[k] = 0.5; cat[3][k] = 1; }   // ventiladores: impõem a vazão, sem refluxo
           if (!s && temVent && xl > 212 && xl <= 226 && r >= 30 && r <= 74) { alvoX[k] = K.vent * 0.55 * dir; alvoY[k] = K.vent * K.radial * clamp((r - 30) / 30, 0.2, 1); puxa[k] = 0.12; }   // saída do ventilador: joga o ar para fora, sobre as cabeças
         }
         if (!s && x >= 196 && x <= 604 && y >= 118 && y <= 146) { drag[k] = K.dFeixe; poroso[k] = 1; frio[k] = 1; }   // feixe do trocador
         if (i === 0 || j === 0 || i === NX - 1 || j === NY - 1) s = 1;
         // embaixo: ar frio entrando no plano junto às câmaras dos ventiladores, ar quente saindo do plano sobre o núcleo
         if (!s && baixo) {
-          if (Math.hypot(x - 146, r - 112) < 7 || (fans >= 2 && Math.hypot(x - 654, r - 112) < 7)) pres[k] = 1;
-          if (Math.hypot(x - 330, r - 121) < 7 || Math.hypot(x - 470, r - 121) < 7) pres[k] = 2;
+          if (K.distrib) {
+            // distribuído: o frio chega pela periferia da câmara de entrada; o quente sai por todo o dorso do núcleo
+            if ((esq || fans >= 2) && xl >= 124 && xl <= 210 && r >= 104 && r <= 127) pres[k] = 1;
+            if (x >= 270 && x <= 530 && r >= 114 && r <= 127) pres[k] = 2;
+          } else {
+            if (Math.hypot(x - 146, r - 112) < 7 || (fans >= 2 && Math.hypot(x - 654, r - 112) < 7)) pres[k] = 1;
+            if (Math.hypot(x - 330, r - 121) < 7 || Math.hypot(x - 470, r - 121) < 7) pres[k] = 2;
+          }
         }
         if (s) { drag[k] = 0; poroso[k] = 0; frio[k] = 0; pres[k] = 0; fx[k] = fy[k] = alvoX[k] = alvoY[k] = puxa[k] = 0; for (const c of cat) c[k] = 0; }
         bar[k] = s;
@@ -324,6 +334,7 @@
     c.style.width = box.width + 'px'; c.style.height = box.height + 'px';
     t.dpr = dp; t.W = Math.max(1, Math.round(box.width * dp)); t.Hh = Math.max(1, Math.round(box.height * dp));
     if (c.width !== t.W || c.height !== t.Hh) { c.width = t.W; c.height = t.Hh; }
+    if (t.cv2) { const c2 = t.cv2; c2.style.left = c.style.left; c2.style.top = c.style.top; c2.style.width = c.style.width; c2.style.height = c.style.height; if (c2.width !== t.W || c2.height !== t.Hh) { c2.width = t.W; c2.height = t.Hh; } }
     t.M = { a: m.a * dp, d: m.d * dp, e: (m.e - box.left) * dp, f: (m.f - box.top) * dp };
   }
   // coordenadas do desenho → tela (a metade de baixo é calculada "de cabeça para cima" e virada no eixo)
@@ -410,6 +421,57 @@
     }
     ctx.restore();
   }
+  // corte B–B (ao lado, fixo no desenho): trajetórias do ar no plano do duto do meio. O rotor bombeia entre
+  // os polos, o ar atravessa o entreferro e os canais entre as vigas I, sai pelo dorso; em cima sobe direto ao
+  // trocador, nos lados e embaixo contorna o núcleo junto à carcaça; atravessa o feixe e segue para as pontas
+  const BB = { cx: 1000, yc: 330, xa: 870, xb: 1130, topo: 200, feixe0: 146, feixe1: 118, saida: 74 };
+  const trajBB = (() => {
+    const { cx, yc } = BB, P2 = (rr, a) => [cx + rr * Math.cos(a), yc - rr * Math.sin(a)], lista = [];
+    for (let k = 0; k < 48; k += 2) {
+      const a = k * 2 * Math.PI / 48, ai = Math.round((a - Math.PI / 4) / (Math.PI / 2)) * (Math.PI / 2) + Math.PI / 4, d = 0.06;
+      const pts = [[...P2(46, ai), 1.6], [...P2(73, ai + (a - ai) * 0.5), 1.8], [...P2(78, a + d), 1.5], [...P2(95, a + d), 1.25], [...P2(112, a), 0.8]];
+      const s = Math.cos(a) >= 0 ? 1 : -1, x0 = cx + 112 * Math.cos(a);
+      if (Math.sin(a) > 0.42) { const x = Math.max(BB.xa + 16, Math.min(BB.xb - 16, x0)); pts.push([x, BB.topo, 0.55], [x, BB.feixe0 + 2, 0.45], [x, BB.feixe1 - 2, 0.25], [x, BB.saida + 10, 0.45]); }
+      else {
+        const xw = cx + s * 120; pts.push([...P2(118, a), 0.5]);
+        if (Math.sin(a) < -0.2) pts.push([cx + s * 82, yc + 118, 0.5]);
+        pts.push([xw, yc + 60 * Math.max(-1, Math.min(1, -Math.sin(a) * 1.4)), 0.55], [xw, BB.topo + 10, 0.6], [cx + s * 108, BB.topo - 4, 0.55], [cx + s * 104, BB.feixe0 + 2, 0.45], [cx + s * 104, BB.feixe1 - 2, 0.25], [cx + s * 112, BB.saida + 10, 0.45]);
+      }
+      // comprimentos acumulados para andar com velocidade por trecho
+      const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      lista.push({ pts, L });
+    }
+    return lista;
+  })();
+  const partBB = Array.from({ length: 200 }, () => ({ t: trajBB[(Math.random() * trajBB.length) | 0], u: Math.random() }));
+  const ponto = (tr, s) => {
+    const L = tr.L, tot = L[L.length - 1], d = Math.max(0, Math.min(tot, s * tot));
+    let i = 1; while (i < L.length - 1 && L[i] < d) i++;
+    const f = (d - L[i - 1]) / ((L[i] - L[i - 1]) || 1), a = tr.pts[i - 1], b = tr.pts[i];
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+  };
+  function corteBB(c2, dtq) {
+    c2.setTransform(1, 0, 0, 1, 0, 0); c2.clearRect(0, 0, W, Hh);
+    const rastro = 0.035, grupos2 = [[], [], []];
+    for (const p of partBB) {
+      const tot = p.t.L[p.t.L.length - 1], v = ponto(p.t, p.u)[2];
+      if (dtq > 0) { p.u += v * 1.15 * dtq / tot; if (p.u > 1) { p.t = trajBB[(Math.random() * trajBB.length) | 0]; p.u = 0; } }
+      const fade = Math.min(1, p.u / 0.06, (1 - p.u) / 0.08), g = fade < 0.35 ? 0 : fade < 0.7 ? 1 : 2;
+      grupos2[g].push(p);
+    }
+    c2.lineCap = 'round';
+    grupos2.forEach((g, n) => {
+      c2.strokeStyle = `rgba(8,12,20,${[0.22, 0.45, 0.72][n]})`; c2.lineWidth = 1.6 * dpr; c2.beginPath();
+      for (const p of g) {
+        const n2 = 5; let prev = null;
+        for (let k = 0; k <= n2; k++) { const q = ponto(p.t, Math.max(0, p.u - rastro * (1 - k / n2))), x = tx(q[0]), y = ty(q[1]); if (prev) c2.lineTo(x, y); else c2.moveTo(x, y); prev = q; }
+      }
+      c2.stroke();
+      c2.fillStyle = `rgba(255,255,255,${[0.3, 0.6, 0.9][n]})`; c2.beginPath();
+      for (const p of g) { const q = ponto(p.t, p.u); c2.moveTo(tx(q[0]) + 1.5 * dpr, ty(q[1])); c2.arc(tx(q[0]), ty(q[1]), 1.5 * dpr, 0, 2 * Math.PI); }
+      c2.fill();
+    });
+  }
   function pintar(dtq) {
     const t = extra || principal;
     if (extra) medir(extra);
@@ -421,6 +483,7 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, Hh);
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     for (const L of camadas) camada(L, dtq, claro, tinta);
+    if (t.ctx2) corteBB(t.ctx2, dtq);
   }
 
   function aoCampo(c) {
@@ -463,6 +526,7 @@
     if (!cv) {
       cv = document.createElement('canvas'); cv.className = 'hx-cfd'; cv.setAttribute('aria-hidden', 'true'); ctx = cv.getContext('2d');
       principal.cv = cv; principal.ctx = ctx;
+      principal.cv2 = document.createElement('canvas'); principal.cv2.className = 'hx-cfd hx-cfd-sobre'; principal.cv2.setAttribute('aria-hidden', 'true'); principal.ctx2 = principal.cv2.getContext('2d');
       for (const L of camadas) { L.off = document.createElement('canvas'); L.off.width = L.G.NX * FI; L.off.height = L.G.NY * FI; L.octx = L.off.getContext('2d'); L.img = L.octx.createImageData(L.G.NX * FI, L.G.NY * FI); }
       io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { vis = es[0].isIntersecting; seguir(); }) : null;
       document.addEventListener('visibilitychange', seguir);
@@ -474,7 +538,7 @@
     if (fans !== fansAtual) { fansAtual = fans; temCampo = false; esperando = false; prepararGeometria(fans); eng.iniciar(fans); }
     alvo = sc; svg = s; principal.svg = s;
     escutarModo(sc); sc.classList.toggle('hx-modo-v', modo === 'V');
-    alvo.prepend(cv);
+    alvo.prepend(cv); alvo.append(principal.cv2);
     if (temCampo) alvo.classList.add('hx-cfd-on');
     if ('ResizeObserver' in window) { ro && ro.disconnect(); ro = new ResizeObserver(() => { medir(); if (!raf) pintar(0); }); ro.observe(s); }
     if (io) { io.disconnect(); io.observe(alvo); } else vis = true;
@@ -486,12 +550,13 @@
     const c = document.createElement('canvas'); c.className = 'hx-cfd hz-cfd'; c.setAttribute('aria-hidden', 'true');
     area.prepend(c); area.classList.add('hx-cfd-on');
     escutarModo(area); area.classList.toggle('hx-modo-v', modo === 'V');
-    extra = { cv: c, ctx: c.getContext('2d'), svg: s, caixa: area, zoom: true, W: 0, Hh: 0, dpr: 1, M: null };
+    const c2 = document.createElement('canvas'); c2.className = 'hx-cfd hx-cfd-sobre'; c2.setAttribute('aria-hidden', 'true'); area.append(c2);
+    extra = { cv: c, ctx: c.getContext('2d'), cv2: c2, ctx2: c2.getContext('2d'), svg: s, caixa: area, zoom: true, W: 0, Hh: 0, dpr: 1, M: null };
     // com movimento reduzido não há laço: redesenha ao arrastar ou ampliar
     const redesenhar = () => { if (!raf) requestAnimationFrame(() => pintar(0)); };
     for (const ev of ['pointermove', 'wheel', 'click']) area.addEventListener(ev, redesenhar, { passive: true });
     requestAnimationFrame(seguir);
-    return () => { if (extra && extra.cv === c) { extra = null; c.remove(); seguir(); } };
+    return () => { if (extra && extra.cv === c) { extra = null; c.remove(); c2.remove(); seguir(); } };
   }
   window.VGThermalCFD = { anexar, ampliar, _nucleo: nucleo, _dupla: dupla };
 })();
