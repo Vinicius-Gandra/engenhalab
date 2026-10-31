@@ -993,8 +993,6 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 .hxv .hx-placa-duto { fill-opacity: .22; }
 .hxv .hx-ar-bb { stroke: rgba(8, 12, 20, .78); }
 .hxv .hx-ah-bb { fill: rgba(8, 12, 20, .85); }
-/* Partículas do corte B–B: camada por cima do desenho, sem capturar o mouse */
-.hx-cfd-sobre { z-index: 2; }
 /* Defletor (cantoneira), anéis de apoio e etapas do circuito do ar */
 .hxv .hx-defl-c { fill: none; stroke: var(--text-2); stroke-width: 2; stroke-linejoin: round; }
 .hxv .hx-anel-bb { fill: var(--hx-steel-2); fill-opacity: .32; stroke: var(--hx-edge, var(--line-strong)); stroke-width: .8; }
@@ -1002,3 +1000,6 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 .hxv .hx-passo-t { font: 800 9px var(--font-mono, ui-monospace, monospace); fill: var(--c-surface); }
 .hxv .hx-passo-l { fill: var(--text-2); }
 .hxv .hx-anel-l { fill: color-mix(in srgb, var(--text) 38%, var(--c-surface)); stroke: var(--hx-edge, var(--line-strong)); stroke-width: .9; }
+/* Botão de pausa do escoamento */
+.hxv .hx-pausa-2, .hx-pausado .hxv .hx-pausa-1 { display: none; }
+.hx-pausado .hxv .hx-pausa-2 { display: inline; }
