@@ -24,7 +24,7 @@
     const rx = new Float32Array(N), ry = new Float32Array(N);
     const drag = F32(), fx = F32(), fy = F32(), q = F32(), alvoX = F32(), alvoY = F32(), puxa = F32();
     let viz = null, entrada = null;
-    const K = { tFonte: BBm ? 0.12 : 0, dCanal: 0.02, bombaBB: 0.1, giro: 0.03, vent: 0.075, bomba: 0.08, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.4, dCoroa: 0.08, dCabE: 1, distrib: 1, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
+    const K = { vDuto: 0.04, dpEnt: BBm ? 0.03 : 0, tFonte: BBm ? 0.12 : 0, dCanal: 0, bombaBB: 0.1, giro: 0.03, vent: 0.075, bomba: 0.08, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.4, dCoroa: 0.08, dCabE: 1, distrib: 1, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
 
     /* ---------- corte B–B: rotor laminado (mesmo contorno do desenho), bobinas, ranhuras e vigas I no duto */
     const dentro = (pol, x, y) => { let c = false; for (let i = 0, j = pol.length - 1; i < pol.length; j = i++) { const [xi, yi] = pol[i], [xj, yj] = pol[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
@@ -60,14 +60,17 @@
       const pr = 2 * PI / 48;
       // duto entre as vigas I: meio poroso direcional (os canais só deixam o ar andar no sentido do raio);
       // as bobinas e as vigas são estreitas demais para a malha e aparecem no desenho por cima
-      if (!s && r >= 79.5 && r <= 111.5) { drag[k] = K.dCanal; canal[k] = 1; rx[k] = ca; ry[k] = sa; poroso[k] = 1; }
+      // a resistência dos canais domina e iguala a vazão em toda a volta: cada canal impõe a mesma velocidade radial
+      if (!s && r >= 79.5 && r <= 111.5) { drag[k] = K.dCanal; canal[k] = 1; rx[k] = ca; ry[k] = sa; poroso[k] = 1; alvoX[k] = ca * K.vDuto; alvoY[k] = sa * K.vDuto; puxa[k] = 0.35; }
       if (!s && r >= 112 && r <= 116 && off(a - PI / 12, PI / 6) * r < 2.2) s = 1;  // barras do dorso
       if (!s && r < 77) {
         // entre os polos: o rotor bombeia para fora e arrasta o ar no sentido da rotação
-        const vr = r < 74 ? K.bombaBB : 0, vt = K.giro * Math.min(1, r / 75);
-        alvoX[k] = ca * vr - sa * vt; alvoY[k] = sa * vr + ca * vt; puxa[k] = r < 74 ? 0.07 : 0.04;
+        // média no tempo (o rotor gira): o ar chega das pontas pelo entreferro e entre os polos com pressão maior
+        // que a da saída e sai por todos os dutos; o rotor só arrasta o ar no sentido da rotação
+        const vt = K.giro * Math.min(1, r / 75);
+        alvoX[k] = -sa * vt; alvoY[k] = ca * vt; puxa[k] = 0.03;
         if (r < 74) cat[2][k] = 1;
-        if (r < 54) pres[k] = 1;                                                     // ar que chega pelo rotor, vindo das pontas
+        pres[k] = 1;   // o ar chega de fora do plano (das pontas) por todo o furo do estator: entreferro e espaço entre os polos
       }
       if (!s && r >= 77 && r <= 112) cat[0][k] = 1;                                 // duto: ferro e cobre do estator
       if (!s && y >= 118 && y <= 146) { drag[k] = K.dFeixe; poroso[k] = 1; frio[k] = 1; }   // feixe
@@ -169,7 +172,7 @@
         ux[i] = vx; uy[i] = vy;
         // entrada e saída fora do plano: densidade fixa (a massa que entra é a vazão)
         let om = omg; const pr = pres[i];
-        if (pr) { if (pr === 1) influxo += 1 - r; r = 1; om = 1; }
+        if (pr) { const r1 = pr === 1 ? 1 + K.dpEnt : 1; if (pr === 1) influxo += r1 - r; r = r1; om = 1; }
         const r9 = f9 * r, r1 = f1 * r, r36 = f36 * r, vx3 = 3 * vx, vy3 = 3 * vy, vx2 = vx * vx, vy2 = vy * vy, vxy2 = 2 * vx * vy, v2 = vx2 + vy2, v215 = 1.5 * v2;
         n0[i] += om * (r9 * (1 - v215) - n0[i]);
         nE[i] += om * (r1 * (1 + vx3 + 4.5 * vx2 - v215) - nE[i]); nW[i] += om * (r1 * (1 - vx3 + 4.5 * vx2 - v215) - nW[i]);
