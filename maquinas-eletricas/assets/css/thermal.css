@@ -951,3 +951,6 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 .hxv .hx-boca-p { fill: var(--water); }
 .hxv .hx-gap-la { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: .8; }
 .hxv .hx-face-la { fill: color-mix(in srgb, var(--hx-copper) 35%, var(--c-surface)); stroke: var(--hx-copper-line); stroke-width: .6; }
+.hxv .hx-cx-agua { fill: color-mix(in srgb, var(--water) 8%, transparent); stroke: var(--water); stroke-width: 1.2; stroke-dasharray: 6 4; }
+.hxv .hx-flange-oc { fill: none; stroke: var(--water); stroke-width: 1; stroke-dasharray: 3 2; }
+.hxv .hx-pipe-la { stroke: var(--water); stroke-width: 3.2; }
