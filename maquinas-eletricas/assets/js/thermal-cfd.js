@@ -20,7 +20,7 @@
     const bar = new Uint8Array(N), borda = new Uint8Array(N), poroso = new Uint8Array(N), frio = new Uint8Array(N), pres = new Uint8Array(N);
     const drag = F32(), fx = F32(), fy = F32(), q = F32(), alvoX = F32(), alvoY = F32(), puxa = F32();
     let viz = null, entrada = null;
-    const K = { vent: 0.075, bomba: 0.05, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.05, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
+    const K = { vent: 0.075, bomba: 0.08, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.4, dCoroa: 0.08, dCabE: 1, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
 
     /* ---------- geometria em células: sólido, meio poroso, forças, fontes de calor */
     function geometria(fans) {
@@ -41,6 +41,7 @@
           if (xl >= 266 && r >= 77 && r <= 112 && !noDuto(x)) s = 1;                 // pacotes do núcleo
           if (xl >= 292 && r >= 13 && r <= 38 && !(r > 20.5 && r < 29.5)
             && !(r >= 29.5 && (Math.abs(xl - 325) < 4 || Math.abs(xl - 343) < 4))) s = 1;   // coroa: duto axial e furos radiais
+          if (!s && xl >= 292 && r > 20.5 && r < 29.5 && K.dCoroa) { drag[k] = K.dCoroa; }   // duto axial da coroa: curva de 90° na entrada e atrito
           const z = 268 - xl, lift = 10 * clamp((z - 12) / 30, 0, 1);
           if (!s && z >= 0 && z <= 50 && r >= 76 + lift && r <= 95 + lift) { drag[k] = K.dCab; poroso[k] = 1; cat[1][k] = 1; }   // cabeças: o ar passa entre as bobinas
           if (!s && xl >= 276 && r > 38 && r <= 75) { drag[k] = K.dPolo; poroso[k] = 1; cat[2][k] = 1; alvoY[k] = K.bomba; puxa[k] = 0.14; }   // entre os polos: o rotor bombeia para fora
@@ -241,7 +242,10 @@
   }
 
   /* ================================================================ desenho na tela */
-  const STOPS = [[0, [43, 108, 176]], [0.25, [47, 164, 199]], [0.5, [124, 197, 143]], [0.75, [242, 181, 68]], [1, [217, 71, 58]]];
+  // escala dos resultados de CFD (arco-íris), em faixas com isolinhas entre elas
+  const STOPS = [[0, [24, 60, 220]], [0.25, [20, 200, 235]], [0.5, [40, 210, 90]], [0.75, [250, 220, 40]], [1, [228, 40, 32]]];
+  const NB = 20, FI = 2;   // faixas do contorno e ampliação da imagem do campo
+  let modo = 'T', contaImg = 0;
   const corT = h => { h = Math.max(0, Math.min(1, h)); let i = 0; while (i < STOPS.length - 2 && h > STOPS[i + 1][0]) i++; const [h0, c0] = STOPS[i], [h1, c1] = STOPS[i + 1], t = (h - h0) / (h1 - h0); return c0.map((c, k) => c + (c1[k] - c) * t); };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const temaClaro = () => { const t = document.documentElement.dataset.theme; return t ? t === 'light' : matchMedia('(prefers-color-scheme: light)').matches; };
@@ -296,9 +300,10 @@
   function prepararCores() {
     const claro = temaClaro(), chave = claro ? 'l' : 'd';
     if (lut && lutTema === chave) return;
-    const bg = cor('--surface-2', claro ? [244, 246, 248] : [22, 30, 40]), a = claro ? 0.8 : 0.82;
-    lut = new Uint8Array(256 * 3);
-    for (let n = 0; n < 256; n++) { const c = corT(n / 255); for (let m = 0; m < 3; m++) lut[n * 3 + m] = Math.round(bg[m] + (c[m] - bg[m]) * a); }
+    const bg = cor('--surface-2', claro ? [244, 246, 248] : [22, 30, 40]), a = claro ? 0.9 : 0.92;
+    // cor de cada faixa e a mesma cor escurecida para a isolinha
+    lut = new Uint8Array(NB * 6);
+    for (let n = 0; n < NB; n++) { const c = corT((n + 0.5) / NB); for (let m = 0; m < 3; m++) { const v = bg[m] + (c[m] - bg[m]) * a; lut[n * 6 + m] = Math.round(v); lut[n * 6 + 3 + m] = Math.round(v * 0.62); } }
     lutTema = chave;
   }
   function medir(t = principal) {
@@ -323,11 +328,31 @@
   }
   // coordenadas do desenho → tela (a metade de baixo é calculada "de cabeça para cima" e virada no eixo)
   const tx = x => M.a * x + M.e, ty = y => M.d * y + M.f;
+  // contorno em faixas: o campo (temperatura ou |u|) interpolado numa grade FI vezes mais fina, cada pixel
+  // na sua faixa, e a fronteira entre faixas escurecida (isolinha), como nos contornos de resultados de CFD
   function imagem(L) {
-    const G = L.G, px = L.img.data, T = L.T;
-    for (let k = 0, o = 0; k < G.N; k++, o += 4) {
-      if (G.bar[k] && !G.borda[k]) { px[o + 3] = 0; continue; }
-      const n = Math.max(0, Math.min(255, T[k] * 255 | 0)) * 3;
+    const G = L.G, NX = G.NX, NY = G.NY, W2 = NX * FI, H2 = NY * FI, px = L.img.data;
+    let S = L.T, esc = 1;
+    if (modo === 'V') {
+      if (!L.vel || L.vel.length !== G.N) L.vel = new Float32Array(G.N);
+      for (let k = 0; k < G.N; k++) L.vel[k] = G.bar[k] ? 0 : Math.hypot(L.ux[k], L.uy[k]);
+      S = L.vel; esc = 1 / (sref * 1.9);
+    }
+    if (!L.fx || L.fx.length !== W2 * H2) L.fx = new Int8Array(W2 * H2);
+    const fx = L.fx;
+    for (let j = 0; j < H2; j++) {
+      const gy = (j + 0.5) / FI - 0.5, j0 = Math.max(0, Math.min(NY - 2, Math.floor(gy))), ty_ = Math.max(0, Math.min(1, gy - j0)), jc = Math.min(NY - 1, (j + 0.5) / FI | 0);
+      for (let i = 0; i < W2; i++) {
+        const gx = (i + 0.5) / FI - 0.5, i0 = Math.max(0, Math.min(NX - 2, Math.floor(gx))), tx_ = Math.max(0, Math.min(1, gx - i0)), kc = jc * NX + Math.min(NX - 1, (i + 0.5) / FI | 0);
+        if (G.bar[kc] && !G.borda[kc]) { fx[j * W2 + i] = -1; continue; }
+        const k = j0 * NX + i0, v = ((S[k] * (1 - tx_) + S[k + 1] * tx_) * (1 - ty_) + (S[k + NX] * (1 - tx_) + S[k + NX + 1] * tx_) * ty_) * esc;
+        fx[j * W2 + i] = Math.max(0, Math.min(NB - 1, v * NB | 0));
+      }
+    }
+    for (let p = 0, o = 0; p < W2 * H2; p++, o += 4) {
+      const b = fx[p]; if (b < 0) { px[o + 3] = 0; continue; }
+      const i = p % W2, dir = i < W2 - 1 ? fx[p + 1] : b, bai = p + W2 < W2 * H2 ? fx[p + W2] : b;
+      const n = b * 6 + ((dir >= 0 && dir !== b) || (bai >= 0 && bai !== b) ? 3 : 0);
       px[o] = lut[n]; px[o + 1] = lut[n + 1]; px[o + 2] = lut[n + 2]; px[o + 3] = 255;
     }
     L.octx.putImageData(L.img, 0, 0);
@@ -392,7 +417,7 @@
     ctx = t.ctx; M = t.M; dpr = t.dpr; W = t.W; Hh = t.Hh;
     prepararCores();
     if (novo || lutTema !== (temaClaro() ? 'l' : 'd')) { for (const L of camadas) imagem(L); novo = false; }
-    const claro = temaClaro(), tinta = claro ? '18,30,42' : '238,244,248';
+    const claro = temaClaro(), tinta = '8,12,20';
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, Hh);
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     for (const L of camadas) camada(L, dtq, claro, tinta);
@@ -401,7 +426,7 @@
   function aoCampo(c) {
     const [A, B] = camadas;
     A.ux = c.ux; A.uy = c.uy; A.T = c.T; B.ux = c.ux2; B.uy = c.uy2; B.T = c.T2;
-    temCampo = true; sref = c.sref || sref; novo = true; esperando = false;
+    temCampo = true; sref = c.sref || sref; if (contaImg++ % 8 === 0) novo = true;   // o campo muda devagar: a imagem do contorno é refeita a cada 8 quadros do cálculo esperando = false;
     if (c.ms > 0) { if (c.ms > 14 && nPassos > 2) nPassos--; else if (c.ms < 7 && nPassos < 8) nPassos++; }
     if (alvo && !alvo.classList.contains('hx-cfd-on')) { alvo.classList.add('hx-cfd-on'); seguir(); }
     else if (!raf) pintar(0);
@@ -418,6 +443,19 @@
     medir();
     if ((vis || extra) && !reduce.matches && !document.hidden) { esperando = false; raf = requestAnimationFrame(quadro); } else pintar(0);
   }
+  // temperatura ou velocidade: botões dentro do desenho (data-modo), valem para a vista e para o ampliado
+  function definirModo(m) {
+    if (m !== 'T' && m !== 'V') return;
+    modo = m; novo = true;
+    for (const el of [alvo, extra && extra.caixa]) if (el) el.classList.toggle('hx-modo-v', m === 'V');
+    if (!raf) pintar(0);
+  }
+  function escutarModo(el) {
+    if (el.dataset.cfdModo) return; el.dataset.cfdModo = '1';
+    const f = e => { const b = e.target.closest && e.target.closest('[data-modo]'); if (!b) return; e.stopPropagation(); definirModo(b.getAttribute('data-modo')); };
+    el.addEventListener('click', f, true);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') f(e); }, true);
+  }
   /** coloca a simulação sob o desenho da vista "Na máquina" */
   function anexar(sc, s, opt = {}) {
     if (!sc || !s || typeof Float32Array === 'undefined') return;
@@ -425,7 +463,7 @@
     if (!cv) {
       cv = document.createElement('canvas'); cv.className = 'hx-cfd'; cv.setAttribute('aria-hidden', 'true'); ctx = cv.getContext('2d');
       principal.cv = cv; principal.ctx = ctx;
-      for (const L of camadas) { L.off = document.createElement('canvas'); L.off.width = L.G.NX; L.off.height = L.G.NY; L.octx = L.off.getContext('2d'); L.img = L.octx.createImageData(L.G.NX, L.G.NY); }
+      for (const L of camadas) { L.off = document.createElement('canvas'); L.off.width = L.G.NX * FI; L.off.height = L.G.NY * FI; L.octx = L.off.getContext('2d'); L.img = L.octx.createImageData(L.G.NX * FI, L.G.NY * FI); }
       io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { vis = es[0].isIntersecting; seguir(); }) : null;
       document.addEventListener('visibilitychange', seguir);
       reduce.addEventListener?.('change', seguir);
@@ -435,6 +473,7 @@
     if (!eng) eng = motor(aoCampo);
     if (fans !== fansAtual) { fansAtual = fans; temCampo = false; esperando = false; prepararGeometria(fans); eng.iniciar(fans); }
     alvo = sc; svg = s; principal.svg = s;
+    escutarModo(sc); sc.classList.toggle('hx-modo-v', modo === 'V');
     alvo.prepend(cv);
     if (temCampo) alvo.classList.add('hx-cfd-on');
     if ('ResizeObserver' in window) { ro && ro.disconnect(); ro = new ResizeObserver(() => { medir(); if (!raf) pintar(0); }); ro.observe(s); }
@@ -446,6 +485,7 @@
     if (!cv || !area || !s) return () => {};
     const c = document.createElement('canvas'); c.className = 'hx-cfd hz-cfd'; c.setAttribute('aria-hidden', 'true');
     area.prepend(c); area.classList.add('hx-cfd-on');
+    escutarModo(area); area.classList.toggle('hx-modo-v', modo === 'V');
     extra = { cv: c, ctx: c.getContext('2d'), svg: s, caixa: area, zoom: true, W: 0, Hh: 0, dpr: 1, M: null };
     // com movimento reduzido não há laço: redesenha ao arrastar ou ampliar
     const redesenhar = () => { if (!raf) requestAnimationFrame(() => pintar(0)); };
