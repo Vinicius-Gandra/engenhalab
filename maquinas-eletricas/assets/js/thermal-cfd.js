@@ -610,6 +610,12 @@
     if (Number.isFinite(opt.Tc) && Number.isFinite(opt.Th)) { Tc = opt.Tc; Th = opt.Th; }
     for (const b of barras) if (!b.isConnected && b !== barraZoom) barras.delete(b);
     if (sc.parentNode && !(sc.previousElementSibling && sc.previousElementSibling.classList.contains('hx-cfd-barra'))) sc.parentNode.insertBefore(criarBarra(false), sc);
+    // etapas do circuito do ar (os números 1 a 6 do desenho)
+    if (sc.parentNode && !(sc.nextElementSibling && sc.nextElementSibling.classList.contains('hx-etapas'))) {
+      const ol = document.createElement('ol'); ol.className = 'hx-etapas'; ol.setAttribute('aria-label', 'Circuito do ar');
+      ol.innerHTML = ['ar frio sai do trocador', 'desce até o ventilador', 'ventilador → cabeças, entreferro e rotor', 'dutos radiais: aquece no ferro e no cobre', 'sobe quente ao trocador', 'feixe: a água leva o calor'].map(t => `<li>${t}</li>`).join('');
+      sc.after(ol);
+    }
     atualizarBarras();
     escutarModo(sc); sc.classList.toggle('hx-modo-v', modo === 'V');
     alvo.prepend(cv);

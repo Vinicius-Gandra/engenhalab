@@ -1037,3 +1037,21 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 /* Água em série entre unidades empilhadas: ligação entre as caixas */
 .hxv .hx-jumper { fill: color-mix(in srgb, var(--water) 18%, var(--c-surface)); stroke: var(--water); stroke-width: 1.1; stroke-dasharray: 4 2; }
 .hxv .hx-jumper-l { fill: none; stroke: var(--water); stroke-width: 4; stroke-linejoin: round; opacity: .85; }
+/* Enquadramento: o desenho ocupa mais da tela; etapas do circuito em HTML abaixo dele */
+@media (min-width: 900px) {
+  #trocador .hxv { max-height: clamp(320px, calc(100svh - 250px), 900px); }
+  .t-editando #trocador .hx-cfd-barra { padding: 4px 2px 6px; gap: 6px 14px; flex-wrap: nowrap; }
+  .t-editando #trocador .hx-cfd-esc { flex: 0 1 300px; min-width: 200px; }
+  .t-editando #trocador .hx-pal .hx-cfd-rot, .t-editando #trocador .hx-cfd-ctl > .hx-cfd-rot { display: none; }
+  .t-editando #trocador .hx-seg button, .t-editando #trocador .hx-play, .t-editando #trocador .hx-pal select { padding-top: 6px; padding-bottom: 6px; }
+  .t-editando #trocador .hx-etapas { display: none; }
+}
+.hx-etapas { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0 0; padding: 0 4px; list-style: none; counter-reset: etapa; font-size: .76rem; color: var(--text-2); }
+.hx-etapas li { counter-increment: etapa; display: inline-flex; align-items: center; gap: 7px; }
+.hx-etapas li::before { content: counter(etapa); display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--text); color: var(--c-surface); font: 800 .66rem/1 var(--font-mono, ui-monospace, monospace); }
+/* preenchendo, vista "Na máquina" (desenho largo): os valores vão para uma faixa embaixo e o desenho ganha a largura toda */
+@media (min-width: 1051px) {
+  .t-editando #trocador:has(#hxp-maquina:not([hidden])) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+  .t-editando #trocador:has(#hxp-maquina:not([hidden])) .hx-movel { grid-column: 1; grid-row: 3; flex-direction: row; overflow: visible; padding: 8px 12px; border-left: 0; border-top: 1px solid var(--line); }
+  .t-editando #trocador:has(#hxp-maquina:not([hidden])) .hx-valores { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); flex: 1; }
+}
