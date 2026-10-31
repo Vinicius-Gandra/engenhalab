@@ -1037,3 +1037,72 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 /* Água em série entre unidades empilhadas: ligação entre as caixas */
 .hxv .hx-jumper { fill: color-mix(in srgb, var(--water) 18%, var(--c-surface)); stroke: var(--water); stroke-width: 1.1; stroke-dasharray: 4 2; }
 .hxv .hx-jumper-l { fill: none; stroke: var(--water); stroke-width: 4; stroke-linejoin: round; opacity: .85; }
+/* Enquadramento: o desenho ocupa mais da tela; etapas do circuito em HTML abaixo dele */
+@media (min-width: 900px) {
+  #trocador .hxv { max-height: clamp(320px, calc(100svh - 250px), 900px); }
+  .t-editando #trocador .hx-cfd-barra { padding: 4px 2px 6px; gap: 6px 14px; flex-wrap: nowrap; }
+  .t-editando #trocador .hx-cfd-esc { flex: 0 1 300px; min-width: 200px; }
+  .t-editando #trocador .hx-pal .hx-cfd-rot, .t-editando #trocador .hx-cfd-ctl > .hx-cfd-rot { display: none; }
+  .t-editando #trocador .hx-seg button, .t-editando #trocador .hx-play, .t-editando #trocador .hx-pal select { padding-top: 6px; padding-bottom: 6px; }
+  .t-editando #trocador .hx-etapas { display: none; }
+}
+.hx-etapas { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 6px 0 0; padding: 0 4px; list-style: none; counter-reset: etapa; font-size: .76rem; color: var(--text-2); }
+.hx-etapas li { counter-increment: etapa; display: inline-flex; align-items: center; gap: 7px; }
+.hx-etapas li::before { content: counter(etapa); display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--text); color: var(--c-surface); font: 800 .66rem/1 var(--font-mono, ui-monospace, monospace); }
+/* preenchendo, vista "Na máquina" (desenho largo): os valores vão para uma faixa embaixo e o desenho ganha a largura toda */
+@media (min-width: 1051px) {
+  .t-editando #trocador:has(#hxp-maquina:not([hidden])) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+  .t-editando #trocador:has(#hxp-maquina:not([hidden])) .hx-movel { grid-column: 1; grid-row: 3; flex-direction: row; overflow: visible; padding: 8px 12px; border-left: 0; border-top: 1px solid var(--line); }
+  .t-editando #trocador:has(#hxp-maquina:not([hidden])) .hx-valores { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); flex: 1; }
+}
+/* Itens do desenho compactos: pastilhas com letra e nome; o detalhe do item apontado numa linha abaixo */
+.hx-parts { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px 6px; }
+.hx-parts li { min-width: 0; }
+.hx-item { display: inline-flex; align-items: center; gap: 7px; width: auto; padding: 4px 11px 4px 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--c-surface); }
+.hx-item-n { width: 20px; height: 20px; font-size: .62rem; }
+.hx-item-t { display: block; }
+.hx-item-t strong { font-size: .76rem; font-weight: 600; white-space: nowrap; }
+.hx-item-t small { display: none; }
+.hx-parts-info { margin: 0; padding: 2px 16px 12px; min-height: 1.5em; font-size: .76rem; line-height: 1.45; color: var(--text-3); }
+.hx-parts-info.is-on { color: var(--text-2); }
+.hx-parts-info b { color: var(--text); font-weight: 650; margin-right: 4px; }
+.t-editando #trocador .hx-parts-info { display: none; }
+@media (max-width: 760px) { .hx-parts { padding: 8px; } .hx-parts-info { padding: 2px 10px 10px; } }
+/* no papel: lista completa, com o detalhe de cada item */
+@media print {
+  .hx-parts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; }
+  .hx-item { display: grid; grid-template-columns: 22px minmax(0, 1fr); border: 0; border-radius: 0; padding: 2px 0; background: none; }
+  .hx-item-t strong { white-space: normal; }
+  .hx-item-t small { display: block; }
+  .hx-parts-info { display: none; }
+}
+@media (max-width: 760px) {
+  .hx-parts { gap: 4px; }
+  .hx-item { gap: 5px; padding: 2px 8px 2px 2px; }
+  .hx-item-n { width: 17px; height: 17px; font-size: .56rem; }
+  .hx-item-t strong { font-size: .68rem; }
+  .hx-parts-info { font-size: .7rem; }
+}
+/* Resistências térmicas compactas: largura toda, legenda em linha, U no cabeçalho */
+.budgets { grid-template-columns: minmax(0, 1fr); margin: 10px 0; }
+.budget { padding: 12px 16px; border-radius: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px 18px; }
+.budget-head { grid-column: 1; flex-direction: column; align-items: flex-start; gap: 2px; }
+.budget-head h3 { font-size: .86rem; white-space: nowrap; }
+.budget-bar { grid-column: 2; height: 16px; margin: 0; }
+.budget-legend { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.budget-legend li { display: inline-flex; align-items: baseline; gap: 6px; padding: 0; font-size: .72rem; }
+.budget-legend .sw { align-self: center; width: 10px; height: 10px; }
+.budget-legend .lbl em { margin-left: 4px; }
+.budget-legend .val { font-weight: 650; }
+.budget-legend .pct::before { content: "· "; }
+.budget-legend .pct:empty::before { content: none; }
+.budget-legend li.is-total { margin: 0 0 0 auto; padding: 0 0 0 14px; border-top: 0; border-left: 1px solid var(--line); }
+.budget-legend li.is-total > span:first-child { display: none; }
+.budget-note { grid-column: 1 / -1; margin: 0; }
+@media (max-width: 760px) {
+  .budget { grid-template-columns: minmax(0, 1fr); padding: 12px; }
+  .budget-head, .budget-bar { grid-column: 1; }
+  .budget-head { flex-direction: row; justify-content: space-between; width: 100%; }
+  .budget-legend li.is-total { margin-left: 0; padding-left: 0; border-left: 0; width: 100%; }
+}
+@media print { .budgets { grid-template-columns: minmax(0, 1fr); } }
