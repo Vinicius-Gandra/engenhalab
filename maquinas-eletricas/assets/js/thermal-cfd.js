@@ -2,36 +2,37 @@
    Ventiladores no eixo empurram o ar; os polos do rotor bombeiam para fora; dutos do núcleo, cabeças
    das bobinas e polos aquecem; o feixe do trocador freia e esfria. A temperatura é levada pelo ar
    e calibrada para que o ar que chega ao feixe esteja na temperatura quente e o que sai, na fria.
-   A metade de cima é calculada; a de baixo é o espelho. O cálculo roda num worker quando possível. */
+   As duas metades são calculadas: embaixo não há trocador e o ar entra e sai por fora do plano. O cálculo roda num worker quando possível. */
 (function () {
   'use strict';
   const H = 2.5;
 
   /* ================================================================ núcleo (sem dependências: roda no worker) */
-  function nucleo(H) {
-    const X0 = 104, Y0 = 48, XC = 698, YC = 330;
+  // baixo = metade de baixo da carcaça: sem trocador; o ar frio chega e o quente sai por fora do plano do corte
+  function nucleo(H, baixo) {
+    const X0 = 104, Y0 = baixo ? 194 : 48, XC = 698, YC = 330;
     const NX = Math.ceil((XC - X0) / H), NY = Math.ceil((YC - Y0) / H), N = NX * NY;
     const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
     const segDist = (px, py, ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, t = clamp(((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy || 1), 0, 1); return Math.hypot(px - ax - t * dx, py - ay - t * dy); };
     const lpk = (264 - 36) / 7, DUCTS = []; for (let k = 1; k < 7; k++) DUCTS.push(268 + k * lpk + (k - 1) * 6 + 3);
     const noDuto = x => DUCTS.some(d => Math.abs(x - d) < 3.8);
     const F32 = () => new Float32Array(N);
-    const bar = new Uint8Array(N), borda = new Uint8Array(N), poroso = new Uint8Array(N), frio = new Uint8Array(N);
+    const bar = new Uint8Array(N), borda = new Uint8Array(N), poroso = new Uint8Array(N), frio = new Uint8Array(N), pres = new Uint8Array(N);
     const drag = F32(), fx = F32(), fy = F32(), q = F32(), alvoX = F32(), alvoY = F32(), puxa = F32();
     let viz = null, entrada = null;
     const K = { vent: 0.075, bomba: 0.05, dCab: 0.05, dPolo: 0.06, dFeixe: 0.07, dDesvio: 0.05, nu: 0.012, kc: 0.012, S1: 650, S2: 460, dtT: 18, radial: 0.4 };
 
     /* ---------- geometria em células: sólido, meio poroso, forças, fontes de calor */
     function geometria(fans) {
-      bar.fill(0); poroso.fill(0); frio.fill(0); drag.fill(0); fx.fill(0); fy.fill(0); q.fill(0); alvoX.fill(0); alvoY.fill(0); puxa.fill(0);
+      bar.fill(0); poroso.fill(0); frio.fill(0); pres.fill(0); drag.fill(0); fx.fill(0); fy.fill(0); q.fill(0); alvoX.fill(0); alvoY.fill(0); puxa.fill(0);
       const cat = [F32(), F32(), F32(), F32()];   // dutos, cabeças, polos, ventiladores
       for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
         const k = j * NX + i, x = X0 + (i + 0.5) * H, y = Y0 + (j + 0.5) * H, r = YC - y;
         const esq = x <= 400, xl = esq ? x : 800 - x, dir = esq ? 1 : -1, temVent = fans >= 2 || esq;
         let s = 0;
-        const capo = x > 106 && x < 694 && y > 52 && y < 200, carc = x > 122 && x < 678 && y >= 198 && y < YC + H;
+        const capo = !baixo && x > 106 && x < 694 && y > 52 && y < 200, carc = x > 122 && x < 678 && y >= 198 && y < YC + H;
         if (!capo && !carc) s = 1;
-        if (Math.abs(y - 200) < 2.6 && !((x > 128 && x < 166) || (x > 262 && x < 538) || (x > 634 && x < 672))) s = 1;   // topo da carcaça e aberturas
+        if (Math.abs(y - 200) < 2.6 && (baixo || !((x > 128 && x < 166) || (x > 262 && x < 538) || (x > 634 && x < 672)))) s = 1;   // topo da carcaça e aberturas (embaixo, fechada)
         if (xl >= 172 && xl <= 196 && y >= 108 && y <= 156) s = 1;                    // cabeçotes de água
         if (xl >= 169.5 && xl <= 175.5 && y >= 154 && y <= 200) s = 1;                // divisórias
         if (y > 200) {
@@ -50,7 +51,12 @@
         }
         if (!s && x >= 196 && x <= 604 && y >= 118 && y <= 146) { drag[k] = K.dFeixe; poroso[k] = 1; frio[k] = 1; }   // feixe do trocador
         if (i === 0 || j === 0 || i === NX - 1 || j === NY - 1) s = 1;
-        if (s) { drag[k] = 0; poroso[k] = 0; frio[k] = 0; fx[k] = fy[k] = alvoX[k] = alvoY[k] = puxa[k] = 0; for (const c of cat) c[k] = 0; }
+        // embaixo: ar frio entrando no plano junto às câmaras dos ventiladores, ar quente saindo do plano sobre o núcleo
+        if (!s && baixo) {
+          if (Math.hypot(x - 146, r - 112) < 7 || (fans >= 2 && Math.hypot(x - 654, r - 112) < 7)) pres[k] = 1;
+          if (Math.hypot(x - 330, r - 121) < 7 || Math.hypot(x - 470, r - 121) < 7) pres[k] = 2;
+        }
+        if (s) { drag[k] = 0; poroso[k] = 0; frio[k] = 0; pres[k] = 0; fx[k] = fy[k] = alvoX[k] = alvoY[k] = puxa[k] = 0; for (const c of cat) c[k] = 0; }
         bar[k] = s;
       }
       // calor: 55 % nos dutos (ferro e cobre do estator), 20 % nas cabeças, 20 % no rotor, 5 % nos ventiladores
@@ -72,25 +78,29 @@
     }
 
     /* ---------- LBM */
-    let n0, nE, nW, nN, nS, nNE, nSE, nNW, nSW, ux, uy, T, T2, passos = 0, fase = 0, ganho = 0.02, sref = 0.05;
-    let om = 1, tau = 1;
+    let n0, nE, nW, nN, nS, nNE, nSE, nNW, nSW, ux, uy, T, T2, passos = 0, fase = 0, ganho = 0.02, sref = 0.05, influxo = 0, nInf = 0;
+    let omg = 1, tau = 1;
     const f9 = 4 / 9, f1 = 1 / 9, f36 = 1 / 36, UMAX = 0.17;
     function iniciar(fans) {
-      om = 1 / (3 * K.nu + 0.5); tau = 1 / om;
+      omg = 1 / (3 * K.nu + 0.5); tau = 1 / omg;
       geometria(fans);
       [n0, nE, nW, nN, nS, nNE, nSE, nNW, nSW, ux, uy, T, T2] = Array.from({ length: 13 }, F32);
       n0.fill(f9); nE.fill(f1); nW.fill(f1); nN.fill(f1); nS.fill(f1); nNE.fill(f36); nSE.fill(f36); nNW.fill(f36); nSW.fill(f36);
-      passos = 0; fase = 0; ganho = 0.02;
+      passos = 0; fase = 0; ganho = 0.02; influxo = 0; nInf = 0;
     }
     function collide() {
+      nInf++;
       for (let y = 1; y < NY - 1; y++) for (let x = 1, i = y * NX + 1; x < NX - 1; x++, i++) {
         if (bar[i]) continue;
-        const r = n0[i] + nN[i] + nS[i] + nE[i] + nW[i] + nNW[i] + nNE[i] + nSW[i] + nSE[i];
+        let r = n0[i] + nN[i] + nS[i] + nE[i] + nW[i] + nNW[i] + nNE[i] + nSW[i] + nSE[i];
         let vx = (nE[i] + nNE[i] + nSE[i] - nW[i] - nNW[i] - nSW[i]) / r, vy = (nN[i] + nNE[i] + nNW[i] - nS[i] - nSE[i] - nSW[i]) / r;
         const d = drag[i]; if (d) { vx *= 1 - d; vy *= 1 - d; }
         const pu = puxa[i]; if (pu) { vx += (alvoX[i] - vx) * pu; if (alvoY[i] > vy || pu > 0.3) vy += (alvoY[i] - vy) * pu; }
         vx = vx > UMAX ? UMAX : vx < -UMAX ? -UMAX : vx; vy = vy > UMAX ? UMAX : vy < -UMAX ? -UMAX : vy;
         ux[i] = vx; uy[i] = vy;
+        // entrada e saída fora do plano: densidade fixa (a massa que entra é a vazão)
+        let om = omg; const pr = pres[i];
+        if (pr) { if (pr === 1) influxo += 1 - r; r = 1; om = 1; }
         const r9 = f9 * r, r1 = f1 * r, r36 = f36 * r, vx3 = 3 * vx, vy3 = 3 * vy, vx2 = vx * vx, vy2 = vy * vy, vxy2 = 2 * vx * vy, v2 = vx2 + vy2, v215 = 1.5 * v2;
         n0[i] += om * (r9 * (1 - v215) - n0[i]);
         nE[i] += om * (r1 * (1 + vx3 + 4.5 * vx2 - v215) - nE[i]); nW[i] += om * (r1 * (1 - vx3 + 4.5 * vx2 - v215) - nW[i]);
@@ -122,12 +132,14 @@
     function paredes(a) { for (let p = 0; p < viz.length;) { const k = viz[p], n = viz[p + 1]; let s = 0; for (let m = 0; m < n; m++) s += a[viz[p + 2 + m]]; a[k] = s / n; p += 2 + n; } }
     function calor(dt) {
       // balanço de energia: calor gerado = vazão que atravessa o feixe × (quente − frio), com quente − frio = 1
-      let vaz = 0; for (const k of entrada) if (uy[k] > 0) vaz += uy[k];
-      ganho = vaz;
+      // (embaixo: vazão = massa que entra pelas entradas fora do plano)
+      if (baixo) { if (nInf) { ganho = Math.max(0, influxo / nInf); influxo = 0; nInf = 0; } }
+      else { let vaz = 0; for (const k of entrada) if (uy[k] > 0) vaz += uy[k]; ganho = vaz; }
       paredes(T);
       const cf = Math.exp(-K.kc * dt);
       for (let y = 1; y < NY - 1; y++) for (let x = 1, i = y * NX + 1; x < NX - 1; x++, i++) {
         if (bar[i]) { T2[i] = T[i]; continue; }
+        if (pres[i] === 1) { T2[i] = 0; continue; }
         // coordenada j cresce para baixo; uy > 0 é para cima
         const xm = x - ux[i] * dt * 0.5, ym = y + uy[i] * dt * 0.5;
         let t = bil(T, x - bil(ux, xm, ym) * dt, y + bil(uy, xm, ym) * dt) + ganho * q[i] * dt;
@@ -144,6 +156,7 @@
       }
       paredes(T);
     }
+    function tSaida() { let a = 0, n = 0; for (let k = 0; k < N; k++) if (pres[k] === 2) { a += T[k]; n++; } return n ? a / n : 0; }
     function tEntrada() { let a = 0, b = 0; for (const k of entrada) { const v = uy[k] > 0 ? uy[k] : 0; a += T[k] * v; b += v; } return b ? a / b : 0; }
     function velRef() {   // velocidade típica (percentil 92) no ar livre, para escalar setas e traços
       const h = new Uint32Array(200); let n = 0;
@@ -158,23 +171,35 @@
     }
     function passo(n) { for (let k = 0; k < n; k++) { collide(); stream(); } calor(n); velRef(); }
     return {
-      NX, NY, N, X0, Y0, YC, K, tEntrada, bar, borda, poroso, geometria, iniciar, aquecer, passo,
+      NX, NY, N, X0, Y0, YC, K, tEntrada, tSaida, bar, borda, poroso, pres, geometria, iniciar, aquecer, passo,
       pronto: () => fase === 2,
       campo: () => ({ ux: ux.slice(), uy: uy.slice(), T: T.slice(), sref })
     };
   }
 
+  // as duas metades juntas: cima (com o trocador) e baixo (carcaça fechada)
+  function dupla(nucleo, H) {
+    const a = nucleo(H, false), b = nucleo(H, true);
+    return {
+      iniciar(f) { a.iniciar(f); b.iniciar(f); },
+      aquecer() { if (!a.pronto()) a.aquecer(); if (!b.pronto()) b.aquecer(); },
+      pronto: () => a.pronto() && b.pronto(),
+      passo(n) { a.passo(n); b.passo(n); },
+      campo() { const c = a.campo(), d = b.campo(); return { ux: c.ux, uy: c.uy, T: c.T, ux2: d.ux, uy2: d.uy, T2: d.T, sref: c.sref }; }
+    };
+  }
+
   /* ================================================================ worker */
-  function trabalhador(nucleo, H) {
+  function trabalhador(dupla, nucleo, H) {
     let sim = null, gen = 0;
-    const enviar = (g, extra) => { const c = sim.campo(); self.postMessage(Object.assign({ g }, c, extra), [c.ux.buffer, c.uy.buffer, c.T.buffer]); };
+    const enviar = (g, extra) => { const c = sim.campo(); self.postMessage(Object.assign({ g }, c, extra), [c.ux.buffer, c.uy.buffer, c.T.buffer, c.ux2.buffer, c.uy2.buffer, c.T2.buffer]); };
     self.onmessage = e => {
       // só aceita mensagens da própria página que criou o worker, no formato esperado
       if (e.origin && e.origin !== self.location.origin) return;
       const m = e.data;
       if (!m || typeof m !== 'object' || typeof m.g !== 'number') return;
       if (m.tipo === 'iniciar') {
-        gen = m.g; sim = nucleo(H); sim.iniciar(m.fans);
+        gen = m.g; sim = dupla(nucleo, H); sim.iniciar(m.fans === 1 ? 1 : 2);
         const g = gen, fatia = () => {
           if (g !== gen) return;
           const t = performance.now(); while (!sim.pronto() && performance.now() - t < 50) sim.aquecer();
@@ -188,9 +213,9 @@
   }
   // motor: worker se possível; senão, a mesma simulação no thread principal
   function motor(aoCampo) {
-    let w = null, local = null, gen = 0;
+    let w = null, local = null, gen = 0, fansW = 2;
     const emLocal = fans => {
-      local = nucleo(H); local.iniciar(fans);
+      local = dupla(nucleo, H); local.iniciar(fans);
       const g = gen, fatia = () => {
         if (g !== gen) return;
         const t = performance.now(); while (!local.pronto() && performance.now() - t < 10) local.aquecer();
@@ -198,18 +223,14 @@
       };
       setTimeout(fatia, 0);
     };
-    let fansW = 0;
     try {
-      const url = URL.createObjectURL(new Blob([`(${trabalhador})(${nucleo}, ${H});`], { type: 'text/javascript' }));
+      const url = URL.createObjectURL(new Blob([`(${trabalhador})(${dupla}, ${nucleo}, ${H});`], { type: 'text/javascript' }));
       w = new Worker(url);
       w.onmessage = e => { if (e.target === w && e.data && e.data.g === gen) aoCampo(e.data); };
       w.onerror = () => { w = null; gen++; emLocal(fansW); };
     } catch (_) { w = null; }
     return {
-      iniciar(fans) {
-        gen++; fansW = fans;
-        if (w) w.postMessage({ tipo: 'iniciar', fans, g: gen }); else emLocal(fans);
-      },
+      iniciar(fans) { gen++; fansW = fans; if (w) w.postMessage({ tipo: 'iniciar', fans, g: gen }); else emLocal(fans); },
       pedir(n) {
         if (w) { w.postMessage({ tipo: 'passo', n, g: gen }); return; }
         if (!local || !local.pronto()) return;
@@ -220,31 +241,47 @@
   }
 
   /* ================================================================ desenho na tela */
-  const G = nucleo(H), NX = G.NX, NY = G.NY, X0 = G.X0, Y0 = G.Y0, YC = G.YC;
   const STOPS = [[0, [43, 108, 176]], [0.25, [47, 164, 199]], [0.5, [124, 197, 143]], [0.75, [242, 181, 68]], [1, [217, 71, 58]]];
   const corT = h => { h = Math.max(0, Math.min(1, h)); let i = 0; while (i < STOPS.length - 2 && h > STOPS[i + 1][0]) i++; const [h0, c0] = STOPS[i], [h1, c1] = STOPS[i + 1], t = (h - h0) / (h1 - h0); return c0.map((c, k) => c + (c1[k] - c) * t); };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const temaClaro = () => { const t = document.documentElement.dataset.theme; return t ? t === 'light' : matchMedia('(prefers-color-scheme: light)').matches; };
-  let eng = null, fansAtual = 0, campo = null, novo = false, esperando = false, nPassos = 4, sref = 0.05;
-  let cv = null, ctx = null, off = null, octx = null, img = null, svg = null, alvo = null, raf = 0, vis = false, io = null, ro = null;
+  const HL = 18;
+  // camada = uma metade: geometria, imagem da temperatura, partículas e malha de setas
+  const camadas = [
+    { G: nucleo(H, false), baixo: false, np: 330 },
+    { G: nucleo(H, true), baixo: true, np: 170 }
+  ];
+  for (const L of camadas) Object.assign(L, { P: [], livres: [], entradas: [], setas: [], ux: null, uy: null, T: null, off: null, octx: null, img: null });
+  let eng = null, fansAtual = 0, temCampo = false, novo = false, esperando = false, nPassos = 4, sref = 0.05;
+  let cv = null, ctx = null, svg = null, alvo = null, raf = 0, vis = false, io = null, ro = null;
   let W = 0, Hh = 0, dpr = 1, M = null, lut = null, lutTema = null, ultimo = 0;
-  const P = [], NP = 380, HL = 18, livres = [], SETAS = [];
 
   function prepararGeometria(fans) {
-    G.geometria(fans);
-    livres.length = 0; SETAS.length = 0;
-    for (let k = 0; k < G.N; k++) if (!G.bar[k] && !G.poroso[k]) livres.push(k);
-    // malha de setas a cada ~15 unidades, em linhas alternadas, só no ar visível
-    for (let y = 57, lin = 0; y < YC - 6; y += 13, lin++) for (let x = 111 + (lin % 2) * 7.5; x < 692; x += 15) {
-      const i = Math.floor((x - X0) / H), j = Math.floor((y - Y0) / H), k = j * NX + i;
-      if (!G.bar[k] && !G.poroso[k]) SETAS.push((x - X0) / H, (y - Y0) / H);
+    for (const L of camadas) {
+      const G = L.G, NX = G.NX; G.geometria(fans);
+      L.livres.length = 0; L.entradas.length = 0; L.setas.length = 0;
+      for (let k = 0; k < G.N; k++) { if (!G.bar[k] && !G.poroso[k] && !G.pres[k]) L.livres.push(k); if (G.pres[k] === 1) L.entradas.push(k); }
+      // malha de setas a cada ~15 unidades, em linhas alternadas, só no ar visível
+      const y0 = L.baixo ? 205 : 57;
+      for (let y = y0, lin = 0; y < G.YC - 6; y += 13, lin++) for (let x = 111 + (lin % 2) * 7.5; x < 692; x += 15) {
+        const i = Math.floor((x - G.X0) / H), j = Math.floor((y - G.Y0) / H), k = j * NX + i;
+        if (j >= 0 && j < G.NY && !G.bar[k] && !G.poroso[k] && !G.pres[k]) L.setas.push((x - G.X0) / H, (y - G.Y0) / H);
+      }
+      while (L.P.length < L.np) L.P.push({ hx: new Float32Array(HL), hy: new Float32Array(HL), s: 0 });
+      for (const p of L.P) nascer(L, p, true);
     }
   }
-  const livre = (x, y) => { const i = x | 0, j = y | 0; if (i < 1 || j < 1 || i >= NX - 1 || j >= NY - 1) return false; return !G.bar[j * NX + i]; };
-  const nascer = p => { const k = livres[(Math.random() * livres.length) | 0]; p.x = k % NX + Math.random(); p.y = (k / NX | 0) + Math.random(); p.hx.fill(p.x); p.hy.fill(p.y); p.h = 0; p.n = 0; p.s = 0; p.vida = 60 + Math.random() * 140; };
-  // campo nas coordenadas de célula (x, y contínuos, centro da célula em +0.5)
-  const amostra = (a, x, y) => {
-    x = Math.max(0, Math.min(NX - 1.001, x - 0.5)); y = Math.max(0, Math.min(NY - 1.001, y - 0.5));
+  const livre = (G, x, y) => { const i = x | 0, j = y | 0; if (i < 1 || j < 1 || i >= G.NX - 1 || j >= G.NY - 1) return false; const k = j * G.NX + i; return !G.bar[k] && G.pres[k] !== 2; };
+  // embaixo, parte das partículas nasce onde o ar frio entra no plano
+  function nascer(L, p, qualquer) {
+    const G = L.G, daEntrada = !qualquer && L.entradas.length && Math.random() < 0.35;
+    const lista = daEntrada ? L.entradas : L.livres, k = lista[(Math.random() * lista.length) | 0];
+    p.x = k % G.NX + Math.random(); p.y = (k / G.NX | 0) + Math.random(); p.hx.fill(p.x); p.hy.fill(p.y); p.h = 0; p.n = 0; p.s = 0; p.vida = 60 + Math.random() * 140;
+  }
+  // campo nas coordenadas de célula (centro da célula em +0.5)
+  const amostra = (G, a, x, y) => {
+    const NX = G.NX;
+    x = Math.max(0, Math.min(NX - 1.001, x - 0.5)); y = Math.max(0, Math.min(G.NY - 1.001, y - 0.5));
     const i0 = x | 0, j0 = y | 0, fx = x - i0, fy = y - j0, i = j0 * NX + i0;
     return (a[i] * (1 - fx) + a[i + 1] * fx) * (1 - fy) + (a[i + NX] * (1 - fx) + a[i + NX + 1] * fx) * fy;
   };
@@ -270,37 +307,37 @@
     const m = svg.getScreenCTM(); if (!m) return;
     M = { a: m.a * dpr, d: m.d * dpr, e: (m.e - box.left) * dpr, f: (m.f - box.top) * dpr };
   }
-  const sx = gx => M.a * (X0 + gx * H) + M.e, sy = gy => M.d * (Y0 + gy * H) + M.f;
-
-  function imagem() {
-    prepararCores();
-    const px = img.data, T = campo.T;
+  // coordenadas do desenho → tela (a metade de baixo é calculada "de cabeça para cima" e virada no eixo)
+  const tx = x => M.a * x + M.e, ty = y => M.d * y + M.f;
+  function imagem(L) {
+    const G = L.G, px = L.img.data, T = L.T;
     for (let k = 0, o = 0; k < G.N; k++, o += 4) {
       if (G.bar[k] && !G.borda[k]) { px[o + 3] = 0; continue; }
       const n = Math.max(0, Math.min(255, T[k] * 255 | 0)) * 3;
       px[o] = lut[n]; px[o + 1] = lut[n + 1]; px[o + 2] = lut[n + 2]; px[o + 3] = 255;
     }
-    octx.putImageData(img, 0, 0);
+    L.octx.putImageData(L.img, 0, 0);
   }
   const grupos = [[], [], [], []];
-  function pintar(dtq) {
-    if (!M || !campo) return;
-    if (novo || lutTema !== (temaClaro() ? 'l' : 'd')) { imagem(); novo = false; }
-    const claro = temaClaro(), tinta = claro ? '18,30,42' : '238,244,248';
-    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, Hh);
-    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(off, sx(0), sy(0), sx(NX) - sx(0), sy(NY) - sy(0));
-    const ux = campo.ux, uy = campo.uy;
+  function camada(L, dtq, claro, tinta) {
+    const G = L.G, X0 = G.X0, Y0 = G.Y0, ux = L.ux, uy = L.uy;
+    const sx = gx => tx(X0 + gx * H), sy = gy => ty(Y0 + gy * H);
+    ctx.save();
+    if (L.baixo) {
+      // espelho no eixo, recortado ao interior da carcaça
+      const yE = ty(G.YC); ctx.translate(0, 2 * yE); ctx.scale(1, -1);
+      ctx.beginPath(); ctx.rect(tx(120), ty(199), tx(680) - tx(120), yE - ty(199)); ctx.clip();
+    }
+    ctx.drawImage(L.off, sx(0), sy(0), sx(G.NX) - sx(0), sy(G.NY) - sy(0));
     // setas: comprimento e opacidade pela velocidade local
     const cab = 2.1 * M.a;
     for (const g of grupos) g.length = 0;
-    for (let s = 0; s < SETAS.length; s += 2) {
-      const gx = SETAS[s], gy = SETAS[s + 1], u = amostra(ux, gx, gy), v = -amostra(uy, gx, gy), sp = Math.hypot(u, v), f = sp / sref;
+    for (let s = 0; s < L.setas.length; s += 2) {
+      const gx = L.setas[s], gy = L.setas[s + 1], u = amostra(G, ux, gx, gy), v = -amostra(G, uy, gx, gy), sp = Math.hypot(u, v), f = sp / sref;
       if (f < 0.07) continue;
-      const L = (2.2 + 9.5 * Math.pow(Math.min(f, 1.5), 0.8)) * M.a, cx = sx(gx), cy = sy(gy), ex = u / sp, ey = v / sp;
-      grupos[f < 0.3 ? 0 : f < 0.6 ? 1 : f < 1 ? 2 : 3].push(cx - ex * L / 2, cy - ey * L / 2, cx + ex * L / 2, cy + ey * L / 2, ex, ey);
+      const Lr = (2.2 + 9.5 * Math.pow(Math.min(f, 1.5), 0.8)) * M.a, cx = sx(gx), cy = sy(gy), ex = u / sp, ey = v / sp;
+      grupos[f < 0.3 ? 0 : f < 0.6 ? 1 : f < 1 ? 2 : 3].push(cx - ex * Lr / 2, cy - ey * Lr / 2, cx + ex * Lr / 2, cy + ey * Lr / 2, ex, ey);
     }
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     grupos.forEach((g, n) => {
       if (!g.length) return;
       ctx.strokeStyle = `rgba(${tinta},${[0.3, 0.48, 0.66, 0.85][n] * (claro ? 0.85 : 1)})`; ctx.lineWidth = (0.8 + 0.3 * n) * dpr; ctx.beginPath();
@@ -313,16 +350,16 @@
     });
     // partículas: andam com o ar; o rastro fica longo e forte onde o ar é rápido
     const kv = 1.7 / sref * dtq;
-    if (dtq > 0) for (const p of P) {
-      const u = amostra(ux, p.x, p.y), v = -amostra(uy, p.x, p.y);
+    if (dtq > 0) for (const p of L.P) {
+      const u = amostra(G, ux, p.x, p.y), v = -amostra(G, uy, p.x, p.y);
       p.x += u * kv; p.y += v * kv; p.s = Math.hypot(u, v) / sref;
-      if (--p.vida < 0 || !livre(p.x, p.y)) { nascer(p); continue; }
+      if (--p.vida < 0 || !livre(G, p.x, p.y)) { nascer(L, p); continue; }
       p.h = (p.h + 1) % HL; p.hx[p.h] = p.x; p.hy[p.h] = p.y; if (p.n < HL - 1) p.n++;
     }
     for (let b = 0; b < 4; b++) for (let velho = 1; velho >= 0; velho--) {
       const al = [0.1, 0.24, 0.42, 0.62][b] * (velho ? 0.4 : 1) * (claro ? 0.85 : 1);
       ctx.strokeStyle = `rgba(${tinta},${al})`; ctx.lineWidth = (0.7 + 0.3 * b) * dpr; ctx.beginPath();
-      for (const p of P) {
+      for (const p of L.P) {
         const f = p.s, bb = f < 0.25 ? 0 : f < 0.55 ? 1 : f < 0.95 ? 2 : 3; if (bb !== b || p.n < 1) continue;
         const meio = p.n >> 1, a0 = velho ? 0 : meio, a1 = velho ? meio : p.n;
         for (let a = a0; a < a1; a++) {
@@ -332,28 +369,35 @@
       }
       ctx.stroke();
     }
-    // metade de baixo da carcaça: espelho em torno do eixo
-    const yE = sy((YC - Y0) / H), yT = Math.floor(sy((200 - Y0) / H)), xa = Math.floor(sx((122 - X0) / H)), xb = Math.ceil(sx((678 - X0) / H)), hh = Math.ceil(yE - yT);
-    ctx.save(); ctx.translate(0, 2 * yE); ctx.scale(1, -1);
-    ctx.drawImage(cv, xa, yT, xb - xa, hh, xa, yT, xb - xa, hh);
     ctx.restore();
+  }
+  function pintar(dtq) {
+    if (!M || !temCampo) return;
+    prepararCores();
+    if (novo || lutTema !== (temaClaro() ? 'l' : 'd')) { for (const L of camadas) imagem(L); novo = false; }
+    const claro = temaClaro(), tinta = claro ? '18,30,42' : '238,244,248';
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, Hh);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const L of camadas) camada(L, dtq, claro, tinta);
   }
 
   function aoCampo(c) {
-    campo = c; sref = c.sref || sref; novo = true; esperando = false;
+    const [A, B] = camadas;
+    A.ux = c.ux; A.uy = c.uy; A.T = c.T; B.ux = c.ux2; B.uy = c.uy2; B.T = c.T2;
+    temCampo = true; sref = c.sref || sref; novo = true; esperando = false;
     if (c.ms > 0) { if (c.ms > 14 && nPassos > 2) nPassos--; else if (c.ms < 7 && nPassos < 8) nPassos++; }
     if (alvo && !alvo.classList.contains('hx-cfd-on')) { alvo.classList.add('hx-cfd-on'); seguir(); }
     else if (!raf) pintar(0);
   }
   function quadro(t) {
     raf = requestAnimationFrame(quadro);
-    if (!esperando && campo) { esperando = true; eng.pedir(nPassos); }
+    if (!esperando && temCampo) { esperando = true; eng.pedir(nPassos); }
     const dtq = ultimo ? Math.min(2.5, (t - ultimo) / 16.7) : 1; ultimo = t;
     pintar(dtq);
   }
   function seguir() {
     cancelAnimationFrame(raf); raf = 0; ultimo = 0;
-    if (!cv || !campo) return;
+    if (!cv || !temCampo) return;
     medir();
     if (vis && !reduce.matches && !document.hidden) { esperando = false; raf = requestAnimationFrame(quadro); } else pintar(0);
   }
@@ -363,26 +407,21 @@
     const fans = opt.fans >= 2 ? 2 : 1;
     if (!cv) {
       cv = document.createElement('canvas'); cv.className = 'hx-cfd'; cv.setAttribute('aria-hidden', 'true'); ctx = cv.getContext('2d');
-      off = document.createElement('canvas'); off.width = NX; off.height = NY; octx = off.getContext('2d'); img = octx.createImageData(NX, NY);
+      for (const L of camadas) { L.off = document.createElement('canvas'); L.off.width = L.G.NX; L.off.height = L.G.NY; L.octx = L.off.getContext('2d'); L.img = L.octx.createImageData(L.G.NX, L.G.NY); }
       io = 'IntersectionObserver' in window ? new IntersectionObserver(es => { vis = es[0].isIntersecting; seguir(); }) : null;
       document.addEventListener('visibilitychange', seguir);
       reduce.addEventListener?.('change', seguir);
       new MutationObserver(() => { if (!raf) pintar(0); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
       addEventListener('resize', () => { medir(); if (!raf) pintar(0); }, { passive: true });
-      for (let k = 0; k < NP; k++) P.push({ hx: new Float32Array(HL), hy: new Float32Array(HL), s: 0 });
     }
     if (!eng) eng = motor(aoCampo);
-    if (fans !== fansAtual) {
-      fansAtual = fans; campo = null; esperando = false; prepararGeometria(fans);
-      for (const p of P) nascer(p);
-      eng.iniciar(fans);
-    }
+    if (fans !== fansAtual) { fansAtual = fans; temCampo = false; esperando = false; prepararGeometria(fans); eng.iniciar(fans); }
     alvo = sc; svg = s;
     alvo.prepend(cv);
-    if (campo) alvo.classList.add('hx-cfd-on');
+    if (temCampo) alvo.classList.add('hx-cfd-on');
     if ('ResizeObserver' in window) { ro && ro.disconnect(); ro = new ResizeObserver(() => { medir(); if (!raf) pintar(0); }); ro.observe(s); }
     if (io) { io.disconnect(); io.observe(alvo); } else vis = true;
     requestAnimationFrame(() => { medir(); seguir(); });
   }
-  window.VGThermalCFD = { anexar, _nucleo: nucleo };
+  window.VGThermalCFD = { anexar, _nucleo: nucleo, _dupla: dupla };
 })();
