@@ -314,7 +314,21 @@
 
   /* ================================================================ desenho na tela */
   // escala dos resultados de CFD (arco-íris), em faixas com isolinhas entre elas
-  const STOPS = [[0, [24, 60, 220]], [0.25, [20, 200, 235]], [0.5, [40, 210, 90]], [0.75, [250, 220, 40]], [1, [228, 40, 32]]];
+  // paletas de cores (nomes em inglês, como nas ferramentas de CFD); uma escolha para cada campo
+  const PALETAS = {
+    rainbow: { nome: 'Rainbow', s: [[0,[24,60,220]],[0.25,[20,200,235]],[0.5,[40,210,90]],[0.75,[250,220,40]],[1,[228,40,32]]] },
+    turbo: { nome: 'Turbo', s: [[0.0,[48,18,59]],[0.125,[70,107,227]],[0.25,[40,188,235]],[0.375,[50,242,152]],[0.5,[164,252,60]],[0.625,[238,207,58]],[0.75,[251,126,33]],[0.875,[208,47,5]],[1.0,[122,4,3]]] },
+    blueyellowred: { nome: 'Blue–Yellow–Red', s: [[0.0,[49,54,149]],[0.125,[81,131,187]],[0.25,[144,195,221]],[0.375,[212,237,244]],[0.5,[255,254,190]],[0.625,[254,210,131]],[0.75,[248,140,81]],[0.875,[221,61,45]],[1.0,[165,0,38]]] },
+    coolwarm: { nome: 'Coolwarm', s: [[0.0,[59,76,192]],[0.125,[98,130,234]],[0.25,[141,176,254]],[0.375,[185,208,249]],[0.5,[221,220,220]],[0.625,[245,196,172]],[0.75,[244,152,122]],[0.875,[221,95,75]],[1.0,[180,4,38]]] },
+    spectral: { nome: 'Spectral', s: [[0.0,[94,79,162]],[0.125,[63,151,183]],[0.25,[137,208,164]],[0.375,[216,239,155]],[0.5,[255,254,190]],[0.625,[254,210,127]],[0.75,[248,140,81]],[0.875,[220,72,76]],[1.0,[158,1,66]]] },
+    viridis: { nome: 'Viridis', s: [[0.0,[68,1,84]],[0.125,[71,45,123]],[0.25,[59,82,139]],[0.375,[44,114,142]],[0.5,[33,145,140]],[0.625,[40,174,128]],[0.75,[94,201,98]],[0.875,[173,220,48]],[1.0,[253,231,37]]] },
+    inferno: { nome: 'Inferno', s: [[0.0,[0,0,4]],[0.125,[33,12,74]],[0.25,[87,16,110]],[0.375,[138,34,106]],[0.5,[188,55,84]],[0.625,[228,90,49]],[0.75,[249,142,9]],[0.875,[249,203,53]],[1.0,[252,255,164]]] },
+    cividis: { nome: 'Cividis', s: [[0.0,[0,34,78]],[0.125,[26,56,111]],[0.25,[67,78,108]],[0.375,[97,101,111]],[0.5,[125,124,120]],[0.625,[155,148,118]],[0.75,[188,174,108]],[0.875,[222,201,88]],[1.0,[254,232,56]]] }
+  };
+  const PAL_PADRAO = { T: 'turbo', V: 'inferno' };
+  let pal = { ...PAL_PADRAO };
+  try { const g = JSON.parse(localStorage.getItem('engenhalab.termica.paletas') || '{}'); for (const m of ['T', 'V']) if (PALETAS[g[m]]) pal[m] = g[m]; } catch (_) { /* sem armazenamento */ }
+  let STOPS = PALETAS[pal.T].s;
   const NB = 20, FI = 2;   // faixas do contorno e ampliação da imagem do campo
   let modo = 'T', contaImg = 0, pausado = false;
   try { pausado = localStorage.getItem('engenhalab.termica.pausa') === '1'; } catch (_) { /* sem armazenamento */ }
@@ -527,12 +541,13 @@
   function criarBarra(zoom) {
     const b = document.createElement('div');
     b.className = 'hx-cfd-barra' + (zoom ? ' hx-cfd-barra-z' : '');
-    let faixas = '';
-    for (let n = 0; n < NB; n++) { const c = corT((n + 0.5) / NB).map(Math.round); faixas += `<i style="background:rgb(${c.join(',')})"></i>`; }
+    const opcoes = Object.entries(PALETAS).map(([k, v]) => `<option value="${k}">${v.nome}</option>`).join('');
     b.innerHTML = `<div class="hx-cfd-ctl"><span class="hx-cfd-rot">Campo</span><div class="hx-seg" role="group" aria-label="Campo mostrado no escoamento">`
       + `<button type="button" data-modo="T">Temperatura</button><button type="button" data-modo="V">Velocidade</button></div>`
-      + `<button type="button" class="hx-play" data-acao="pausa"><span class="hx-play-i" aria-hidden="true"></span><span class="hx-play-t"></span></button></div>`
-      + `<div class="hx-cfd-esc"><span class="hx-esc-tit"></span><div class="hx-esc-faixas" aria-hidden="true">${faixas}</div><div class="hx-esc-ticks"></div></div>`;
+      + `<button type="button" class="hx-play" data-acao="pausa"><span class="hx-play-i" aria-hidden="true"></span><span class="hx-play-t"></span></button>`
+      + `<label class="hx-pal"><span class="hx-cfd-rot">Colors</span><select aria-label="Paleta de cores do campo">${opcoes}</select></label></div>`
+      + `<div class="hx-cfd-esc"><span class="hx-esc-tit"></span><div class="hx-esc-faixas" aria-hidden="true"></div><div class="hx-esc-ticks"></div></div>`;
+    b.querySelector('select').addEventListener('change', e => definirPaleta(e.target.value));
     escutarModo(b); barras.add(b); atualizarBarras();
     return b;
   }
@@ -545,14 +560,23 @@
       p.querySelector('.hx-play-t').textContent = pausado ? 'Animar' : 'Pausar';
       p.setAttribute('aria-label', pausado ? 'Retomar o movimento do ar' : 'Pausar o movimento do ar');
       b.querySelector('.hx-esc-tit').textContent = tit;
+      b.querySelector('select').value = pal[modo];
+      let faixas = ''; for (let n = 0; n < NB; n++) faixas += `<i style="background:rgb(${corT((n + 0.5) / NB).map(Math.round).join(',')})"></i>`;
+      b.querySelector('.hx-esc-faixas').innerHTML = faixas;
       b.querySelector('.hx-esc-ticks').innerHTML = ticks.map((t, k) => `<span style="left:${k * 25}%">${t}</span>`).join('');
     }
   }
   let barraZoom = null;
   // temperatura ou velocidade (data-modo) e pausa (data-acao): valem para a vista e para o ampliado
+  function definirPaleta(id) {
+    if (!PALETAS[id]) return;
+    pal[modo] = id; STOPS = PALETAS[id].s; lut = null; novo = true;
+    try { localStorage.setItem('engenhalab.termica.paletas', JSON.stringify(pal)); } catch (_) { /* sem armazenamento */ }
+    atualizarBarras(); if (!raf) pintar(0);
+  }
   function definirModo(m) {
     if (m !== 'T' && m !== 'V') return;
-    modo = m; novo = true; atualizarBarras();
+    modo = m; STOPS = PALETAS[pal[m]].s; lut = null; novo = true; atualizarBarras();
     for (const el of [alvo, extra && extra.caixa]) if (el) el.classList.toggle('hx-modo-v', m === 'V');
     if (!raf) pintar(0);
   }
