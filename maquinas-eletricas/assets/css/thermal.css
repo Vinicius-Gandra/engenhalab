@@ -1156,3 +1156,31 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
   .seq-dl { gap: 6px 10px; }
 }
 @media (hover: none) { .seq-detail { display: block; margin: 0; padding-top: 6px; font-size: .68rem; } .seq-stage:hover { background: none; } }
+/* cartão com referências (só com login) */
+.dica-me.ref { max-width: 380px; max-height: min(70vh, 560px); overflow: auto; pointer-events: auto; overscroll-behavior: contain; }
+.dica-me .dica-o { margin-top: 6px; color: var(--text-3); }
+.dica-me .dica-ops { list-style: none; margin: 9px 0 0; padding: 0; display: grid; gap: 2px; }
+.dica-me .dica-ops li { display: grid; grid-template-columns: 1fr auto; column-gap: 8px; padding: 5px 7px; border-radius: 7px; }
+.dica-me .dica-ops li.on { background: var(--surface-2, rgb(127 127 127 / .1)); box-shadow: inset 2px 0 0 var(--accent, #2f6fdf); }
+.dica-me .dica-ops strong { color: var(--text); font-size: .74rem; font-weight: 600; }
+.dica-me .dica-ops span { grid-column: 1 / -1; color: var(--text-3); font-size: .7rem; }
+.dica-me .dica-ops em { grid-row: 1; grid-column: 2; font: 600 .66rem var(--font-mono, monospace); font-style: normal; color: var(--text-2); white-space: nowrap; }
+.dica-me .dica-faixas { margin-top: 9px; border-top: 1px solid var(--line); }
+.dica-me .dica-faixa { padding: 7px 0; border-bottom: 1px solid var(--line); }
+.dica-me .dica-faixa-cab { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+.dica-me .dica-faixa-cab span { color: var(--text); font-weight: 600; font-size: .72rem; }
+.dica-me .dica-faixa-cab strong { font: 600 .7rem var(--font-mono, monospace); color: var(--text); white-space: nowrap; }
+.dica-me .dica-faixa p { margin-top: 2px; font-size: .7rem; color: var(--text-3); }
+.dica-me .dica-faixa-pe { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.dica-me .dica-faixa-pe:empty { display: none; }
+.dica-me .dica-tipo { padding: 1px 6px; border-radius: 999px; font-size: .6rem; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; border: 1px solid var(--line); color: var(--text-2); }
+.dica-me .dica-tipo.t-N { color: #1f6feb; border-color: rgb(31 111 235 / .35); }
+.dica-me .dica-tipo.t-F { color: #b26a00; border-color: rgb(178 106 0 / .35); }
+.dica-me .dica-tipo.t-L { color: #7c4dbd; border-color: rgb(124 77 189 / .35); }
+.dica-me sup { color: var(--text-3); font-size: .62rem; }
+.dica-me .dica-usar { margin-left: auto; padding: 2px 8px; border: 1px solid var(--line-strong, var(--line)); border-radius: 999px; background: transparent; color: var(--text); font: 600 .66rem var(--font-mono, monospace); cursor: pointer; }
+.dica-me .dica-usar:hover { background: var(--surface-2, rgb(127 127 127 / .1)); }
+.dica-me .dica-fontes { margin: 9px 0 0; padding-left: 18px; font-size: .68rem; }
+.dica-me .dica-fontes li { margin: 3px 0; }
+.dica-me .dica-fontes a { color: var(--accent, #2f6fdf); text-decoration: underline; text-underline-offset: 2px; }
+.dica-me .dica-fontes small { display: block; color: var(--text-3); font-size: .64rem; }
