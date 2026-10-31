@@ -5,13 +5,16 @@
   const S = window.Sessao, app = document.getElementById('app');
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const data = t => t ? new Date(t * 1000).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
-  const ACOES = { login: 'Entrou', logout: 'Saiu', login_recusado: 'Login recusado', conta_ativada: 'Conta ativada', acesso_redefinido: 'Acesso redefinido', convite_criado: 'Convite criado', convite_admin_terminal: 'Convite (Terminal)', redefinicao_criada: 'Link de redefinição', convite_cancelado: 'Convite cancelado', usuario_bloqueado: 'Bloqueado', usuario_desbloqueado: 'Desbloqueado', sessoes_encerradas: 'Sessões encerradas', projeto_criado: 'Projeto criado', projeto_alterado: 'Projeto alterado', projeto_renomeado: 'Projeto renomeado', projeto_excluido: 'Projeto excluído', documento_emitido: 'Memorial emitido', documento_baixado: 'Memorial aberto' };
+  // laboratórios que o administrador libera para cada profissional (administrador usa todos)
+  const LABS = [['offshore', 'Offshore'], ['maquinas', 'Máquinas elétricas']];
+  const caixas = (nome, marcados, desligado) => LABS.map(([k, t]) => `<label class="ac-lab"><input type="checkbox" name="${nome}" value="${k}"${marcados.includes(k) ? ' checked' : ''}${desligado ? ' disabled' : ''}> ${t}</label>`).join('');
+  const ACOES = { laboratorios_alterados: 'Laboratórios alterados', login: 'Entrou', logout: 'Saiu', login_recusado: 'Login recusado', conta_ativada: 'Conta ativada', acesso_redefinido: 'Acesso redefinido', convite_criado: 'Convite criado', convite_admin_terminal: 'Convite (Terminal)', redefinicao_criada: 'Link de redefinição', convite_cancelado: 'Convite cancelado', usuario_bloqueado: 'Bloqueado', usuario_desbloqueado: 'Desbloqueado', sessoes_encerradas: 'Sessões encerradas', projeto_criado: 'Projeto criado', projeto_alterado: 'Projeto alterado', projeto_renomeado: 'Projeto renomeado', projeto_excluido: 'Projeto excluído', documento_emitido: 'Memorial emitido', documento_baixado: 'Memorial aberto' };
   const s = S.sessao();
   if (!s) { location.href = 'conta.html?volta=admin.html'; return; }
   if (s.usuario.papel !== 'admin') { app.innerHTML = '<section class="ac-cartao"><h1>Acesso restrito</h1><p>Este painel é só do administrador.</p><a class="ac-btn sec" href="conta.html">Minha conta</a></section>'; return; }
 
   let aba = 'usuarios', usuarios = [];
-  app.innerHTML = `<div class="ac-titulo"><div><span class="ac-olho">Administração</span><h1>Laboratório offshore</h1><p>Convites, bloqueios, sessões e histórico de alterações e emissões.</p></div><a class="ac-btn sec" href="conta.html">Minha conta</a></div>
+  app.innerHTML = `<div class="ac-titulo"><div><span class="ac-olho">Administração</span><h1>Laboratórios EngenhaLab</h1><p>Convites, laboratórios liberados, bloqueios, sessões e histórico de alterações e emissões.</p></div><a class="ac-btn sec" href="conta.html">Minha conta</a></div>
     <nav class="ac-abas" role="tablist"><button role="tab" data-aba="usuarios" aria-selected="true">Usuários</button><button role="tab" data-aba="sessoes" aria-selected="false">Sessões</button><button role="tab" data-aba="historico" aria-selected="false">Histórico</button></nav>
     <p class="ac-msg" hidden></p><div id="painel"></div>`;
   const painel = app.querySelector('#painel');
@@ -29,13 +32,17 @@
   async function abaUsuarios() {
     painel.innerHTML = `<section class="ac-bloco"><header><h2>Convidar profissional</h2></header>
       <form class="ac-form-linha" novalidate><label class="ac-campo">Nome<input name="nome" required maxlength="80"></label><label class="ac-campo">E-mail<input name="email" type="email" required maxlength="160"></label>
-      <label class="ac-campo ac-curto">Papel<select name="papel"><option value="usuario">Profissional</option><option value="admin">Administrador</option></select></label><button class="ac-btn" type="submit">Gerar convite</button></form>
+      <label class="ac-campo ac-curto">Papel<select name="papel"><option value="usuario">Profissional</option><option value="admin">Administrador</option></select></label>
+      <fieldset class="ac-campo ac-labs" data-labs-novo><legend>Laboratórios</legend>${caixas('labs', ['offshore'])}</fieldset><button class="ac-btn" type="submit">Gerar convite</button></form>
       <div class="ac-link" data-link hidden></div></section>
       <section class="ac-bloco"><header><h2>Usuários</h2></header><div class="ac-rolar" data-lista><p class="ac-vazio">Carregando…</p></div></section>`;
     painel.querySelector('form').addEventListener('submit', async ev => {
       ev.preventDefault(); const fd = new FormData(ev.target);
-      try { const r = await pedir('admin/convidar', { nome: fd.get('nome'), email: fd.get('email'), papel: fd.get('papel') }); mostrarLink(r, fd.get('nome')); ev.target.reset(); lista(); } catch (e) { aviso(e.message); }
+      try { const r = await pedir('admin/convidar', { nome: fd.get('nome'), email: fd.get('email'), papel: fd.get('papel'), labs: fd.getAll('labs') }); mostrarLink(r, fd.get('nome')); ev.target.reset(); lista(); } catch (e) { aviso(e.message); }
     });
+    // administrador acessa todos os laboratórios: as caixas ficam marcadas e travadas
+    const papelSel = painel.querySelector('select[name="papel"]'), novo = painel.querySelector('[data-labs-novo]');
+    papelSel.addEventListener('change', () => novo.querySelectorAll('input').forEach(i => { i.disabled = papelSel.value === 'admin'; if (i.disabled) i.checked = true; }));
     await lista();
   }
   async function lista() {
@@ -43,10 +50,11 @@
     try {
       ({ usuarios } = await pedir('admin/usuarios'));
       const agora = Date.now() / 1000;
-      alvo.innerHTML = `<table class="ac-tabela"><thead><tr><th>Profissional</th><th>Situação</th><th>Último acesso</th><th>Sessões</th><th></th></tr></thead><tbody>${usuarios.map(u => {
+      alvo.innerHTML = `<table class="ac-tabela"><thead><tr><th>Profissional</th><th>Situação</th><th>Laboratórios</th><th>Último acesso</th><th>Sessões</th><th></th></tr></thead><tbody>${usuarios.map(u => {
         const st = u.status === 'pendente' ? (u.convite_ate ? 'convite enviado' : 'convite vencido') : u.status;
         return `<tr><td><b>${esc(u.nome)}</b><small>${esc(u.email)}${u.papel === 'admin' ? ' · administrador' : ''}</small></td>
           <td><span class="ac-selo ${esc(u.status)}">${esc(st)}</span>${u.travado_ate > agora ? '<small>travado por tentativas erradas</small>' : ''}${u.convite_ate && u.status !== 'pendente' ? `<small>redefinição até ${data(u.convite_ate)}</small>` : ''}</td>
+          <td class="ac-labs-col" data-labs="${esc(u.id)}">${u.papel === 'admin' ? `${caixas('l-' + u.id, LABS.map(x => x[0]), true)}<small>administrador: todos</small>` : caixas('l-' + u.id, u.labs || [])}</td>
           <td>${data(u.ultimo_acesso)}</td><td>${u.sessoes}</td>
           <td class="ac-acoes">${u.id === s.usuario.id ? '<small>você</small>' : u.status === 'pendente'
             ? `<button class="ac-btn peq" data-a="redefinir" data-id="${esc(u.id)}">Novo link</button><button class="ac-btn peq perigo" data-a="cancelar" data-id="${esc(u.id)}">Cancelar convite</button>`
@@ -54,6 +62,14 @@
                <button class="ac-btn peq sec" data-a="encerrar" data-id="${esc(u.id)}"${u.sessoes ? '' : ' disabled'}>Encerrar sessões</button><button class="ac-btn peq sec" data-a="redefinir" data-id="${esc(u.id)}">Redefinir acesso</button>`}
             <button class="ac-btn peq sec" data-a="hist" data-id="${esc(u.id)}">Histórico</button></td></tr>`; }).join('')}</tbody></table>`;
       alvo.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => acao(b.dataset.a, usuarios.find(u => u.id === b.dataset.id))));
+      // marcar ou desmarcar um laboratório vale na hora (o servidor confere a permissão a cada pedido)
+      alvo.querySelectorAll('[data-labs] input:not(:disabled)').forEach(i => i.addEventListener('change', async () => {
+        const td = i.closest('[data-labs]'), u = usuarios.find(x => x.id === td.dataset.labs), labs = [...td.querySelectorAll('input:checked')].map(x => x.value);
+        td.querySelectorAll('input').forEach(x => { x.disabled = true; });
+        try { const r = await pedir('admin/laboratorios', { usuario_id: u.id, labs }); u.labs = r.labs; aviso(`${u.nome}: ${r.labs.length ? r.labs.map(l => LABS.find(x => x[0] === l)[1]).join(' e ') : 'nenhum laboratório'}.`, true); }
+        catch (e) { aviso(e.message); i.checked = !i.checked; }
+        finally { td.querySelectorAll('input').forEach(x => { x.disabled = false; }); }
+      }));
     } catch (e) { alvo.innerHTML = `<p class="ac-vazio">${esc(e.message)}</p>`; }
   }
   async function acao(a, u) {

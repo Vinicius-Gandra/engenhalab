@@ -140,17 +140,22 @@
     else { const m = document.querySelector('main'); if (m) { const d = document.createElement('div'); d.className = 'rp-resp rp-resp-pagina'; d.innerHTML = html; m.prepend(d); } }
   }
   window.addEventListener('beforeprint', blocoResponsavel);
-  window.Sessao = { pedir, sessao, sair, BASE, guardar: s => { if (s && s.usuario) adotar(s.usuario); gravar(K_SESSAO, s); document.dispatchEvent(new CustomEvent('engenha-sessao')); }, projetoAtivo: () => ler(K_PROJ, null), definirProjeto: p => gravar(K_PROJ, p), dadosLocais, aplicarDados, apagarEstudo, temEstudo, CHAVES, avatar, ICONES, iconeSvg, iniciais };
+  // laboratórios liberados para a conta (o administrador usa todos); sessões antigas sem a lista valem para o offshore
+  const temLab = lab => { const s = sessao(); if (!s) return false; const u = s.usuario; return u.papel === 'admin' || (Array.isArray(u.labs) ? u.labs : ['offshore']).includes(lab); };
+  window.Sessao = { temLab, pedir, sessao, sair, BASE, guardar: s => { if (s && s.usuario) adotar(s.usuario); gravar(K_SESSAO, s); document.dispatchEvent(new CustomEvent('engenha-sessao')); }, projetoAtivo: () => ler(K_PROJ, null), definirProjeto: p => gravar(K_PROJ, p), dadosLocais, aplicarDados, apagarEstudo, temEstudo, CHAVES, avatar, ICONES, iconeSvg, iniciais };
 
   /* ------------------------------------------------- projeto no servidor */
   function dadosLocais() { const o = {}; for (const k of CHAVES) { const v = ler(k, null); if (v && typeof v === 'object') o[k] = v; } return o; }
   function aplicarDados(d) { for (const k of CHAVES) { if (d && d[k]) gravar(k, d[k]); else gravar(k, null); } }
   const pagina = document.body && document.body.dataset.page !== 'acesso';
-  if (!pagina) return;
+  // confere a sessão em segundo plano (pode ter sido encerrada ou ter mudado de permissão pelo administrador)
+  if (pagina && sessao()) pedir('conta/eu').then(r => { const s = sessao(); if (r && r.usuario && s) { gravar(K_SESSAO, { ...s, usuario: { ...s.usuario, ...r.usuario } }); document.dispatchEvent(new CustomEvent('engenha-sessao')); } }).catch(() => {});
+  // o resto (projeto salvo, barra e cabeçalho) é das páginas do laboratório offshore
+  if (!pagina || !/\/offshore\//.test(location.pathname)) return;
 
   let ultimo = JSON.stringify(dadosLocais()), espera = 0, salvando = false, barra = null;
   async function salvar() {
-    const p = ler(K_PROJ, null), s = sessao(); if (!p || !s || salvando) return;
+    const p = ler(K_PROJ, null), s = sessao(); if (!p || !s || salvando || !temLab('offshore')) return;
     const atual = JSON.stringify(dadosLocais()); if (atual === ultimo) return;
     salvando = true; estado('Salvando…');
     try { const r = await pedir('projetos/salvar', { id: p.id, dados: JSON.parse(atual) }); ultimo = atual; gravar(K_PROJ, { ...p, versao: r.versao }); estado('Salvo às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })); }
@@ -162,7 +167,7 @@
 
   // ao abrir a página: se o projeto mudou em outro lugar (e aqui não há mudança pendente), traz a versão salva
   async function conferirVersao() {
-    const p = ler(K_PROJ, null); if (!p || !sessao()) return;
+    const p = ler(K_PROJ, null); if (!p || !sessao() || !temLab('offshore')) return;
     try {
       const r = await pedir('projetos/abrir', { id: p.id });
       if (r.versao > (p.versao || 0)) {
@@ -186,7 +191,7 @@
   function estado(txt, erro) { const e = barra && barra.querySelector('.sb-estado'); if (e) { e.textContent = txt; e.classList.toggle('erro', !!erro); } }
   async function montarBarra() {
     const s = sessao();
-    if (!s) { if (barra) { barra.remove(); barra = null; } return; }
+    if (!s || !temLab('offshore')) { if (barra) { barra.remove(); barra = null; } return; }
     if (!barra) { barra = document.createElement('div'); barra.className = 's-projeto'; barra.setAttribute('role', 'region'); barra.setAttribute('aria-label', 'Projeto salvo no servidor'); (document.querySelector('.s-areas') || document.querySelector('header')).after(barra); }
     const p = ler(K_PROJ, null);
     barra.innerHTML = `<span class="sb-rot">Projeto</span><select class="sb-sel" aria-label="Projeto"><option value="">${p ? esc(p.nome) : 'Sem projeto (só neste navegador)'}</option></select>
@@ -233,7 +238,7 @@
       if (/registro-garrafa\.html$/.test(location.pathname)) a.setAttribute('aria-current', 'page');
       nav.append(a);
     }
-    a.hidden = !sessao();
+    a.hidden = !temLab('offshore');
     // mantém a aba atual à vista quando a barra rola (celular)
     const atual = nav.querySelector('[aria-current="page"]:not([hidden])');
     if (atual && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, atual.offsetLeft - (nav.clientWidth - atual.offsetWidth) / 2);
@@ -241,6 +246,4 @@
   function atualizar() { botaoConta(); montarBarra(); abaGarrafa(); }
   document.addEventListener('engenha-sessao', atualizar);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { atualizar(); conferirVersao(); }); else { atualizar(); conferirVersao(); }
-  // confere a sessão em segundo plano (pode ter sido encerrada pelo administrador)
-  if (sessao()) pedir('conta/eu').catch(() => {});
 })();
