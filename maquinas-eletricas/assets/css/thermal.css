@@ -929,3 +929,10 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 /* desempenho: padrões sem contorno; animações paradas quando o desenho está fora da tela */
 .hxv .hx-padrao { stroke: none; }
 .hx-fora-tela .hxv, .hx-fora-tela .hxv * { animation-play-state: paused !important; }
+
+/* Escoamento simulado sob o desenho "Na máquina" */
+.hx-scroll { position: relative; }
+.hx-scroll > .hxv { position: relative; z-index: 1; }
+.hx-cfd { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .6s ease; }
+.hx-cfd-on .hx-cfd { opacity: 1; }
+.hx-cfd-on .hxv .hx-gap, .hx-cfd-on .hxv .hx-zone-hot, .hx-cfd-on .hxv .hx-zone-cold { fill: transparent; }
