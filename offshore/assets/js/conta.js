@@ -4,9 +4,12 @@
   const S = window.Sessao, app = document.getElementById('app');
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const primeiro = nome => String(nome || '').trim().split(/\s+/)[0] || '';
-  // volta só para páginas do próprio laboratório
+  // volta só para páginas dos laboratórios do site (offshore ou máquinas elétricas)
   const voltaParam = new URLSearchParams(location.search).get('volta');
-  const volta = voltaParam && /^[\w-]+\.html$/.test(voltaParam) ? voltaParam : null;
+  const volta = voltaParam && /^(\.\.\/maquinas-eletricas\/)?[\w-]+\.html$/.test(voltaParam) ? voltaParam : null;
+  // laboratórios do login compartilhado: onde cada um começa
+  const LABS = { offshore: ['Laboratório offshore', '01-lancamento.html'], maquinas: ['Máquinas elétricas', '../maquinas-eletricas/index.html'] };
+  const labsDe = u => (u && Array.isArray(u.labs) ? u.labs : ['offshore']).filter(l => LABS[l]);
   // o token do convite fica só na memória da página
   let convite = null; { const m = location.hash.match(/convite=([\w-]{30,80})/); if (m) { convite = m[1]; try { history.replaceState(null, '', location.pathname + location.search); } catch (_) { /* sem histórico */ } } }
 
@@ -45,7 +48,7 @@
   function ligarMostrar() { app.querySelectorAll('[data-mostrar]').forEach(c => c.addEventListener('change', () => app.querySelectorAll('input[data-senha]').forEach(i => { i.type = c.checked ? 'text' : 'password'; }))); }
   const cena = corpo => `<div class="v-cena"><span class="v-luz l1"></span><span class="v-luz l2"></span><span class="v-luz l3"></span>${corpo}</div>`;
   const cartao = (topo, corpo) => cena(`<div class="v-centro"><section class="v-cartao">${topo}<p class="v-msg" data-msg="v-msg" hidden></p>${corpo}</section>
-    <footer class="v-rodape"><span>Laboratório offshore · acesso por convite</span><a href="../index.html">EngenhaLab</a></footer></div>`);
+    <footer class="v-rodape"><span>Laboratórios EngenhaLab · acesso por convite</span><a href="../index.html">EngenhaLab</a></footer></div>`);
   const retrato = (u, titulo, sub) => `<div class="v-retrato">${u ? S.avatar(u, 'v-av-g') : `<span class="v-av-vazio">${IC.silhueta}</span>`}</div>${titulo ? `<h1 class="v-tit">${titulo}</h1>` : ''}${sub ? `<p class="v-sub">${sub}</p>` : ''}`;
   function entrou(s, primeiraVez) {
     S.guardar({ sessao: s.sessao, expira: s.expira, usuario: s.usuario });
@@ -160,7 +163,8 @@
     const so = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Mac OS X|Macintosh/.test(ua) ? 'macOS' : /Windows/.test(ua) ? 'Windows' : /Linux/.test(ua) ? 'Linux' : '';
     return { nome: so ? `${nav} no ${so}` : nav, movel: /iPhone|Android|iPad|Mobile/.test(ua) };
   }
-  const secaoAtual = () => { const h = location.hash.replace('#', ''); return SECOES.some(s => s[0] === h) ? h : 'perfil'; };
+  let SECS = SECOES;
+  const secaoAtual = () => { const h = location.hash.replace('#', ''); return SECS.some(s => s[0] === h) ? h : 'perfil'; };
   const qtd = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
   const dataCurta = t => t ? new Date(t * 1000).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }).replace('.', '') : '—';
   const hora = t => t ? new Date(t * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
@@ -172,6 +176,9 @@
     const s = S.sessao(); if (!s) return telaEntrar();
     let u = s.usuario; const admin = u.papel === 'admin';
     try { const r = await S.pedir('conta/eu'); u = r.usuario; S.guardar({ ...S.sessao(), usuario: u }); } catch (e) { if (e.sessao === false) { S.sair(); return telaEntrar(e.message); } }
+    // projetos e memoriais são do offshore; a conta mostra os laboratórios liberados para ela
+    const labs = labsDe(u), temOff = labs.includes('offshore');
+    SECS = temOff ? SECOES : SECOES.filter(x => x[0] !== 'projetos' && x[0] !== 'memoriais');
     document.body.className = 'c-pagina';
     app.innerHTML = `<a class="skip" href="#conteudo">Pular para o conteúdo</a>
       <header class="s-appbar">
@@ -180,7 +187,7 @@
         <span class="s-header-divider" aria-hidden="true"></span>
         <div class="s-appbar-title"><span class="overline">Laboratório offshore</span><strong>Minha conta</strong></div>
         <div class="s-actions">
-          <a class="s-act s-act-primary" href="01-lancamento.html">${IC.lab}<span class="c-txt">Abrir o laboratório</span></a>
+          ${labs.map((l, i) => `<a class="s-act${i ? '' : ' s-act-primary'}" href="${LABS[l][1]}">${IC.lab}<span class="c-txt">${labs.length > 1 ? LABS[l][0] : 'Abrir o laboratório'}</span></a>`).join('')}
           ${admin ? `<a class="s-act" href="admin.html">${IC.admin}<span class="c-txt">Administração</span></a>` : ''}
           <button type="button" class="s-act s-act-icon" data-tema title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="s-theme-sun" aria-hidden="true">☼</span><span class="s-theme-moon" aria-hidden="true">☾</span></button>
           <div class="c-menu-caixa"><button type="button" class="s-act c-conta-btn" data-menu aria-haspopup="true" aria-expanded="false"><span data-av-topo>${S.avatar(u, 'c-av-s')}</span><span class="c-txt" data-primeiro>${esc(primeiro(u.nome))}</span></button>
@@ -188,25 +195,26 @@
               <a href="#perfil" data-fechar>Editar perfil</a>${admin ? '<a href="admin.html">Painel do administrador</a>' : ''}<button type="button" data-sair>Sair da conta</button></div></div>
         </div>
       </header>
-      <nav class="s-areas" aria-label="Etapas do laboratório offshore">${ETAPAS.map(([h, n, t]) => `<a class="s-area" href="${h}"><span class="s-area-number">${n}</span> ${t}</a>`).join('')}</nav>
+      ${temOff ? `<nav class="s-areas" aria-label="Etapas do laboratório offshore">${ETAPAS.map(([h, n, t]) => `<a class="s-area" href="${h}"><span class="s-area-number">${n}</span> ${t}</a>`).join('')}</nav>` : ''}
       <main class="container c-conta" id="conteudo">
         <section class="page-head c-head">
-          <div><span class="eyebrow">Minha conta · ${admin ? 'administrador' : 'profissional convidado'}</span><h1 data-nome>${esc(u.nome)}</h1>
+          <div><span class="eyebrow">Minha conta · ${admin ? 'administrador · todos os laboratórios' : 'profissional convidado'}</span><h1 data-nome>${esc(u.nome)}</h1>
             <p><span data-empresa>${esc(u.empresa || 'Empresa não informada')}</span> · ${esc(u.email)}</p>
-            <div class="head-links"><a href="#perfil">Editar perfil</a><a href="#projetos">Projetos</a><a href="01-lancamento.html">Abrir o laboratório ↗</a></div></div>
+            <div class="head-links"><a href="#perfil">Editar perfil</a>${temOff ? '<a href="#projetos">Projetos</a>' : ''}${labs.map(l => `<a href="${LABS[l][1]}">${LABS[l][0]} ↗</a>`).join('')}</div>
+            ${labs.length ? '' : '<p class="c-sem-lab">Sua conta ainda não tem laboratório liberado. Fale com o administrador.</p>'}</div>
           <button type="button" class="c-head-av" data-ir aria-label="Alterar foto ou ícone"><span data-av-head>${S.avatar(u, 'c-av-xl')}</span><span class="c-cam">${IC.camera}</span></button>
         </section>
         <div class="stats c-stats">
-          <div class="stat"><span>Projetos</span><strong data-n="projetos">—</strong><small>salvos no servidor</small></div>
-          <div class="stat"><span>Memoriais</span><strong data-n="documentos">—</strong><small>emitidos com número</small></div>
+          ${temOff ? `<div class="stat"><span>Projetos</span><strong data-n="projetos">—</strong><small>salvos no servidor</small></div>
+          <div class="stat"><span>Memoriais</span><strong data-n="documentos">—</strong><small>emitidos com número</small></div>` : `<div class="stat"><span>Laboratórios</span><strong>${labs.length}</strong><small>${esc(labs.map(l => LABS[l][0]).join(' · ') || 'nenhum liberado')}</small></div>`}
           <div class="stat"><span>Sessões</span><strong data-n="sessoes">—</strong><small>abertas agora</small></div>
           <div class="stat"><span>Segundo fator</span>${estadoFator(u, 'Ativo', 'Inativo')}<small>aplicativo autenticador</small></div>
         </div>
         <div class="c-corpo">
-          <nav class="c-nav" aria-label="Seções da conta">${SECOES.map(([id, rot, sub], i) => `<a href="#${id}" data-sec="${id}"><b>0${i + 1}</b><span>${rot}<small>${sub}</small></span></a>`).join('')}</nav>
+          <nav class="c-nav" aria-label="Seções da conta">${SECS.map(([id, rot, sub], i) => `<a href="#${id}" data-sec="${id}"><b>0${i + 1}</b><span>${rot}<small>${sub}</small></span></a>`).join('')}</nav>
           <div class="c-conteudo"><p class="c-msg" data-msg="c-msg" hidden></p><div data-conteudo></div></div>
         </div>
-        <footer class="section-footer"><span>EngenhaLab · Laboratório offshore</span><span>Acesso por convite · verificação em duas etapas</span></footer>
+        <footer class="section-footer"><span>EngenhaLab · ${esc(labs.map(l => LABS[l][0]).join(' · ') || 'Minha conta')}</span><span>Acesso por convite · verificação em duas etapas</span></footer>
       </main>`;
 
     // tema, menu e sair
@@ -231,7 +239,7 @@
     window.onhashchange = () => { if (app.querySelector('.c-conta')) mostrar(true); };
     mostrar();
     if (primeiraVez) aviso('Acesso ativado. Confira seu nome e escolha uma foto ou ícone: eles assinam os memoriais e relatórios.', 'ok');
-    await Promise.all([carregar('projetos'), carregar('documentos'), carregar('sessoes')]);
+    await Promise.all(temOff ? [carregar('projetos'), carregar('documentos'), carregar('sessoes')] : [carregar('sessoes')]);
     numeros(); if (secaoAtual() !== 'perfil') mostrar();
 
     function numeros() { ['projetos', 'documentos', 'sessoes'].forEach(k => { const e = app.querySelector(`[data-n="${k}"]`); if (e) e.textContent = cache[k] ? cache[k].length : '—'; }); }
