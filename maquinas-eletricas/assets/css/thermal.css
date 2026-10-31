@@ -956,3 +956,10 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 .hxv .hx-pipe-la { stroke: var(--water); stroke-width: 3.2; }
 .hxv .hx-ar-la { fill: var(--surface-2); }
 .hxv .hx-ar-la-t { opacity: .7; }
+/* Corte B–B: chapa espaçadora, vigas I, setas de ar coloridas pela temperatura */
+.hxv .hx-chapa-bb { fill: var(--hx-steel); stroke: var(--hx-edge, var(--line-strong)); stroke-width: 1.2; fill-rule: evenodd; }
+.hxv .hx-viga { stroke: color-mix(in srgb, var(--text) 62%, var(--c-surface)); stroke-width: 2.2; stroke-linecap: butt; }
+.hxv .hx-viga-m { stroke: color-mix(in srgb, var(--text) 62%, var(--c-surface)); stroke-width: 3.6; }
+.hxv .hx-furo-bb { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: .8; }
+.hxv .hx-shaft-bb { fill: var(--c-deemph); stroke: var(--line-strong); stroke-width: 1; }
+.hxv .hx-ar-bb { fill: none; stroke-linecap: round; stroke-linejoin: round; }
