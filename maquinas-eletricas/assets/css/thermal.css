@@ -936,3 +936,11 @@ html.hz-aberto, html.hz-aberto body { overflow: hidden; }
 .hx-cfd { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .6s ease; }
 .hx-cfd-on .hx-cfd { opacity: 1; }
 .hx-cfd-on .hxv .hx-gap, .hx-cfd-on .hxv .hx-zone-hot, .hx-cfd-on .hxv .hx-zone-cold { fill: transparent; }
+/* Sobre o escoamento colorido: contornos mais firmes em núcleo, bobinas e rotor */
+.hx-cfd-on .hxv { --hx-edge: color-mix(in srgb, var(--text) 72%, var(--c-surface)); }
+.hx-cfd-on .hxv :is(.hx-core, .hx-steel-2, .hx-rotor, .hx-pole, .hx-bearing) { stroke: var(--hx-edge); stroke-width: 1.6; }
+.hx-cfd-on .hxv .hx-cu { stroke: color-mix(in srgb, var(--hx-copper-line) 55%, var(--text)); stroke-width: 1.5; }
+.hx-cfd-on .hxv .hx-fan { stroke: var(--hx-edge); stroke-width: 1.2; }
+.hx-cfd-on .hxv .hx-wedge { stroke: var(--hx-edge); stroke-width: 1.4; }
+.hx-cfd-on .hxv .hx-hatch-fe { stroke: color-mix(in srgb, var(--text-3) 60%, transparent); }
+.hx-cfd-on .hxv .hx-part.is-hot :is(rect, path, circle, line) { stroke: var(--accent); }
