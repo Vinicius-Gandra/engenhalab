@@ -169,7 +169,10 @@
     let sim = null, gen = 0;
     const enviar = (g, extra) => { const c = sim.campo(); self.postMessage(Object.assign({ g }, c, extra), [c.ux.buffer, c.uy.buffer, c.T.buffer]); };
     self.onmessage = e => {
+      // só aceita mensagens da própria página que criou o worker, no formato esperado
+      if (e.origin && e.origin !== self.location.origin) return;
       const m = e.data;
+      if (!m || typeof m !== 'object' || typeof m.g !== 'number') return;
       if (m.tipo === 'iniciar') {
         gen = m.g; sim = nucleo(H); sim.iniciar(m.fans);
         const g = gen, fatia = () => {
@@ -179,7 +182,7 @@
         };
         fatia();
       } else if (m.tipo === 'passo' && sim && m.g === gen && sim.pronto()) {
-        const t = performance.now(); sim.passo(m.n); enviar(gen, { ms: performance.now() - t });
+        const t = performance.now(); sim.passo(Math.max(1, Math.min(8, m.n | 0))); enviar(gen, { ms: performance.now() - t });
       }
     };
   }
@@ -199,7 +202,7 @@
     try {
       const url = URL.createObjectURL(new Blob([`(${trabalhador})(${nucleo}, ${H});`], { type: 'text/javascript' }));
       w = new Worker(url);
-      w.onmessage = e => { if (e.data.g === gen) aoCampo(e.data); };
+      w.onmessage = e => { if (e.target === w && e.data && e.data.g === gen) aoCampo(e.data); };
       w.onerror = () => { w = null; gen++; emLocal(fansW); };
     } catch (_) { w = null; }
     return {
