@@ -1208,3 +1208,12 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 html[data-theme="dark"] .hxv .hx-cabo-neg { stroke: #d8dde0; }
 html[data-theme="dark"] .hxv .hx-cabo-pt.hx-cabo-neg, html[data-theme="dark"] .hxv .hx-cabo-bb.hx-cabo-neg, html[data-theme="dark"] .hxv .hx-t-neg { fill: #d8dde0; }
 @media (prefers-color-scheme: dark) { html:not([data-theme="light"]) .hxv .hx-cabo-neg { stroke: #d8dde0; } html:not([data-theme="light"]) .hxv .hx-cabo-pt.hx-cabo-neg, html:not([data-theme="light"]) .hxv .hx-cabo-bb.hx-cabo-neg, html:not([data-theme="light"]) .hxv .hx-t-neg { fill: #d8dde0; } }
+/* simulação ligada / desligada */
+.hx-sim { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 6px 12px 6px 8px; border: 1px solid var(--line-strong, var(--line)); border-radius: 999px; background: transparent; color: var(--text); font: 650 .76rem var(--font-sans); cursor: pointer; }
+.hx-sim-i { position: relative; width: 28px; height: 16px; border-radius: 999px; background: var(--accent); transition: background .2s; }
+.hx-sim-i::after { content: ""; position: absolute; top: 2px; left: 14px; width: 12px; height: 12px; border-radius: 50%; background: var(--c-surface, #fff); transition: left .2s; }
+.hx-sim.is-off .hx-sim-i { background: var(--line-strong, #9aa); }
+.hx-sim.is-off .hx-sim-i::after { left: 2px; }
+.hx-sim:hover { background: var(--surface-2); }
+.hx-sim-off :is(.hx-seg, .hx-play, .hx-pal, .hx-cfd-esc, .hx-cfd-ctl > .hx-cfd-rot) { opacity: .38; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .hx-sim-i, .hx-sim-i::after { transition: none; } }
