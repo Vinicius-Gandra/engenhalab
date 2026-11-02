@@ -1188,3 +1188,15 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 .hxv .hx-shaft { stroke: var(--line-strong); stroke-width: .8; stroke-linejoin: round; }
 .hxv .hx-shaft-j { stroke: var(--line-strong); stroke-width: .6; }
 .hxv .hx-shaft-furo { fill: var(--c-surface); stroke: var(--line-strong); stroke-width: .5; stroke-dasharray: 3 2; }
+/* eixo de referência: chavetas, assentos, acoplamento, excitatriz e cabos do campo */
+.hxv .hx-key { fill: var(--text-3); }
+.hxv .hx-assento { fill: none; stroke: var(--accent); stroke-width: .9; stroke-dasharray: 3 2; }
+.hxv .hx-t-ass { font: 600 7px var(--font-mono, monospace); fill: var(--accent); paint-order: stroke; stroke: var(--c-surface); stroke-width: 2.5px; }
+.hxv .hx-bolt { fill: var(--text-2); }
+.hxv .hx-acopl .hx-steel { stroke: var(--line-strong); stroke-width: .7; }
+.hxv .hx-exc-caixa { fill: none; stroke: var(--text-2); stroke-width: 1.4; stroke-linejoin: round; }
+.hxv .hx-diodo { fill: #b5482f; }
+.hxv .hx-cabo { fill: none; stroke: #c4472b; stroke-width: 1.1; stroke-linejoin: round; }
+.hxv .hx-cabo-oc { stroke-dasharray: 3 2; opacity: .8; }
+.hxv .hx-cabo-bb { fill: #c4472b; }
+.hxv .hx-exc-aleta { stroke: var(--line-strong); stroke-width: .6; stroke-dasharray: 2 2; }
