@@ -332,6 +332,10 @@
   const NB = 20, FI = 2;   // faixas do contorno e ampliação da imagem do campo
   let modo = 'T', contaImg = 0, pausado = false;
   try { pausado = localStorage.getItem('engenhalab.termica.pausa') === '1'; } catch (_) { /* sem armazenamento */ }
+  // simulação ligada (escoamento por cima do desenho) ou desligada (só o desenho, para ver as peças)
+  let ligado = true;
+  try { ligado = localStorage.getItem('engenhalab.termica.simulacao') !== '0'; } catch (_) { /* sem armazenamento */ }
+  const mostrar = () => { for (const el of [alvo, extra && extra.caixa]) if (el) el.classList.toggle('hx-cfd-on', ligado && temCampo); };
   const corT = h => { h = Math.max(0, Math.min(1, h)); let i = 0; while (i < STOPS.length - 2 && h > STOPS[i + 1][0]) i++; const [h0, c0] = STOPS[i], [h1, c1] = STOPS[i + 1], t = (h - h0) / (h1 - h0); return c0.map((c, k) => c + (c1[k] - c) * t); };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const temaClaro = () => { const t = document.documentElement.dataset.theme; return t ? t === 'light' : matchMedia('(prefers-color-scheme: light)').matches; };
@@ -518,7 +522,7 @@
     if (contaImg++ % 8 === 0) novo = true;
     temCampo = true; esperando = false;
     if (c.ms > 0) { if (c.ms > 14 && nPassos > 2) nPassos--; else if (c.ms < 7 && nPassos < 8) nPassos++; }
-    if (alvo && !alvo.classList.contains('hx-cfd-on')) { alvo.classList.add('hx-cfd-on'); seguir(); }
+    if (alvo && ligado && !alvo.classList.contains('hx-cfd-on')) { alvo.classList.add('hx-cfd-on'); seguir(); }
     else if (!raf) pintar(0);
   }
   function quadro(t) {
@@ -530,6 +534,8 @@
   function seguir() {
     cancelAnimationFrame(raf); raf = 0; ultimo = 0;
     if (!cv || !temCampo) return;
+    mostrar();
+    if (!ligado) return;
     medir();
     for (const el of [alvo, extra && extra.caixa]) if (el) el.classList.toggle('hx-pausado', pausado);
     if ((vis || extra) && !pausado && !reduce.matches && !document.hidden) { esperando = false; raf = requestAnimationFrame(quadro); } else pintar(0);
@@ -542,7 +548,7 @@
     const b = document.createElement('div');
     b.className = 'hx-cfd-barra' + (zoom ? ' hx-cfd-barra-z' : '');
     const opcoes = Object.entries(PALETAS).map(([k, v]) => `<option value="${k}">${v.nome}</option>`).join('');
-    b.innerHTML = `<div class="hx-cfd-ctl"><span class="hx-cfd-rot">Campo</span><div class="hx-seg" role="group" aria-label="Campo mostrado no escoamento">`
+    b.innerHTML = `<div class="hx-cfd-ctl"><button type="button" class="hx-sim" data-acao="sim"><span class="hx-sim-i" aria-hidden="true"></span><span class="hx-sim-t">Simulação</span></button><span class="hx-cfd-rot">Campo</span><div class="hx-seg" role="group" aria-label="Campo mostrado no escoamento">`
       + `<button type="button" data-modo="T">Temperatura</button><button type="button" data-modo="V">Velocidade</button></div>`
       + `<button type="button" class="hx-play" data-acao="pausa"><span class="hx-play-i" aria-hidden="true"></span><span class="hx-play-t"></span></button>`
       + `<label class="hx-pal"><span class="hx-cfd-rot">Colors</span><select aria-label="Paleta de cores do campo">${opcoes}</select></label></div>`
@@ -555,6 +561,10 @@
     const ticks = modo === 'V' ? ['0', '0,25', '0,5', '0,75', '1'] : [0, 0.25, 0.5, 0.75, 1].map(f => Tc == null ? '—' : num(Tc + (Th - Tc) * f));
     const tit = modo === 'V' ? 'Velocidade do ar · relativa à máxima' : 'Temperatura do ar · °C';
     for (const b of barras) {
+      const sm = b.querySelector('.hx-sim'); sm.setAttribute('aria-pressed', String(ligado)); sm.classList.toggle('is-off', !ligado);
+      sm.setAttribute('aria-label', ligado ? 'Desligar a simulação do ar e ver só o desenho' : 'Ligar a simulação do ar sobre o desenho');
+      sm.title = ligado ? 'Simulação ligada · clique para ver só o desenho' : 'Simulação desligada · clique para ligar';
+      b.classList.toggle('hx-sim-off', !ligado);
       b.querySelectorAll('[data-modo]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.modo === modo)));
       const p = b.querySelector('.hx-play'); p.classList.toggle('hx-parado', pausado); p.setAttribute('aria-pressed', String(pausado));
       p.querySelector('.hx-play-t').textContent = pausado ? 'Animar' : 'Pausar';
@@ -583,6 +593,8 @@
   function escutarModo(el) {
     if (el.dataset.cfdModo) return; el.dataset.cfdModo = '1';
     const f = e => {
+      const sm = e.target.closest && e.target.closest('[data-acao="sim"]');
+      if (sm) { e.stopPropagation(); ligado = !ligado; try { localStorage.setItem('engenhalab.termica.simulacao', ligado ? '1' : '0'); } catch (_) { /* sem armazenamento */ } atualizarBarras(); mostrar(); if (ligado) seguir(); else { cancelAnimationFrame(raf); raf = 0; } return; }
       const p = e.target.closest && e.target.closest('[data-acao="pausa"]');
       if (p) { e.stopPropagation(); pausado = !pausado; try { localStorage.setItem('engenhalab.termica.pausa', pausado ? '1' : '0'); } catch (_) { /* sem armazenamento */ } atualizarBarras(); seguir(); return; }
       const b = e.target.closest && e.target.closest('[data-modo]'); if (!b) return; e.stopPropagation(); definirModo(b.getAttribute('data-modo'));
@@ -619,7 +631,7 @@
     atualizarBarras();
     escutarModo(sc); sc.classList.toggle('hx-modo-v', modo === 'V');
     alvo.prepend(cv);
-    if (temCampo) alvo.classList.add('hx-cfd-on');
+    if (temCampo && ligado) alvo.classList.add('hx-cfd-on');
     if ('ResizeObserver' in window) { ro && ro.disconnect(); ro = new ResizeObserver(() => { medir(); if (!raf) pintar(0); }); ro.observe(s); }
     if (io) { io.disconnect(); io.observe(alvo); } else vis = true;
     requestAnimationFrame(() => { medir(); seguir(); });
@@ -628,7 +640,7 @@
   function ampliar(area, s) {
     if (!cv || !area || !s) return () => {};
     const c = document.createElement('canvas'); c.className = 'hx-cfd hz-cfd'; c.setAttribute('aria-hidden', 'true');
-    area.prepend(c); area.classList.add('hx-cfd-on');
+    area.prepend(c); area.classList.toggle('hx-cfd-on', ligado);
     escutarModo(area); area.classList.toggle('hx-modo-v', modo === 'V');
     barraZoom = criarBarra(true); (area.parentNode || area).appendChild(barraZoom);
     extra = { cv: c, ctx: c.getContext('2d'), svg: s, caixa: area, zoom: true, W: 0, Hh: 0, dpr: 1, M: null };
