@@ -1217,3 +1217,25 @@ html[data-theme="dark"] .hxv .hx-cabo-pt.hx-cabo-neg, html[data-theme="dark"] .h
 .hx-sim:hover { background: var(--surface-2); }
 .hx-sim-off :is(.hx-seg, .hx-play, .hx-pal, .hx-cfd-esc, .hx-cfd-ctl > .hx-cfd-rot) { opacity: .38; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .hx-sim-i, .hx-sim-i::after { transition: none; } }
+/* mancal no colo, ventilador no assento e ponte de diodos */
+.hxv .hx-babbitt { fill: #cfcabd; stroke: none; }
+.hxv .hx-fan-cubo { fill: var(--text-3); opacity: .85; }
+.hxv .hx-dissip { fill: #aeb6bd; stroke: var(--line-strong); stroke-width: .4; }
+.hxv .hx-exc-sup { stroke: var(--text-2); stroke-width: 1.2; }
+.hxv .hx-fan-disco { fill: var(--text-2); }
+.hxv .hx-fan-cubo { fill: var(--text-3); opacity: 1; stroke: var(--line-strong); stroke-width: .5; }
+/* mancal de deslizamento em corte */
+.hxv .hx-mc-caixa { fill: color-mix(in srgb, var(--text-3) 30%, var(--c-surface)); stroke: var(--line-strong); stroke-width: .8; stroke-linejoin: round; }
+.hxv .hx-mc-paraf { stroke: var(--text-2); stroke-width: 1.1; }
+.hxv .hx-mc-oleo { fill: #d9b24c; opacity: .55; }
+.hxv .hx-mc-nivel { stroke: #9c7418; stroke-width: .6; stroke-dasharray: 2 1.5; }
+.hxv .hx-mc-visor { fill: #f3e2a8; stroke: var(--text-2); stroke-width: .6; }
+.hxv .hx-mc-casq { fill: color-mix(in srgb, var(--text-3) 55%, var(--c-surface)); stroke: var(--line-strong); stroke-width: .4; }
+.hxv .hx-babbitt { fill: #d7d3c8; stroke: #a59f90; stroke-width: .3; }
+.hxv .hx-mc-lab { fill: color-mix(in srgb, var(--text-3) 42%, var(--c-surface)); stroke: var(--line-strong); stroke-width: .4; }
+.hxv .hx-mc-dente { stroke: var(--line-strong); stroke-width: .45; }
+.hxv .hx-mc-anel { fill: #b9895a; stroke: #7d5a36; stroke-width: .4; }
+.hxv .hx-mc-anel-oc { fill: none; stroke: #9a7148; stroke-width: .5; stroke-dasharray: 1.6 1.4; }
+.hxv .hx-mc-rtd { stroke: #2f6fdf; stroke-width: .8; }
+.hxv .hx-mc-rtd-c { fill: #2f6fdf; }
+.hxv .hx-mc-isol { fill: #3a3a3a; }
