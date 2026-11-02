@@ -1184,3 +1184,7 @@ html[data-theme=light] .hxv { --hx-iron: #83b3a7; --hx-iron2: #477e73; --hx-ins:
 .dica-me .dica-fontes li { margin: 3px 0; }
 .dica-me .dica-fontes a { color: var(--accent, #2f6fdf); text-decoration: underline; text-underline-offset: 2px; }
 .dica-me .dica-fontes small { display: block; color: var(--text-3); font-size: .64rem; }
+/* eixo com o perfil do laboratório de eixos */
+.hxv .hx-shaft { stroke: var(--line-strong); stroke-width: .8; stroke-linejoin: round; }
+.hxv .hx-shaft-j { stroke: var(--line-strong); stroke-width: .6; }
+.hxv .hx-shaft-furo { fill: var(--c-surface); stroke: var(--line-strong); stroke-width: .5; stroke-dasharray: 3 2; }
