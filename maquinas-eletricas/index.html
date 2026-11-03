@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&family=JetBrains+Mono:wght@400;600&display=swap">
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/site-labs.css">
+<link rel="stylesheet" href="assets/css/maquina3d.css?v=20261102-1">
+<script type="module" src="assets/js/maquina3d.js?v=20261102-1"></script>
   <style>
     /* Capa do laboratório (00 · Anatomia). Mesmo cabeçalho e barra de áreas dos módulos 01–04. */
     :root { --hh: 56px; --ah: 40px; --gut: clamp(16px, 3vw, 36px); }
@@ -233,6 +235,42 @@
       <p class="s-eyebrow">Máquinas elétricas · visão geral</p>
       <h1>Laboratório de máquinas <em>elétricas.</em></h1>
       <p>Ferramentas para projetar geradores e motores síncronos: do campo magnético ao eixo, aos mancais e à refrigeração. Escolha uma peça no corte ou na lista para ver o que ela faz e em qual módulo ela é calculada.</p>
+    </section>
+
+    <section class="m3" id="tour-3d" aria-labelledby="m3-tit">
+      <header class="m3-head">
+        <div>
+          <p class="s-eyebrow">00 · Visão geral em 3D</p>
+          <h2 id="m3-tit">O gerador por dentro</h2>
+          <p>Gerador síncrono de polos salientes com excitação sem escovas e trocador ar–água. Escolha a trilha elétrica ou a mecânica e siga o tour, ou gire e toque numa peça.</p>
+        </div>
+        <div class="m3-tools">
+          <div class="m3-seg" role="group" aria-label="Trilha do tour">
+            <button type="button" data-trilha="eletrica" aria-pressed="true">Elétrica</button>
+            <button type="button" data-trilha="mecanica" aria-pressed="false">Mecânica</button>
+          </div>
+          <button type="button" class="m3-tb m3-primary" id="m3-play" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9-5.5z"/><path class="i-pause" d="M4 2.5h3v11H4zM9 2.5h3v11H9z"/></svg><span>Tour guiado</span></button>
+        </div>
+      </header>
+      <div class="m3-stage" id="m3-stage">
+        <canvas id="m3-canvas" tabindex="0" aria-label="Gerador síncrono em 3D: gire, aproxime e toque numa peça"></canvas>
+        <div class="m3-card" id="m3-card">
+          <div class="m3-card-top"><span class="m3-trilha" id="m3-trilha-rot">Elétrica</span><span id="m3-count">01 / 06</span>
+            <div class="m3-nav"><button type="button" id="m3-prev" aria-label="Capítulo anterior"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button><button type="button" id="m3-next" aria-label="Próximo capítulo"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button></div>
+          </div>
+          <h3 id="m3-step-title"></h3>
+          <p id="m3-step-text" aria-live="polite"></p>
+          <div class="m3-prog"><i id="m3-prog"></i></div>
+        </div>
+        <div class="m3-acoes" role="group" aria-label="Vista">
+          <button type="button" id="m3-corte" aria-pressed="false" title="Cortar a carcaça e o estator ao meio">Corte</button>
+          <button type="button" id="m3-giro" aria-pressed="true" title="Girar o rotor">Girar rotor</button>
+          <button type="button" id="m3-full" aria-label="Tela cheia" title="Tela cheia"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4"/></svg></button>
+        </div>
+        <div class="m3-tip" id="m3-tip" role="tooltip" hidden></div>
+        <p class="m3-dica" aria-hidden="true">Arraste para girar · role ou pinça para aproximar · toque numa peça</p>
+      </div>
+      <nav class="m3-caps" id="m3-caps" role="tablist" aria-label="Capítulos do tour"></nav>
     </section>
 
     <div class="anat-stage">
