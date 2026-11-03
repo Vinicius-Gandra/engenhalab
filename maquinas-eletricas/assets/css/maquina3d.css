@@ -53,6 +53,17 @@ html[data-theme="dark"] .m3-stage { background: radial-gradient(110% 85% at 58% 
 
 .m3:fullscreen { margin: 0; padding: 16px; background: var(--bg); }
 .m3:fullscreen .m3-stage { height: calc(100vh - 150px); }
+/* tela cheia por CSS (celular): a seção cobre a tela e o palco ocupa o que sobra */
+.m3.m3-cheia { position: fixed; inset: 0; z-index: 9500; margin: 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden; background: var(--bg);
+  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+.m3.m3-cheia .m3-head { margin-bottom: 0; }
+.m3.m3-cheia .m3-head > div:first-child { display: none; }
+.m3.m3-cheia .m3-stage { flex: 1 1 auto; height: auto; min-height: 0; }
+.m3.m3-cheia .m3-caps { flex: none; margin-top: 0; }
+html.m3-travado, html.m3-travado body { overflow: hidden; overscroll-behavior: none; }
+html.m3-travado .vg-entrar { display: none; }
+.m3:fullscreen ~ .vg-entrar { display: none; }
+#m3-full[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 @media (max-width: 720px) {
   .m3-stage { height: 72vh; min-height: 420px; border-radius: 14px; }
   .m3-card { left: 8px; right: 8px; bottom: 8px; width: auto; padding: 12px; }
