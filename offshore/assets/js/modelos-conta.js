@@ -16,12 +16,14 @@
   var T98 = {
     name: 'T-98', eye: 0.5, mass: 98000, volume: 13.24, diameter: 1.07, length: 16.7, coneLength: 2.1, fallArea: 1.036, fins: 4, geometry: 'arquivo local',
     fallPar: { cdBottom: 1.96, cdTop: 0, ca: 0.6 },
-    truePar: { alphaT: 0.3287, cdSoil: 0.23, nc: 12, ncFin: 7.5, beta: 0.123, rateRef: 0.17 }
+    truePar: { alphaT: 0.35, cdSoil: 1.3, nc: 0, ncFin: 7.5, beta: 0.17, rateRef: 0.17, st: 2.5 }
   };
 
   function aplicar(L) {
     if (!L || !L.MODELS) return;
     if (!acesso) return;
+    // a sensibilidade passa a acompanhar o modelo: 2,5 no T-98 e 1,2 nos demais
+    for (var m in L.MODELS) if (L.MODELS[m].truePar && L.MODELS[m].truePar.st === undefined) L.MODELS[m].truePar.st = 1.2;
     L.MODELS[98] = T98;
     // core.js troca um modelo que ainda não conhecia pelo T-120: devolve o projeto salvo
     if (salvo && Number(salvo.model) === 98 && L.project && Number(L.project.model) !== 98) { try { L.saveProject(salvo); } catch (e) { /* projeto inválido: fica o T-120 */ } }
