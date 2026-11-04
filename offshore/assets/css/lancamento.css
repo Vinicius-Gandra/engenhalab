@@ -147,7 +147,7 @@
 
 
 /* seletor de modelo */
-.lx-lineup{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.lx-lineup{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
 .lx-lineup button{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;height:148px;padding:10px 4px 9px;border:1px solid var(--line);border-radius:11px;background:linear-gradient(180deg,var(--panel2),color-mix(in srgb,var(--panel2) 70%,var(--bg)));color:var(--muted);transition:border-color .15s,background .15s,transform .15s,box-shadow .15s}
 .lx-lineup button:not(:disabled):hover{border-color:var(--line2);color:var(--text);transform:translateY(-1px)}
 .lx-lineup button:not(:disabled):active{transform:scale(.97)}

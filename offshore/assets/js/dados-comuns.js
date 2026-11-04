@@ -15,6 +15,18 @@
       trechos: [{ length: 9.0, finStart: 0.658, finEnd: 0.658 }, { length: 5.0, finStart: 0, finEnd: 0 }], volumeCap: 8.319 },
     120: { nome: 'T-120', d: 1.219, l: 20.93, aletas: 4, volume: 16.21 }
   };
+  // modelo liberado só para quem entrou com acesso ao laboratório offshore
+  if (comAcesso()) MODELOS[98] = { nome: 'T-98', d: 1.07, l: 14.6, aletas: 4, volume: 13.24,
+    trechos: [{ length: 1.4, finStart: 0.15, finEnd: 0.9 }, { length: 8.3, finStart: 0.9, finEnd: 0.9 },
+      { length: 1.4, finStart: 0.9, finEnd: 0.15 }, { length: 3.5, finStart: 0, finEnd: 0 }] };
+  function comAcesso() {
+    try {
+      var s = JSON.parse(localStorage.getItem('engenha-offshore-sessao') || 'null');
+      if (!s || !s.usuario || !(s.expira * 1000 > Date.now())) return false;
+      var u = s.usuario;
+      return u.papel === 'admin' || (Array.isArray(u.labs) ? u.labs : ['offshore']).indexOf('offshore') >= 0;
+    } catch (e) { return false; }
+  }
   // trechos de referência do T-120 (padrão da página de capacidade axial)
   var TRECHOS_120 = [
     { length: 6.485, finStart: 0, finEnd: 0 },
