@@ -39,6 +39,9 @@
 .e3-palco[data-modo="tecnico"] .e3-status{color:var(--soft)}
 .e3-cota{padding:2px 7px;border-radius:5px;background:var(--orange);color:#fff;font:700 .68rem var(--mono);white-space:nowrap;box-shadow:0 2px 8px rgb(0 0 0/.18)}
 .e3-cota-pos{display:grid;place-items:center}
+.e3-cota-nota{background:transparent;color:var(--orange);border:1px solid var(--orange);box-shadow:none}
+.e3-cota-baixo2 .e3-cota{transform:translateY(38px)}
+.e3-cota-baixo3 .e3-cota{transform:translateY(62px)}
 .e3-cota-baixo .e3-cota{transform:translateY(14px)}
 .e3-cota-dir .e3-cota{transform:translateX(calc(50% + 10px))}
 .e3-cota-esq .e3-cota{transform:translateX(calc(-50% - 10px))}
