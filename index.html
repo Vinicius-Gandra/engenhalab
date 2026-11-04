@@ -3,6 +3,7 @@
 <head>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-3RUO80RBVz/+lyeg5nra2DclJBmr18AdF/bQ3L+Cm24=' 'sha256-ls5wGMsZiDARMj4sjqscG8Rs0ameKls1aaYB1NWY21o=' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://api.engenhalab.com.br https://engenhalab-calculo.engenhalab.workers.dev http://localhost:8787 http://127.0.0.1:8787 https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <script src="/assets/js/anti-quadro.js"></script>
+  <script src="/assets/js/idioma-cedo.js?v=20261104-1"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="EngenhaLab: central de laboratórios interativos de engenharia. Máquinas elétricas e offshore abertos; estruturas e CAE, fluidos e CFD, metalurgia química e automação e CAD em preparação.">
@@ -85,13 +86,77 @@
     .brand-mark b, .brand-name b { color: var(--accent); }
     .brand-name { font-size: .92rem; font-weight: 700; letter-spacing: -.02em; color: var(--text-2); }
     .brand-name b { font-weight: 800; }
-    .top nav { margin-left: auto; }
-    .top nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--text-2); font-size: .88rem; font-weight: 600; }
     .theme { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; color: var(--text-2); font-size: 1.1rem; }
     .moon { display: none; }
     html[data-theme="light"] .sun { display: none; }
     html[data-theme="light"] .moon { display: inline; }
     @media (prefers-color-scheme: light) { html:not([data-theme]) .sun { display: none; } html:not([data-theme]) .moon { display: inline; } }
+
+
+    /* ---- Barra de menus ----------------------------------------------------- */
+    .top-bar { gap: 6px; }
+    .brand { margin-right: 10px; }
+    .menu { display: flex; align-items: center; gap: 2px; }
+    .menu-item { position: relative; }
+    .menu-link { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 13px; border: 0; border-radius: 10px; background: transparent; color: var(--text-2); font-size: .875rem; font-weight: 600; letter-spacing: -.005em; white-space: nowrap; transition: color .15s, background .15s; }
+    .menu-link svg { width: 9px; height: 6px; fill: none; stroke: currentColor; stroke-width: 1.6; transition: transform .2s; }
+    .menu-drop[aria-expanded="true"] { color: var(--text); background: var(--surface-2); }
+    .menu-drop[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .menu-panel { position: absolute; top: calc(100% + 10px); left: -8px; z-index: 60; display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)) minmax(170px, .8fr); gap: 6px; width: max-content; max-width: min(820px, calc(100vw - 32px)); padding: 10px; border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--surface) 96%, transparent); backdrop-filter: blur(16px); box-shadow: 0 24px 60px -24px rgb(0 0 0 / .45), 0 2px 8px -2px rgb(0 0 0 / .15); }
+    .menu-panel[hidden] { display: none; }
+    .menu-col { padding: 6px; border-radius: 12px; }
+    .menu-lab { display: flex; gap: 12px; padding: 10px; border-radius: 10px; }
+    .menu-lab b { display: block; font-size: .92rem; font-weight: 700; letter-spacing: -.01em; }
+    .menu-lab small { display: block; margin-top: 2px; color: var(--text-3); font-size: .76rem; }
+    .menu-num { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border: 1px solid var(--accent-line); border-radius: 8px; color: var(--accent); font: 700 .72rem var(--font-mono); background: var(--accent-wash); }
+    .menu-mods { margin: 2px 0 0 42px; padding: 0; border-left: 1px solid var(--line); }
+    .menu-mods a { display: block; padding: 6px 10px; border-radius: 0 8px 8px 0; color: var(--text-2); font-size: .82rem; }
+    .menu-col-prep { border-left: 1px solid var(--line); border-radius: 0; padding-left: 16px; }
+    .menu-cap { margin: 10px 0 8px; color: var(--text-3); font: 700 .66rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+    .menu-prep { margin: 0; padding: 0; list-style: none; }
+    .menu-prep li { display: flex; align-items: center; gap: 8px; padding: 6px 0; color: var(--text-3); font-size: .82rem; }
+    .menu-prep li::before { content: ""; width: 6px; height: 6px; border: 1.5px solid currentColor; border-radius: 50%; }
+    .top-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+    .top-conta { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); font-size: .84rem; font-weight: 650; white-space: nowrap; transition: border-color .15s, background .15s; }
+    .top-conta.logado { padding: 0 12px 0 4px; }
+    .top-av { display: grid; place-items: center; width: 30px; height: 30px; overflow: hidden; border-radius: 50%; background: var(--accent-wash); color: var(--accent); font: 700 .7rem var(--font-mono); }
+    .top-av img { width: 100%; height: 100%; object-fit: cover; }
+    .top-lang { position: relative; display: inline-flex; align-items: center; gap: 5px; height: 38px; padding: 0 8px 0 10px; border-radius: 10px; color: var(--text-2); cursor: pointer; }
+    .top-lang svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.3; }
+    .top-lang select { appearance: none; -webkit-appearance: none; margin: 0; padding: 0 14px 0 0; border: 0; background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238195a2' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right center/9px 6px; color: inherit; font: 700 .74rem var(--font-mono); letter-spacing: .04em; cursor: pointer; }
+    .top-lang select option { color: #111; background: #fff; }
+    .menu-bt { display: none; position: relative; width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; }
+    .menu-bt span, .menu-bt span::before, .menu-bt span::after { position: absolute; left: 13px; width: 18px; height: 1.6px; border-radius: 2px; background: var(--text); content: ""; transition: transform .2s, opacity .2s; }
+    .menu-bt span { top: 21px; }
+    .menu-bt span::before { left: 0; top: -6px; }
+    .menu-bt span::after { left: 0; top: 6px; }
+    .menu-bt[aria-expanded="true"] span { background: transparent; }
+    .menu-bt[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
+    .menu-bt[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
+    @media (hover: hover) {
+      .menu-link:hover { color: var(--text); background: var(--surface-2); }
+      .menu-lab:hover, .menu-mods a:hover { background: var(--surface-2); color: var(--text); }
+      .menu-lab:hover .menu-num { background: var(--accent); color: var(--accent-ink); }
+      .top-conta:hover { border-color: var(--line-strong); background: var(--surface-2); }
+      .top-lang:hover { color: var(--text); background: var(--surface-2); }
+    }
+    /* celular: menu em folha abaixo da barra */
+    @media (max-width: 859px) {
+      .menu-bt { display: block; }
+      .top-conta-t { display: none; }
+      .top-conta:not(.logado) .top-conta-t { display: inline; }
+      .top-conta.logado { padding: 0 4px; border-color: transparent; }
+      .menu { position: fixed; inset: calc(56px + env(safe-area-inset-top)) 0 auto 0; z-index: 55; flex-direction: column; align-items: stretch; gap: 0; max-height: calc(100dvh - 56px - env(safe-area-inset-top)); overflow: auto; padding: 8px var(--gut) 20px; border-bottom: 1px solid var(--line); background: var(--bg); box-shadow: 0 30px 50px -30px rgb(0 0 0 / .5); transform: translateY(-8px); opacity: 0; visibility: hidden; transition: opacity .18s, transform .18s, visibility 0s .18s; }
+      .menu.aberto { transform: none; opacity: 1; visibility: visible; transition: opacity .18s, transform .18s; }
+      .menu-link { justify-content: space-between; height: 50px; padding: 0 4px; border-bottom: 1px solid var(--line); border-radius: 0; font-size: 1rem; color: var(--text); }
+      .menu-drop[aria-expanded="true"] { background: transparent; }
+      .menu-panel { position: static; display: block; width: auto; max-width: none; padding: 4px 0 10px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; }
+      .menu-col-prep { border-left: 0; padding-left: 6px; }
+      .brand { margin-right: auto; }
+      .top-actions { margin-left: 0; }
+    }
+    @media (min-width: 960px) { .top-bar { gap: 10px; } }
+    @media (max-width: 420px) { .top-actions { gap: 0; } .top-lang { padding: 0 6px; } .top-lang svg { display: none; } .top-conta { padding: 0 11px; } .brand { margin-right: 6px; } }
 
     /* ---- Abertura ---------------------------------------------------------- */
     main { flex: 1; }
@@ -221,7 +286,7 @@
 
     /* ---- Mouse (computador) ---------------------------------------------------- */
     @media (hover: hover) {
-      .top nav a:hover, .theme:hover { color: var(--text); background: var(--surface-2); }
+      .theme:hover { color: var(--text); background: var(--surface-2); }
       .jump a:hover { border-color: var(--line-strong); color: var(--text); }
       .lab { transition: border-color .2s, box-shadow .25s; }
       .lab:hover { border-color: color-mix(in srgb, var(--hue) 40%, var(--line)); box-shadow: 0 18px 44px -28px color-mix(in srgb, var(--hue) 80%, transparent); }
@@ -264,6 +329,7 @@
       .tile-soon.nudge .status { animation: none; }
     }
   </style>
+  <script defer src="/assets/js/inicio-topo.js?v=20261104-1"></script>
   <script defer src="/assets/js/analytics-config.js"></script>
   <script defer src="/assets/js/analytics.js"></script>
 </head>
@@ -271,10 +337,51 @@
   <a class="skip" href="#abertos">Pular para os laboratórios</a>
 
   <header class="top" id="topo">
-    <div class="wrap">
+    <div class="wrap top-bar">
       <a class="brand" href="index.html" aria-label="EngenhaLab — início"><span class="brand-mark">VG<b>.</b></span><span class="brand-name">Engenha<b>Lab</b></span></a>
-      <nav aria-label="Navegação principal"><a href="sobre.html">Sobre o autor</a></nav>
-      <button class="theme" id="theme" type="button" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="sun" aria-hidden="true">☼</span><span class="moon" aria-hidden="true">☾</span></button>
+      <nav class="menu" id="menu" aria-label="Navegação principal">
+        <div class="menu-item menu-labs">
+          <button type="button" class="menu-link menu-drop" id="menu-labs-bt" aria-expanded="false" aria-controls="menu-labs">Laboratórios<svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button>
+          <div class="menu-panel" id="menu-labs" hidden>
+            <div class="menu-col">
+              <a class="menu-lab" href="maquinas-eletricas/index.html"><span class="menu-num">01</span><span><b>Máquinas elétricas</b><small>Geradores e motores síncronos</small></span></a>
+              <ol class="menu-mods">
+                <li><a href="maquinas-eletricas/01-maquinas-sincronas.html">Máquinas síncronas</a></li>
+                <li><a href="maquinas-eletricas/02-mecanica.html">Mecânica</a></li>
+                <li><a href="maquinas-eletricas/03-termica.html">Térmica</a></li>
+                <li><a href="maquinas-eletricas/04-eixos.html">Eixos</a></li>
+              </ol>
+            </div>
+            <div class="menu-col">
+              <a class="menu-lab" href="offshore/index.html"><span class="menu-num">02</span><span><b>Offshore &amp; ancoragem</b><small>Estacas torpedo para FPSO</small></span></a>
+              <ol class="menu-mods">
+                <li><a href="offshore/01-lancamento.html">Lançamento e cravação</a></li>
+                <li><a href="offshore/02-catenaria.html">Catenária</a></li>
+                <li><a href="offshore/03-capacidade-axial.html">Capacidade axial</a></li>
+                <li><a href="offshore/04-carga-lateral.html">Carga lateral</a></li>
+                <li><a href="offshore/05-estaca-3d.html">Torpedo 3D</a></li>
+              </ol>
+            </div>
+            <div class="menu-col menu-col-prep">
+              <p class="menu-cap">Em preparação</p>
+              <ul class="menu-prep">
+                <li>Estruturas &amp; FEM</li>
+                <li>Fluidos &amp; CFD</li>
+                <li>Metalurgia química</li>
+                <li>Automação &amp; CAD</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <a class="menu-link" href="#preparacao">Em preparação</a>
+        <a class="menu-link" href="sobre.html">Sobre o autor</a>
+      </nav>
+      <div class="top-actions">
+        <a class="top-conta" id="top-conta" href="offshore/conta.html?volta=..%2Findex.html" title="Entrar com a sua conta"><span class="top-conta-t">Entrar</span></a>
+        <label class="top-lang" title="Idioma / Language"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M2.5 10h15M10 2.5c2.2 2.3 3.2 4.8 3.2 7.5s-1 5.2-3.2 7.5c-2.2-2.3-3.2-4.8-3.2-7.5S7.8 4.8 10 2.5z"/></svg><select id="top-lang" aria-label="Idioma / Language"><option value="pt">PT</option><option value="en">EN</option></select></label>
+        <button class="theme" id="theme" type="button" title="Alternar tema claro/escuro" aria-label="Alternar tema claro/escuro"><span class="sun" aria-hidden="true">☼</span><span class="moon" aria-hidden="true">☾</span></button>
+        <button class="menu-bt" id="menu-bt" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu"><span aria-hidden="true"></span></button>
+      </div>
     </div>
   </header>
 
@@ -366,6 +473,8 @@
     <span><b>Engenha<span>Lab</span></b> · laboratórios de engenharia por <a href="sobre.html">Vinicius Marques Gandra</a></span>
     <a href="mailto:viniciusgandra2016@gmail.com">viniciusgandra2016@gmail.com</a>
   </footer>
+
+  <script src="/assets/js/idioma.js?v=20261104-5"></script>
 
   <script>
   (() => {
