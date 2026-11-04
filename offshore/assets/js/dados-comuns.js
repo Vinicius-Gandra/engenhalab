@@ -16,9 +16,9 @@
     120: { nome: 'T-120', d: 1.219, l: 20.93, aletas: 4, volume: 16.21 }
   };
   // modelo liberado só para quem entrou com acesso ao laboratório offshore
-  if (comAcesso()) MODELOS[98] = { nome: 'T-98', d: 1.07, l: 14.3, aletas: 4, volume: 13.24,
-    trechos: [{ length: 0.6, finStart: 0, finEnd: 0 }, { length: 0.5, finStart: 0.3, finEnd: 0.9 }, { length: 9.0, finStart: 0.9, finEnd: 0.9 },
-      { length: 0.5, finStart: 0.9, finEnd: 0.3 }, { length: 3.7, finStart: 0, finEnd: 0 }] };
+  if (comAcesso()) MODELOS[98] = { nome: 'T-98', d: 1.07, l: 14.6, aletas: 4, volume: 13.24,
+    trechos: [{ length: 1.4, finStart: 0.15, finEnd: 0.9 }, { length: 8.3, finStart: 0.9, finEnd: 0.9 },
+      { length: 1.4, finStart: 0.9, finEnd: 0.15 }, { length: 3.5, finStart: 0, finEnd: 0 }] };
   function comAcesso() {
     try {
       var s = JSON.parse(localStorage.getItem('engenha-offshore-sessao') || 'null');

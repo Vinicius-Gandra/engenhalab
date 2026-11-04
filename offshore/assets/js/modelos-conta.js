@@ -14,7 +14,7 @@
   }
   var acesso = comAcesso(), salvo = ler(PROJETO);
   var T98 = {
-    name: 'T-98', eye: 0.5, mass: 98000, volume: 13.24, diameter: 1.07, length: 16.5, coneLength: 2.2, fallArea: 1.036, fins: 4, geometry: 'arquivo local',
+    name: 'T-98', eye: 0.5, mass: 98000, volume: 13.24, diameter: 1.07, length: 16.7, coneLength: 2.1, fallArea: 1.036, fins: 4, geometry: 'arquivo local',
     fallPar: { cdBottom: 1.96, cdTop: 0, ca: 0.6 },
     truePar: { alphaT: 0.3287, cdSoil: 0.23, nc: 12, ncFin: 7.5, beta: 0.123, rateRef: 0.17 }
   };
