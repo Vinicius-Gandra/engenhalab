@@ -14,8 +14,8 @@
   }
   var acesso = comAcesso(), salvo = ler(PROJETO);
   var T98 = {
-    name: 'T-98', eye: 0.5, mass: 98000, volume: 13.24, diameter: 1.07, length: 17, coneLength: 2.1, fallArea: 1.187, fins: 4, geometry: 'arquivo local',
-    fallPar: { cdBottom: 1.96, cdTop: 0, ca: 0.6 },
+    name: 'T-98', eye: 0.3, mass: 98000, volume: 11.1, diameter: 1.067, length: 16.7, coneLength: 2.1, fallArea: 1.182, fins: 4, geometry: 'arquivo local',
+    fallPar: { cdBottom: 1.87, cdTop: 0, ca: 0.6 },
     // padrão de referência do T-98: solo Su = 5 + 2z kPa, St 3, aletas de 0,08 m
     truePar: { alphaT: 0.33, cdSoil: 0.63, nc: 13.6, ncFin: 7.5, beta: 0.123, rateRef: 0.17, st: 3, rhoSoil: 1.613, su0: 5, suGradient: 2, finT: 0.08 }
   };
