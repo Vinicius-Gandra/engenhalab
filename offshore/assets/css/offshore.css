@@ -147,3 +147,10 @@ body{min-height:100dvh}.container{width:min(1640px,100%);margin:auto;padding:cla
 :root{--soil-lo:#1d3442;--soil-hi:#3b3530}html[data-theme="light"]{--soil-lo:#efe9de;--soil-hi:#cdb898}
 @media(max-width:1100px){.soil-layout{grid-template-columns:1fr}}
 @media(max-width:680px){.project-strip{justify-content:flex-start}}
+
+/* seletor de idioma, ao lado da conta */
+.s-lang{position:relative;gap:5px;padding:0 6px 0 9px;cursor:pointer}
+.s-lang-g{font-size:.82rem;line-height:1;opacity:.8}
+.s-lang select{appearance:none;-webkit-appearance:none;height:100%;margin:0;padding:0 15px 0 0;border:0;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238195a2' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 1px center/9px 6px;color:inherit;font:700 .72rem var(--mono,monospace);letter-spacing:.04em;cursor:pointer}
+.s-lang select:focus-visible{outline:2px solid var(--orange);outline-offset:3px;border-radius:4px}
+.s-lang select option{color:#111;background:#fff}
