@@ -45,6 +45,13 @@
 .e3-cota-baixo .e3-cota{transform:translateY(14px)}
 .e3-cota-dir .e3-cota{transform:translateX(calc(50% + 10px))}
 .e3-cota-esq .e3-cota{transform:translateX(calc(-50% - 10px))}
+/* desenho técnico do T-98 */
+.e3-c98-pos{display:grid;place-items:center}
+.e3-c98{padding:0 4px;border-radius:3px;background:var(--bg2);color:var(--orange);font:700 .64rem/1.5 var(--mono);white-space:nowrap}
+.e3-c98-dir .e3-c98{transform:translateX(calc(50% + 6px))}
+.e3-c98-esq .e3-c98{transform:translateX(calc(-50% - 6px))}
+@media (max-width:640px){.e3-c98{font-size:.58rem}}
+.e3-c98-ini .e3-c98{transform:translateX(50%);background:transparent;color:var(--soft);font-weight:600}
 
 .e3-topo{position:absolute;top:14px;left:14px;right:14px;z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;pointer-events:none}
 .e3-topo>*{pointer-events:auto}
