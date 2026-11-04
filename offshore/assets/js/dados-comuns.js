@@ -16,8 +16,8 @@
     120: { nome: 'T-120', d: 1.219, l: 20.93, aletas: 4, volume: 16.21 }
   };
   // modelo liberado só para quem entrou com acesso ao laboratório offshore
-  if (comAcesso()) MODELOS[98] = { nome: 'T-98', d: 1.067, l: 14.6, aletas: 4, volume: 11.1,
-    trechos: [{ length: 1.4, finStart: 0.15, finEnd: 0.9 }, { length: 8.3, finStart: 0.9, finEnd: 0.9 },
+  if (comAcesso()) MODELOS[98] = { nome: 'T-98', d: 1.067, l: 14.9, aletas: 4, volume: 11.1,
+    trechos: [{ length: 0.3, finStart: 0, finEnd: 0 }, { length: 1.4, finStart: 0.15, finEnd: 0.9 }, { length: 8.3, finStart: 0.9, finEnd: 0.9 },
       { length: 1.4, finStart: 0.9, finEnd: 0.15 }, { length: 3.5, finStart: 0, finEnd: 0 }] };
   function comAcesso() {
     try {
