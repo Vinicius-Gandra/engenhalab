@@ -14,15 +14,33 @@
   }
   var acesso = comAcesso(), salvo = ler(PROJETO);
   var T98 = {
-    name: 'T-98', eye: 0.5, mass: 98000, volume: 13.24, diameter: 1.07, length: 16.7, coneLength: 2.1, fallArea: 1.036, fins: 4, geometry: 'arquivo local',
+    name: 'T-98', eye: 0.5, mass: 98000, volume: 13.24, diameter: 1.07, length: 17, coneLength: 2.1, fallArea: 1.187, fins: 4, geometry: 'arquivo local',
     fallPar: { cdBottom: 1.96, cdTop: 0, ca: 0.6 },
-    truePar: { alphaT: 0.3287, cdSoil: 0.23, nc: 12, ncFin: 7.5, beta: 0.123, rateRef: 0.17 }
+    // padrão de referência do T-98: solo Su = 5 + 2z kPa, St 3, aletas de 0,08 m
+    truePar: { alphaT: 0.33, cdSoil: 0.63, nc: 13.6, ncFin: 7.5, beta: 0.123, rateRef: 0.17, st: 3, rhoSoil: 1.613, su0: 5, suGradient: 2, finT: 0.08 }
   };
+  // campos que só o T-98 traz no padrão: ao sair dele, voltam ao que a pessoa tinha antes de escolhê-lo
+  var PROPRIOS = ['st', 'rhoSoil', 'su0', 'suGradient', 'finT'], ANTES = 'offshore-antes-t98';
+  function gravar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sem armazenamento */ } }
+  function envolver(L) {
+    var salvar = L.saveProject;
+    L.saveProject = function (patch) {
+      var de = Number(L.project && L.project.model), para = patch && patch.model !== undefined ? Number(patch.model) : de;
+      if (para === 98 && de !== 98) { var a = {}; PROPRIOS.forEach(function (k) { a[k] = L.project[k]; }); gravar(ANTES, a); }
+      if (de === 98 && para !== 98) {
+        var volta = ler(ANTES) || {}, d = L.DEFAULT || {}, extra = {};
+        PROPRIOS.forEach(function (k) { if (patch[k] === undefined) extra[k] = volta[k] !== undefined ? volta[k] : d[k]; });
+        patch = Object.assign(extra, patch);
+      }
+      return salvar.call(L, patch);
+    };
+  }
 
   function aplicar(L) {
     if (!L || !L.MODELS) return;
     if (!acesso) return;
     L.MODELS[98] = T98;
+    envolver(L);
     // core.js troca um modelo que ainda não conhecia pelo T-120: devolve o projeto salvo
     if (salvo && Number(salvo.model) === 98 && L.project && Number(L.project.model) !== 98) { try { L.saveProject(salvo); } catch (e) { /* projeto inválido: fica o T-120 */ } }
     document.addEventListener('DOMContentLoaded', function () {
